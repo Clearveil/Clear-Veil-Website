@@ -72,9 +72,9 @@ import Arrow from './Arrow.astro';
     padding: 26px 28px; border: 0; background: none; text-align: left; cursor: pointer;
   }
   .num { width: 22px; font-size: 0.8125rem; color: var(--ink-3); font-variant-numeric: tabular-nums; align-self: start; padding-top: 0.55em; }
-  .titles { display: grid; gap: 4px; }
+  .titles { display: grid; gap: 6px; }
   .name { font-size: var(--fs-h3); letter-spacing: -0.035em; line-height: 1.2; }
-  .summary { color: var(--ink-2); font-size: 0.975rem; }
+  .summary { color: var(--ink-2); font-size: 0.86rem; line-height: 1.55; max-width: 420px; }
 
   /* Plus → minus toggle, glossy round button */
   .toggle {
@@ -106,7 +106,8 @@ import Arrow from './Arrow.astro';
     transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
   }
   .row.is-open .panel-inner { opacity: 1; transform: none; transition-delay: 120ms; }
-  .panel-inner p { color: var(--ink-2); max-width: 500px; font-size: 0.95rem; }
+  .panel-inner p { color: var(--ink-2); max-width: 460px; font-size: 0.86rem; line-height: 1.7; }
+  .panel-inner :global(.tag) { height: 26px; padding: 0 11px; font-size: 0.75rem; }
   .panel-inner ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 
   @media (max-width: 900px) {
