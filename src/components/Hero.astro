@@ -18,8 +18,8 @@ import { hero } from '../content/site';
         <a class="btn btn-glass" href={hero.primary.href} target="_blank" rel="noopener">
           {hero.primary.label}
         </a>
+        <ContactIcons />
       </div>
-      <ContactIcons class="reach" />
     </div>
     <div class="media">
       <Reel />
@@ -61,8 +61,8 @@ import { hero } from '../content/site';
     padding-bottom: 0.08em;
   }
   .lede { margin-top: 22px; max-width: 440px; font-size: var(--fs-lede); color: var(--ink-2); }
-  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
-  .copy :global(.reach) { margin-top: 26px; }
+  /* Button with the contact icons centered beneath it */
+  .actions { display: inline-grid; justify-items: center; gap: 22px; margin-top: 36px; }
 
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
@@ -71,6 +71,6 @@ import { hero } from '../content/site';
   }
   @media (max-width: 480px) {
     .actions { width: 100%; }
-    .actions .btn { flex: 1 1 100%; }
+    .actions .btn { width: 100%; }
   }
 </style>

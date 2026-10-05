@@ -15,8 +15,8 @@ import { contact, site } from '../content/site';
         <p>{contact.sub}</p>
         <div class="book">
           <a class="btn btn-glass" href={site.bookingUrl} target="_blank" rel="noopener">Book a 15-minute call</a>
+          <ContactIcons label="Prefer to talk? Call or text" form={false} />
         </div>
-        <ContactIcons label="Prefer to talk? Call or text" form={false} class="reach" />
       </div>
 
       <form class="form" data-contact-form novalidate data-reveal style="--i:1">
@@ -135,8 +135,7 @@ import { contact, site } from '../content/site';
   .panel { background: radial-gradient(60% 50% at 20% 0%, rgba(255, 255, 255, 0.07), transparent 70%), linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)); }
   .intro { display: grid; gap: 20px; align-content: start; position: relative; }
   .intro p { color: var(--ink-2); font-size: var(--fs-lede); max-width: 420px; }
-  .book { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 12px; }
-  .intro :global(.reach) { margin-top: 4px; }
+  .book { display: inline-grid; justify-items: center; gap: 22px; margin-top: 12px; justify-self: start; }
 
   .form { display: grid; gap: 16px; position: relative; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -182,5 +181,7 @@ import { contact, site } from '../content/site';
   @media (max-width: 560px) {
     .row2 { grid-template-columns: 1fr; }
     .submit .btn { width: 100%; }
+    .book { justify-self: stretch; }
+    .book .btn { width: 100%; }
   }
 </style>
