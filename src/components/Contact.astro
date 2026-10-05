@@ -132,10 +132,7 @@ import Arrow from './Arrow.astro';
     overflow: hidden;
   }
   /* Light catching the top edge of the panel */
-  .panel::before {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(60% 50% at 20% 0%, rgba(255, 255, 255, 0.08), transparent 70%);
-  }
+  .panel { background: radial-gradient(60% 50% at 20% 0%, rgba(255, 255, 255, 0.07), transparent 70%), linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)); }
   .intro { display: grid; gap: 20px; align-content: start; position: relative; }
   .intro p { color: var(--ink-2); font-size: var(--fs-lede); }
   .book { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 12px; }

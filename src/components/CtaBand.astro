@@ -26,10 +26,7 @@ const { title = contact.title, sub = contact.sub } = Astro.props;
     padding: clamp(48px, 7vw, 96px) clamp(24px, 5vw, 64px);
     border-radius: var(--r-xl); overflow: hidden;
   }
-  .cta::before {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(50% 60% at 50% 0%, rgba(255, 255, 255, 0.12), transparent 70%);
-  }
+  .cta { background: radial-gradient(50% 60% at 50% 0%, rgba(255, 255, 255, 0.1), transparent 70%), linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)); }
   .mark { width: 72px; position: relative; filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.3)); }
   h2 { max-width: 16ch; position: relative; }
   p { color: var(--ink-2); font-size: var(--fs-lede); max-width: 520px; position: relative; }

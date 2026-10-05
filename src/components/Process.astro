@@ -33,18 +33,15 @@ import { process } from '../content/site';
   .step {
     display: flex; flex-direction: column; gap: 14px;
     padding: 30px 28px 28px; min-height: 320px;
-    transition: transform var(--t) var(--ease), box-shadow var(--t) var(--ease);
+    transition: transform var(--t) var(--ease);
   }
-  .step:hover {
-    transform: translateY(-4px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 30px 60px -24px rgba(0, 0, 0, 1);
-  }
+  .step:hover { transform: translateY(-4px); --rim: rgba(255, 255, 255, 0.5); }
   .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: auto; padding-bottom: 48px; }
   .badge {
     font-size: 0.8125rem; color: var(--ink-2);
     padding: 5px 12px; border-radius: 8px;
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
   }
   .dot {
     width: 8px; height: 8px; border-radius: 50%; background: #fff;

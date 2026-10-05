@@ -48,18 +48,37 @@ export const hero = {
 };
 
 /**
- * Client logos for the marquee. Drop a file into /public/logos/ and set `logo`.
- * White or light logos on transparent backgrounds look best (they're shown
- * greyed and brighten on hover). Until a file exists, the name is shown.
+ * Client logos for the marquee (and on matching reviews).
+ * Files live in /public/logos/ — white on transparent, WebP or PNG.
+ * `w` and `h` are the file's pixel size; they're used to balance wide and
+ * square logos so they look the same visual weight.
+ * `name` must match a review's `company` for the logo to show on that review.
  */
-export const clients: { name: string; logo?: string }[] = [
-  { name: 'Apex Aminos' },
-  { name: 'Revival Clothing' },
-  { name: 'Safeplace NY' },
-  { name: 'Visionworld' },
-  { name: 'Church On The Move USA' },
-  { name: 'Girlyman' },
+export const clients: { name: string; logo: string; w: number; h: number }[] = [
+  { name: 'Girlyman', logo: '/logos/girlyman.webp', w: 520, h: 128 },
+  { name: 'Apex Aminos', logo: '/logos/apex-aminos.webp', w: 218, h: 160 },
+  { name: 'Safeplace NY', logo: '/logos/safeplace-ny.webp', w: 236, h: 160 },
+  { name: 'Visionworld', logo: '/logos/visionworld.webp', w: 496, h: 160 },
+  { name: 'Church On The Move USA', logo: '/logos/church-on-the-move.webp', w: 156, h: 160 },
+  { name: 'Revival Clothing', logo: '/logos/revival-clothing.webp', w: 520, h: 141 },
+  { name: 'Älert', logo: '/logos/alert.webp', w: 407, h: 160 },
+  { name: 'McKenna Bros. Paving Co.', logo: '/logos/mckenna-bros-paving.webp', w: 451, h: 160 },
+  { name: 'Sunnyday Sourdough Co.', logo: '/logos/sunnyday-sourdough.webp', w: 188, h: 160 },
+  { name: 'Kandy', logo: '/logos/kandy.webp', w: 520, h: 140 },
+  { name: 'The Green Door', logo: '/logos/the-green-door.webp', w: 160, h: 160 },
+  { name: 'Moreno & Sons Excavation', logo: '/logos/moreno-and-sons.webp', w: 268, h: 160 },
+  { name: "Pezzuto's Excavating", logo: '/logos/pezzutos-excavating.webp', w: 337, h: 160 },
+  { name: 'Dylan Burrows Concrete', logo: '/logos/dylan-burrows-concrete.webp', w: 236, h: 160 },
+  { name: 'Triple JJJ Bar & Grill', logo: '/logos/triple-jjj.webp', w: 273, h: 160 },
+  // TODO(owner): real names for these four marks (used as alt text)
+  { name: 'Client', logo: '/logos/client-06.webp', w: 279, h: 160 },
+  { name: 'Client', logo: '/logos/client-10.webp', w: 162, h: 160 },
+  { name: 'Client', logo: '/logos/client-11.webp', w: 265, h: 160 },
+  { name: 'Client', logo: '/logos/client-12.webp', w: 175, h: 160 },
 ];
+
+/** Find a client's logo by name (used by reviews). */
+export const logoFor = (name: string) => clients.find((c) => c.name === name);
 
 export const stats = [
   { value: '$5M+', label: 'Ad spend managed' },

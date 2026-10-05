@@ -20,11 +20,6 @@ import { stats } from '../content/site';
     display: grid; grid-template-columns: repeat(3, 1fr);
     border-radius: var(--r-xl); overflow: hidden;
   }
-  /* A thin lit line across the top edge of the band */
-  .band::before {
-    content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-  }
   .stat {
     display: grid; gap: 6px; padding: clamp(32px, 4vw, 52px) clamp(24px, 3vw, 44px);
     text-align: center;

@@ -1,18 +1,32 @@
 ---
 /** Slow client-logo marquee. Logos are set in src/content/site.ts → clients. */
 import { clients } from '../content/site';
+
+// Give every logo roughly the same visual area, so a wide wordmark and a round
+// badge feel equally weighted instead of one dwarfing the other.
+const AREA = 4600;
+const sized = clients.map((c) => {
+  const ratio = c.w / c.h;
+  const h = Math.round(Math.min(62, Math.max(30, Math.sqrt(AREA / ratio))));
+  return { ...c, h, w: Math.round(h * ratio) };
+});
 // Two copies side by side so the loop is seamless.
-const loop = [...clients, ...clients];
+const loop = [...sized, ...sized];
 ---
 <section class="strip" aria-label="Clients we work with">
   <p class="label">Trusted by growing brands</p>
   <div class="viewport">
     <ul class="track">
       {loop.map((c, i) => (
-        <li aria-hidden={i >= clients.length ? 'true' : undefined}>
-          {c.logo
-            ? <img src={c.logo} alt={c.name} loading="lazy" decoding="async" height="40" />
-            : <span class="name">{c.name}</span>}
+        <li aria-hidden={i >= sized.length ? 'true' : undefined}>
+          <img
+            src={c.logo}
+            alt={i >= sized.length ? '' : c.name}
+            width={c.w}
+            height={c.h}
+            loading="lazy"
+            decoding="async"
+          />
         </li>
       ))}
     </ul>
@@ -21,31 +35,24 @@ const loop = [...clients, ...clients];
 
 <style>
   .strip { padding-block: 8px 24px; }
-  .label { text-align: center; font-size: 0.8125rem; color: var(--ink-3); margin-bottom: 28px; }
+  .label { text-align: center; font-size: 0.8125rem; color: var(--ink-3); margin-bottom: 30px; }
   .viewport {
     overflow: hidden;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
-    mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
   }
   .track {
     list-style: none; margin: 0; padding: 0;
-    display: flex; width: max-content;
-    animation: marquee 60s linear infinite;
+    display: flex; align-items: center; width: max-content;
+    animation: marquee 90s linear infinite;
   }
   .viewport:hover .track { animation-play-state: paused; }
-  li { flex: none; display: grid; place-items: center; padding: 0 clamp(28px, 4vw, 56px); height: 56px; }
+  li { flex: none; display: grid; place-items: center; padding: 0 clamp(26px, 3.4vw, 48px); height: 72px; }
   img {
-    height: 40px; width: auto; max-width: 150px; object-fit: contain;
-    filter: grayscale(1) brightness(1.6); opacity: 0.55;
+    opacity: 0.5;
     transition: opacity var(--t) var(--ease), filter var(--t) var(--ease);
   }
-  li:hover img { opacity: 1; filter: grayscale(1) brightness(2); }
-  .name {
-    font-size: 1.15rem; font-weight: 500; letter-spacing: -0.03em; white-space: nowrap;
-    color: rgba(255, 255, 255, 0.55);
-    transition: color var(--t) var(--ease);
-  }
-  li:hover .name { color: #fff; }
+  li:hover img { opacity: 1; filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.35)); }
 
   @keyframes marquee { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) {

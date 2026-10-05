@@ -7,7 +7,7 @@ import { hero } from '../content/site';
 <section class="hero">
   <div class="container grid">
     <div class="copy">
-      <span class="status"><b>New</b>{hero.status}</span>
+      <span class="status glass"><b>New</b>{hero.status}</span>
       <Mark class="mark" />
       <h1>
         <span>{hero.headline[0]}</span>
@@ -37,16 +37,14 @@ import { hero } from '../content/site';
 
   .status {
     display: inline-flex; align-items: center; gap: 10px;
-    padding: 5px 14px 5px 5px; border-radius: 10px;
-    font-size: 0.875rem; color: rgba(255, 255, 255, 0.85);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03));
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+    padding: 5px 15px 5px 5px; border-radius: 999px;
+    font-size: 0.875rem; color: rgba(255, 255, 255, 0.88);
   }
   .status b {
-    padding: 3px 8px; border-radius: 6px;
+    padding: 3px 9px; border-radius: 999px;
     font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
-    background: linear-gradient(180deg, #6a6a6a, #444);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.5);
+    color: #0b0b0b; background: radial-gradient(120% 90% at 50% -10%, #fff, rgba(255, 255, 255, 0) 60%), linear-gradient(180deg, #f6f5f3, #dcdad6);
+    box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 12px -2px rgba(255, 255, 255, 0.35);
   }
 
   .mark { width: 96px; margin: 40px 0 26px; color: #fff; filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.25)); }
