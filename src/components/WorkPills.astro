@@ -38,14 +38,14 @@ import Arrow from './Arrow.astro';
     transition: transform var(--t) var(--ease);
   }
   .pill:hover { transform: translateY(-2px); --rim: rgba(255, 255, 255, 0.55); --glass-fill-top: rgba(255, 255, 255, 0.1); }
-  .client { font-weight: 500; font-size: 1.05rem; letter-spacing: -0.02em; }
-  .what { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .client { font-weight: 500; font-size: 0.98rem; letter-spacing: -0.02em; }
+  .what { color: var(--ink-2); font-size: var(--fs-card); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .result {
-    font-size: 0.875rem; font-weight: 500; color: #111;
+    font-size: var(--fs-card-meta); font-weight: 500; color: #111;
     padding: 4px 12px; border-radius: 999px;
     background: linear-gradient(180deg, #fff, #dcdad6);
   }
-  .svc { font-size: 0.875rem; color: var(--ink-3); white-space: nowrap; }
+  .svc { font-size: var(--fs-card-meta); color: var(--ink-3); white-space: nowrap; }
   .go {
     display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03));
@@ -59,7 +59,7 @@ import Arrow from './Arrow.astro';
   @media (max-width: 900px) {
     .pill { grid-template-columns: 1fr auto; gap: 4px 16px; padding: 18px 14px 18px 22px; border-radius: 22px; }
     .client { grid-column: 1; }
-    .what { grid-column: 1; white-space: normal; font-size: 0.95rem; }
+    .what { grid-column: 1; white-space: normal; font-size: var(--fs-card); }
     .svc { grid-column: 1; }
     .result { grid-column: 1; justify-self: start; margin-top: 6px; }
     .go { grid-column: 2; grid-row: 1 / span 4; }

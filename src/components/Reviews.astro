@@ -50,7 +50,7 @@ const withLogos = reviews.map((r) => {
   .head .section-head { margin-bottom: 0; }
   .google {
     display: inline-flex; align-items: center; gap: 12px;
-    padding: 14px 22px; border-radius: 999px; font-weight: 500; font-size: 0.95rem;
+    padding: 14px 22px; border-radius: 999px; font-weight: 500; font-size: 0.875rem;
     transition: transform var(--t) var(--ease);
   }
   .google:hover { transform: translateY(-2px); }
@@ -67,9 +67,9 @@ const withLogos = reviews.map((r) => {
     border-bottom: 1px solid var(--line);
   }
   .logo { opacity: 0.9; }
-  .stars { color: #fff; letter-spacing: 3px; font-size: 0.85rem; text-shadow: 0 0 10px rgba(255, 255, 255, 0.45); }
-  blockquote { margin: 0; font-size: 1.05rem; line-height: 1.6; color: rgba(255, 255, 255, 0.86); }
+  .stars { color: #fff; letter-spacing: 3px; font-size: 0.75rem; text-shadow: 0 0 10px rgba(255, 255, 255, 0.45); }
+  blockquote { margin: 0; font-size: var(--fs-card-quote); line-height: 1.65; color: rgba(255, 255, 255, 0.86); }
   figcaption { display: grid; gap: 2px; }
-  figcaption b { font-weight: 500; }
-  figcaption small { color: var(--ink-3); font-size: 0.875rem; }
+  figcaption b { font-weight: 500; font-size: 0.9rem; }
+  figcaption small { color: var(--ink-3); font-size: var(--fs-card-meta); }
 </style>

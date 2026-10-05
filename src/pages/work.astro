@@ -57,18 +57,18 @@ const projects = work.map((w) => {
   }
   .meta { display: grid; gap: 12px; align-content: start; justify-items: start; }
   .idrow { display: flex; align-items: center; justify-content: space-between; justify-self: stretch; min-height: 52px; }
-  .idx { font-size: 0.8125rem; color: var(--ink-3); }
+  .idx { font-size: var(--fs-card-meta); color: var(--ink-3); }
   .logo { opacity: 0.85; }
   h2 { font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.75rem); }
-  .what { color: var(--ink-2); font-size: var(--fs-lede); }
+  .what { color: var(--ink-2); font-size: var(--fs-card); }
   ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
   .result {
     margin-top: 8px; font-weight: 500; color: #111; padding: 6px 14px; border-radius: 999px;
     background: linear-gradient(180deg, #fff, #dcdad6);
   }
   .quote { margin: 0; display: grid; gap: 16px; align-content: center; padding-left: clamp(0px, 3vw, 40px); border-left: 1px solid var(--line); }
-  blockquote { margin: 0; font-size: 1.125rem; line-height: 1.6; color: rgba(255, 255, 255, 0.86); }
-  figcaption { color: var(--ink-3); font-size: 0.9rem; }
+  blockquote { margin: 0; font-size: var(--fs-card-quote); line-height: 1.65; color: rgba(255, 255, 255, 0.86); }
+  figcaption { color: var(--ink-3); font-size: var(--fs-card-meta); }
   .more { color: var(--ink-2); margin-top: 24px; text-align: center; }
   @media (max-width: 800px) {
     .project { grid-template-columns: 1fr; }
