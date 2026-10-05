@@ -27,7 +27,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       </nav>
 
       <div class="end">
-        <a href={site.bookingUrl} class="btn btn-light btn-sm cta" target="_blank" rel="noopener">
+        <a href={site.bookingUrl} class="btn btn-glass btn-sm cta" target="_blank" rel="noopener">
           Book a call
         </a>
         <button class="menu-btn glass" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-btn>
@@ -45,7 +45,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
               {l.label}<Arrow />
             </a>
           ))}
-          <a href={site.bookingUrl} class="btn btn-light" target="_blank" rel="noopener" style={`--i:${nav.length}`}>
+          <a href={site.bookingUrl} class="btn btn-glass" target="_blank" rel="noopener" style={`--i:${nav.length}`}>
             Book a 15-minute call
           </a>
         </nav>

@@ -3,6 +3,7 @@
  * Contact form → POST /api/contact → email via Resend.
  * On success it fires a Meta Pixel "Lead" event and a GTM "generate_lead" event.
  */
+import ContactIcons from './ContactIcons.astro';
 import { contact, site } from '../content/site';
 ---
 <section class="section contact" id="contact">
@@ -13,9 +14,9 @@ import { contact, site } from '../content/site';
         <h2 class="h-display">{contact.title}</h2>
         <p>{contact.sub}</p>
         <div class="book">
-          <a class="btn btn-light" href={site.bookingUrl} target="_blank" rel="noopener">Book a 15-minute call</a>
-          <span class="or">or send a message</span>
+          <a class="btn btn-glass" href={site.bookingUrl} target="_blank" rel="noopener">Book a 15-minute call</a>
         </div>
+        <ContactIcons label="Prefer to talk? Call or text" form={false} class="reach" />
       </div>
 
       <form class="form" data-contact-form novalidate data-reveal style="--i:1">
@@ -54,7 +55,7 @@ import { contact, site } from '../content/site';
         <input type="hidden" name="t" value="" />
 
         <div class="submit">
-          <button class="btn btn-light" type="submit">
+          <button class="btn btn-glass" type="submit">
             <span class="label">{contact.button}</span>
           </button>
           <span class="note" data-status role="status" aria-live="polite">{contact.note}</span>
@@ -135,7 +136,7 @@ import { contact, site } from '../content/site';
   .intro { display: grid; gap: 20px; align-content: start; position: relative; }
   .intro p { color: var(--ink-2); font-size: var(--fs-lede); max-width: 420px; }
   .book { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 12px; }
-  .or { color: var(--ink-3); font-size: 0.9rem; }
+  .intro :global(.reach) { margin-top: 4px; }
 
   .form { display: grid; gap: 16px; position: relative; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }

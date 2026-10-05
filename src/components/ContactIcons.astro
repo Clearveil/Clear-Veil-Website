@@ -1,0 +1,93 @@
+---
+/**
+ * Three round glass shortcuts: message (→ contact form), call, text.
+ * Number lives in src/content/site.ts → site.phone.
+ * Each tap is reported to GTM ("contact_click") and Meta Pixel ("Contact").
+ */
+import { site } from '../content/site';
+
+interface Props { class?: string; label?: string; form?: boolean }
+const { class: className, label = 'Or reach us directly', form = true } = Astro.props;
+
+const all = [
+  {
+    kind: 'form',
+    href: '/#contact',
+    label: 'Send a message',
+    icon: '<path d="M4 6.5h16v11H4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+  },
+  {
+    kind: 'call',
+    href: `tel:${site.phone}`,
+    label: `Call ${site.phoneDisplay}`,
+    icon: '<path d="M7.2 4.5h2.4l1.3 3.6-1.7 1.1a9.5 9.5 0 0 0 5.6 5.6l1.1-1.7 3.6 1.3v2.4a1.7 1.7 0 0 1-1.9 1.7A14.6 14.6 0 0 1 5.5 6.4a1.7 1.7 0 0 1 1.7-1.9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  },
+  {
+    kind: 'text',
+    href: `sms:${site.phone}`,
+    label: `Text ${site.phoneDisplay}`,
+    icon: '<path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5a1.5 1.5 0 0 1-1.5 1.5h-8l-4.5 3.2V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8.5" cy="11.3" r="1" fill="currentColor"/><circle cx="12" cy="11.3" r="1" fill="currentColor"/><circle cx="15.5" cy="11.3" r="1" fill="currentColor"/>',
+  },
+];
+const items = form ? all : all.filter((i) => i.kind !== 'form');
+---
+<div class:list={['contact-icons', className]}>
+  <span class="label">{label}</span>
+  <ul>
+    {items.map((it) => (
+      <li>
+        <a class="icon glass" href={it.href} aria-label={it.label} data-contact={it.kind}>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" set:html={it.icon} />
+          <span class="tip" aria-hidden="true">{it.label}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script>
+  declare global {
+    interface Window { fbq?: (...args: unknown[]) => void; dataLayer?: unknown[] }
+  }
+  document.querySelectorAll<HTMLAnchorElement>('[data-contact]').forEach((a) => {
+    a.addEventListener('click', () => {
+      const method = a.dataset.contact;
+      (window.dataLayer ||= []).push({ event: 'contact_click', method });
+      if (method !== 'form') window.fbq?.('track', 'Contact', { method });
+    });
+  });
+</script>
+
+<style>
+  .contact-icons { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .label { font-size: 0.8125rem; color: var(--ink-3); }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 10px; }
+
+  .icon {
+    display: grid; place-items: center;
+    width: 44px; height: 44px; border-radius: 50%;
+    color: rgba(255, 255, 255, 0.85);
+    transition: transform var(--t) var(--ease), color var(--t) var(--ease);
+  }
+  .icon svg { width: 19px; height: 19px; }
+  .icon:hover {
+    transform: translateY(-2px);
+    color: #fff;
+    --rim: rgba(255, 255, 255, 0.75);
+    --glass-fill-top: rgba(255, 255, 255, 0.18);
+  }
+
+  /* Small glass label that rises above the icon on hover / keyboard focus */
+  .tip {
+    position: absolute; left: 50%; bottom: calc(100% + 10px);
+    padding: 6px 12px; border-radius: 999px;
+    font-size: 0.78rem; white-space: nowrap; color: #fff;
+    background: rgba(24, 24, 24, 0.86);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 8px 20px -8px rgba(0, 0, 0, 0.8);
+    opacity: 0; transform: translate(-50%, 4px); pointer-events: none;
+    transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+  }
+  .icon:hover .tip, .icon:focus-visible .tip { opacity: 1; transform: translate(-50%, 0); }
+  @media (hover: none) { .tip { display: none; } }
+</style>

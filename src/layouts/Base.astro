@@ -29,6 +29,7 @@ const orgSchema = {
   logo: new URL('/icon-512.png', site.url).href,
   image: ogImage,
   description: site.description,
+  telephone: site.phone,
   areaServed: 'US',
   address: { '@type': 'PostalAddress', addressRegion: 'MI', addressCountry: 'US' },
   sameAs: site.social.map((s) => s.href),
@@ -84,7 +85,7 @@ const orgSchema = {
       // highlight can follow it. Mouse/trackpad only; skipped on touch.
       if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
         document.addEventListener('pointermove', (e) => {
-          const el = (e.target as Element).closest?.<HTMLElement>('.glass, .btn-glass, .btn-light, .card');
+          const el = (e.target as Element).closest?.<HTMLElement>('.glass, .btn-glass, .btn-glass, .card');
           if (!el) return;
           const r = el.getBoundingClientRect();
           el.style.setProperty('--mx', `${e.clientX - r.left}px`);

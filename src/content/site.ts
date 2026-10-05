@@ -17,6 +17,9 @@ export const site = {
     'Clear Veil Marketing runs paid ads, builds websites and produces creative for growing businesses. Over $5M in managed ad spend. Book a 15-minute call.',
   location: 'Michigan',
   bookingUrl: 'https://cal.com/clear-veil-marketing-inc/15min',
+  // Call + text number: E.164 format for links, and how it's displayed
+  phone: '+12696154507',
+  phoneDisplay: '(269) 615-4507',
   reviewsUrl: 'https://share.google/QMZkqgB78xrt4Td4w',
   social: [
     { label: 'Instagram', href: 'https://www.instagram.com/clear.veil/' },
