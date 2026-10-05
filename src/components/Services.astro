@@ -1,0 +1,123 @@
+---
+/**
+ * Expandable service rows. One open at a time; height animates smoothly via
+ * CSS grid (0fr → 1fr), so there's no measuring or jank.
+ */
+import { services, site } from '../content/site';
+import Arrow from './Arrow.astro';
+---
+<section class="section" id="services">
+  <div class="container layout">
+    <div class="section-head side" data-reveal>
+      <span class="eyebrow">{services.eyebrow}</span>
+      <h2 class="h-display">{services.title}</h2>
+      <p>{services.intro}</p>
+      <a class="link" href={site.bookingUrl} target="_blank" rel="noopener">Talk through your project <Arrow /></a>
+    </div>
+
+    <div class="rows" data-accordion>
+      {services.items.map((s, i) => (
+        <div class:list={['row card', { 'is-open': i === 0 }]} data-reveal style={`--i:${i}`}>
+          <h3>
+            <button type="button" class="head" aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`svc-${i}`} id={`svc-btn-${i}`}>
+              <span class="num">0{i + 1}</span>
+              <span class="titles">
+                <span class="name">{s.name}</span>
+                <span class="summary">{s.summary}</span>
+              </span>
+              <span class="toggle" aria-hidden="true"><i></i><i></i></span>
+            </button>
+          </h3>
+          <div class="panel" id={`svc-${i}`} role="region" aria-labelledby={`svc-btn-${i}`}>
+            <div class="panel-clip">
+              <div class="panel-inner">
+                <p>{s.body}</p>
+                <ul>{s.includes.map((x) => <li class="tag">{x}</li>)}</ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-accordion]').forEach((acc) => {
+    const rows = [...acc.querySelectorAll<HTMLElement>('.row')];
+    rows.forEach((row) => {
+      row.querySelector('button')!.addEventListener('click', () => {
+        const willOpen = !row.classList.contains('is-open');
+        rows.forEach((r) => {
+          const open = r === row && willOpen;
+          r.classList.toggle('is-open', open);
+          r.querySelector('button')!.setAttribute('aria-expanded', String(open));
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .layout { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(40px, 6vw, 96px); align-items: start; }
+  .side { position: sticky; top: 120px; margin-bottom: 0; }
+  .side .link { justify-self: start; margin-top: 8px; }
+
+  .rows { display: grid; gap: 12px; }
+  .row {
+    border-radius: var(--r-lg);
+    transition: box-shadow var(--t) var(--ease), background var(--t) var(--ease);
+  }
+  .row:hover, .row.is-open {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.1), var(--surface-drop);
+  }
+  h3 { font-size: inherit; letter-spacing: inherit; line-height: inherit; }
+  .head {
+    width: 100%; display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center;
+    padding: 26px 28px; border: 0; background: none; text-align: left; cursor: pointer;
+  }
+  .num { width: 22px; font-size: 0.8125rem; color: var(--ink-3); font-variant-numeric: tabular-nums; align-self: start; padding-top: 0.55em; }
+  .titles { display: grid; gap: 4px; }
+  .name { font-size: var(--fs-h3); letter-spacing: -0.035em; line-height: 1.2; }
+  .summary { color: var(--ink-2); font-size: 0.975rem; }
+
+  /* Plus → minus toggle, glossy round button */
+  .toggle {
+    position: relative; width: 36px; height: 36px; border-radius: 50%; flex: none;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    transition: background var(--t) var(--ease), transform var(--t) var(--ease);
+  }
+  .toggle i {
+    position: absolute; left: 50%; top: 50%; width: 12px; height: 1.5px; margin: -0.75px 0 0 -6px;
+    background: #fff; border-radius: 2px; transition: transform var(--t) var(--ease);
+  }
+  .toggle i:last-child { transform: rotate(90deg); }
+  .row.is-open .toggle { background: linear-gradient(180deg, #fff, #d9d7d3); }
+  .row.is-open .toggle i { background: #111; }
+  .row.is-open .toggle i:last-child { transform: rotate(0deg); }
+  .head:hover .toggle { transform: scale(1.06); }
+
+  /* Smooth height */
+  .panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--t-slow) var(--ease); }
+  .row.is-open .panel { grid-template-rows: 1fr; }
+  .panel-clip { overflow: hidden; }
+  .panel-inner {
+    display: grid; gap: 20px; padding: 0 76px 28px 70px;
+    opacity: 0; transform: translateY(-6px);
+    transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+  }
+  .row.is-open .panel-inner { opacity: 1; transform: none; transition-delay: 120ms; }
+  .panel-inner p { color: var(--ink-2); max-width: 560px; }
+  .panel-inner ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .side { position: static; margin-bottom: 16px; }
+  }
+  @media (max-width: 560px) {
+    .head { padding: 22px 20px; gap: 14px; grid-template-columns: 1fr auto; }
+    .num { display: none; }
+    .panel-inner { padding: 0 20px 22px; }
+  }
+</style>

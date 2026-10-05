@@ -1,0 +1,62 @@
+---
+import { process } from '../content/site';
+---
+<section class="section process">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">{process.eyebrow}</span>
+      <h2 class="h-display">{process.title}</h2>
+      <p>{process.intro}</p>
+    </div>
+    <ol class="steps">
+      {process.steps.map((s, i) => (
+        <li class="step card" data-reveal style={`--i:${i}`}>
+          <div class="top">
+            <span class="badge">Stage {i + 1}</span>
+            <span class="dot" aria-hidden="true"></span>
+          </div>
+          <h3>{s.name}</h3>
+          <p>{s.body}</p>
+          <ul>{s.tags.map((t) => <li class="tag">{t}</li>)}</ul>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    position: relative;
+  }
+  .step {
+    display: flex; flex-direction: column; gap: 14px;
+    padding: 30px 28px 28px; min-height: 320px;
+    transition: transform var(--t) var(--ease), box-shadow var(--t) var(--ease);
+  }
+  .step:hover {
+    transform: translateY(-4px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 30px 60px -24px rgba(0, 0, 0, 1);
+  }
+  .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: auto; padding-bottom: 48px; }
+  .badge {
+    font-size: 0.8125rem; color: var(--ink-2);
+    padding: 5px 12px; border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08), 0 0 16px 2px rgba(255, 255, 255, 0.5);
+  }
+  h3 { font-size: clamp(1.8rem, 1.4rem + 1.2vw, 2.4rem); }
+  p { color: var(--ink-2); }
+  ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+
+  @media (max-width: 900px) {
+    .steps { grid-template-columns: 1fr; }
+    .step { min-height: 0; }
+    .top { padding-bottom: 28px; }
+  }
+</style>

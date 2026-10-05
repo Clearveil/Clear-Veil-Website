@@ -1,0 +1,126 @@
+---
+import Wordmark from './Wordmark.astro';
+import Mark from './Mark.astro';
+import { nav, site } from '../content/site';
+---
+<header class="nav" data-nav>
+  <div class="nav-inner container">
+    <a href="/" class="brand" aria-label="Clear Veil Marketing, home">
+      <Mark class="brand-mark" />
+      <Wordmark class="brand-word" />
+    </a>
+    <span class="divider" aria-hidden="true"></span>
+    <nav class="links" aria-label="Main">
+      {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <a href={site.bookingUrl} class="btn btn-glass btn-sm cta" target="_blank" rel="noopener">Book a call</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-btn>
+      <span class="sr-only">Menu</span>
+      <span class="bars" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </div>
+
+  <div class="mobile" id="mobile-menu" data-menu>
+    <div class="mobile-clip">
+      <nav class="mobile-inner container" aria-label="Mobile">
+        {nav.map((l, i) => <a href={l.href} style={`--i:${i}`}>{l.label}</a>)}
+        <a href={site.bookingUrl} class="btn btn-light" target="_blank" rel="noopener" style={`--i:${nav.length}`}>Book a 15-minute call</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-nav]')!;
+  const btn = header.querySelector<HTMLButtonElement>('[data-menu-btn]')!;
+
+  // Frosted background once the page has scrolled
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 12);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Mobile menu
+  const setOpen = (open: boolean) => {
+    header.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+  };
+  btn.addEventListener('click', () => setOpen(!header.classList.contains('is-open')));
+  header.querySelectorAll('[data-menu] a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  window.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+</script>
+
+<style>
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    transition: background var(--t) var(--ease), box-shadow var(--t) var(--ease), backdrop-filter var(--t) var(--ease);
+  }
+  .nav.is-scrolled, .nav.is-open {
+    background: rgba(0, 0, 0, 0.62);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .nav-inner { height: 76px; display: flex; align-items: center; gap: 28px; }
+
+  .brand { display: flex; align-items: center; gap: 12px; color: #fff; flex-shrink: 0; }
+  .brand-mark { width: 34px; height: auto; }
+  .brand-word { width: 92px; height: auto; opacity: 0.92; }
+  .divider { width: 1px; height: 26px; background: var(--line-strong); }
+
+  .links { display: flex; gap: 6px; margin-right: auto; }
+  .links a {
+    padding: 8px 12px; border-radius: 8px;
+    font-size: 0.94rem; color: var(--ink-2);
+    transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+  }
+  .links a:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+
+  .menu-btn { display: none; }
+
+  /* Mobile menu: animates height with the grid 0fr → 1fr technique */
+  .mobile {
+    display: grid; grid-template-rows: 0fr;
+    transition: grid-template-rows var(--t) var(--ease-in-out);
+  }
+  .mobile-clip { overflow: hidden; }
+  .nav.is-open .mobile { grid-template-rows: 1fr; }
+  .mobile-inner { display: grid; gap: 4px; padding-top: 8px; padding-bottom: 28px; }
+  .mobile-inner a:not(.btn) {
+    padding: 14px 0; font-size: 1.5rem; letter-spacing: -0.03em;
+    border-bottom: 1px solid var(--line);
+  }
+  .mobile-inner .btn { margin-top: 20px; }
+  .mobile-inner > * {
+    opacity: 0; transform: translateY(-8px);
+    transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+  }
+  .nav.is-open .mobile-inner > * {
+    opacity: 1; transform: none;
+    transition-delay: calc(80ms + var(--i) * 40ms);
+  }
+
+  @media (max-width: 900px) {
+    .links, .divider { display: none; }
+    .cta { margin-left: auto; }
+    .nav-inner { gap: 12px; height: 68px; }
+    .menu-btn {
+      display: grid; place-items: center;
+      width: 42px; height: 42px; border: 0; border-radius: var(--r-sm); cursor: pointer;
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+    .bars { position: relative; width: 16px; height: 10px; }
+    .bars i {
+      position: absolute; left: 0; width: 100%; height: 1.5px; border-radius: 2px; background: #fff;
+      transition: transform var(--t) var(--ease), top var(--t) var(--ease);
+    }
+    .bars i:first-child { top: 0; }
+    .bars i:last-child { top: 8.5px; }
+    .nav.is-open .bars i:first-child { top: 4.25px; transform: rotate(45deg); }
+    .nav.is-open .bars i:last-child { top: 4.25px; transform: rotate(-45deg); }
+  }
+  @media (min-width: 901px) { .mobile { display: none; } }
+  @media (max-width: 420px) {
+    .brand-word { display: none; }
+  }
+</style>

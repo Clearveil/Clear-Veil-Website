@@ -1,0 +1,235 @@
+---
+/**
+ * 9:16 story-style video reel.
+ * - Clip 1 loads with the page; clips 2+ load only when they're about to play.
+ * - Ticks at the top fill as each clip plays; tap one to jump to that clip.
+ * - Pauses when scrolled out of view. Respects "reduce motion" (no autoplay).
+ */
+import { hero } from '../content/site';
+const clips = hero.clips;
+---
+<div class="reel-wrap" data-reel>
+  <div class="stack" aria-hidden="true">
+    <img src={clips[1]?.poster} alt="" class="ghost g1" width="540" height="960" loading="lazy" decoding="async" />
+    <img src={clips[2]?.poster} alt="" class="ghost g2" width="540" height="960" loading="lazy" decoding="async" />
+  </div>
+
+  <div class="reel">
+    <div class="screen">
+      {clips.map((c, i) => (
+        <video
+          class:list={['clip', { 'is-active': i === 0 }]}
+          poster={c.poster}
+          data-src={c.src}
+          src={i === 0 ? c.src : undefined}
+          preload={i === 0 ? 'auto' : 'none'}
+          muted
+          playsinline
+          width="540"
+          height="960"
+          aria-label={`Clear Veil client ad, clip ${i + 1} of ${clips.length}`}
+        />
+      ))}
+      <div class="shade" aria-hidden="true"></div>
+    </div>
+
+    <div class="ticks" role="tablist" aria-label="Choose clip">
+      {clips.map((_, i) => (
+        <button type="button" class="tick" role="tab" aria-selected={i === 0 ? 'true' : 'false'} aria-label={`Play clip ${i + 1}`} data-tick={i}>
+          <span class="fill"></span>
+        </button>
+      ))}
+    </div>
+
+    <button type="button" class="sound" data-sound aria-pressed="false">
+      <span class="sr-only">Sound</span>
+      <svg class="off" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="m16 9 5 6m0-6-5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg class="on" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+
+    <button type="button" class="play" data-play hidden>
+      <span class="sr-only">Play</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5L8 5.5Z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-reel]');
+  if (root) {
+    const videos = [...root.querySelectorAll<HTMLVideoElement>('video')];
+    const ticks = [...root.querySelectorAll<HTMLButtonElement>('[data-tick]')];
+    const fills = ticks.map((t) => t.querySelector<HTMLElement>('.fill')!);
+    const soundBtn = root.querySelector<HTMLButtonElement>('[data-sound]')!;
+    const playBtn = root.querySelector<HTMLButtonElement>('[data-play]')!;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let current = 0;
+    let inView = true;
+    let started = !reduced; // with reduced motion, wait for a tap
+    let muted = true;
+
+    const load = (v: HTMLVideoElement) => {
+      if (!v.getAttribute('src') && v.dataset.src) {
+        v.src = v.dataset.src;
+        v.preload = 'auto';
+        v.load();
+      }
+    };
+
+    const play = (v: HTMLVideoElement) => {
+      v.play().then(
+        () => (playBtn.hidden = true),
+        () => (playBtn.hidden = false), // autoplay blocked (e.g. iOS low power mode)
+      );
+    };
+
+    const show = (i: number) => {
+      current = (i + videos.length) % videos.length;
+      videos.forEach((v, n) => {
+        const active = n === current;
+        v.classList.toggle('is-active', active);
+        ticks[n].setAttribute('aria-selected', String(active));
+        fills[n].style.transform = `scaleX(${n < current ? 1 : 0})`;
+        if (!active) v.pause();
+      });
+      const v = videos[current];
+      load(v);
+      v.muted = muted;
+      v.currentTime = 0;
+      if (started && inView) play(v);
+    };
+
+    // Progress ticks + preload the next clip when this one is ~60% through
+    const frame = () => {
+      const v = videos[current];
+      if (v.duration) {
+        const p = v.currentTime / v.duration;
+        fills[current].style.transform = `scaleX(${p})`;
+        if (p > 0.6) load(videos[(current + 1) % videos.length]);
+      }
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+
+    videos.forEach((v, n) => v.addEventListener('ended', () => n === current && show(current + 1)));
+    ticks.forEach((t, n) => t.addEventListener('click', () => { started = true; show(n); }));
+
+    soundBtn.addEventListener('click', () => {
+      muted = !muted;
+      videos[current].muted = muted;
+      soundBtn.setAttribute('aria-pressed', String(!muted));
+      if (videos[current].paused) { started = true; play(videos[current]); }
+    });
+
+    playBtn.addEventListener('click', () => { started = true; play(videos[current]); });
+
+    // Pause when off screen, resume when back
+    new IntersectionObserver(([e]) => {
+      inView = e.isIntersecting;
+      const v = videos[current];
+      if (!inView) v.pause();
+      else if (started) play(v);
+    }, { threshold: 0.25 }).observe(root);
+
+    if (reduced) playBtn.hidden = false;
+  }
+</script>
+
+<style>
+  .reel-wrap {
+    position: relative;
+    width: min(100%, 360px);
+    aspect-ratio: 9 / 16;
+    margin-inline: auto;
+  }
+
+  /* Soft light behind the reel */
+  .reel-wrap::before {
+    content: ''; position: absolute; inset: 8% -30% -4%;
+    background: radial-gradient(50% 45% at 50% 50%, rgba(255, 255, 255, 0.16), transparent 70%);
+    filter: blur(20px); z-index: -1;
+  }
+
+  /* Faded clips stacked behind for depth */
+  .stack { position: absolute; inset: 0; }
+  .ghost {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    border-radius: 30px; opacity: 0.22; filter: grayscale(0.4) brightness(0.7);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+  .g1 { transform: translateX(15%) scale(0.88) rotate(4deg); }
+  .g2 { transform: translateX(26%) scale(0.76) rotate(8deg); opacity: 0.1; }
+
+  /* The device: gradient bezel + lit edge + deep shadow */
+  .reel {
+    position: relative; height: 100%;
+    padding: 6px; border-radius: 34px;
+    background: linear-gradient(160deg, #3a3a3a 0%, #121212 40%, #0b0b0b 60%, #2a2a2a 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+      0 2px 4px rgba(0, 0, 0, 0.8),
+      0 40px 80px -20px rgba(0, 0, 0, 0.95),
+      0 20px 80px -30px rgba(255, 255, 255, 0.25);
+  }
+  .screen {
+    position: relative; height: 100%; overflow: hidden;
+    border-radius: 28px; background: #0a0a0a;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+  }
+  .clip {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity 700ms var(--ease);
+  }
+  .clip.is-active { opacity: 1; }
+  .shade {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, transparent 18%, transparent 78%, rgba(0, 0, 0, 0.4) 100%);
+  }
+
+  /* Story ticks */
+  .ticks {
+    position: absolute; top: 18px; left: 20px; right: 20px;
+    display: flex; gap: 6px;
+  }
+  .tick {
+    flex: 1; height: 18px; padding: 7px 0; border: 0; background: none; cursor: pointer;
+  }
+  .tick::before {
+    content: ''; display: block; height: 3px; border-radius: 3px;
+    background: rgba(255, 255, 255, 0.28);
+    transition: background var(--t-fast) var(--ease);
+  }
+  .tick:hover::before { background: rgba(255, 255, 255, 0.45); }
+  .fill {
+    display: block; height: 3px; margin-top: -3px; border-radius: 3px;
+    background: #fff; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    transform-origin: left; transform: scaleX(0);
+  }
+
+  /* Round glass controls */
+  .sound, .play {
+    position: absolute; display: grid; place-items: center;
+    border: 0; border-radius: 50%; cursor: pointer; color: #fff;
+    background: rgba(20, 20, 20, 0.5);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: transform var(--t) var(--ease), background var(--t) var(--ease);
+  }
+  .sound:hover, .play:hover { transform: scale(1.06); background: rgba(40, 40, 40, 0.6); }
+  .sound { right: 18px; bottom: 18px; width: 40px; height: 40px; }
+  .sound svg { width: 18px; }
+  .sound .on, .sound[aria-pressed='true'] .off { display: none; }
+  .sound[aria-pressed='true'] .on { display: block; }
+  .play { left: 50%; top: 50%; width: 68px; height: 68px; translate: -50% -50%; }
+  .play svg { width: 26px; margin-left: 3px; }
+  .play[hidden] { display: none; }
+
+  @media (max-width: 900px) {
+    .reel-wrap { width: min(74vw, 330px); }
+    .g1 { transform: translateX(12%) scale(0.9) rotate(4deg); }
+    .g2 { transform: translateX(20%) scale(0.8) rotate(8deg); }
+  }
+</style>

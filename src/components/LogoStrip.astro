@@ -1,0 +1,55 @@
+---
+/** Slow client-logo marquee. Logos are set in src/content/site.ts → clients. */
+import { clients } from '../content/site';
+// Two copies side by side so the loop is seamless.
+const loop = [...clients, ...clients];
+---
+<section class="strip" aria-label="Clients we work with">
+  <p class="label">Trusted by growing brands</p>
+  <div class="viewport">
+    <ul class="track">
+      {loop.map((c, i) => (
+        <li aria-hidden={i >= clients.length ? 'true' : undefined}>
+          {c.logo
+            ? <img src={c.logo} alt={c.name} loading="lazy" decoding="async" height="40" />
+            : <span class="name">{c.name}</span>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .strip { padding-block: 8px 24px; }
+  .label { text-align: center; font-size: 0.8125rem; color: var(--ink-3); margin-bottom: 28px; }
+  .viewport {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  }
+  .track {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; width: max-content;
+    animation: marquee 60s linear infinite;
+  }
+  .viewport:hover .track { animation-play-state: paused; }
+  li { flex: none; display: grid; place-items: center; padding: 0 clamp(28px, 4vw, 56px); height: 56px; }
+  img {
+    height: 40px; width: auto; max-width: 150px; object-fit: contain;
+    filter: grayscale(1) brightness(1.6); opacity: 0.55;
+    transition: opacity var(--t) var(--ease), filter var(--t) var(--ease);
+  }
+  li:hover img { opacity: 1; filter: grayscale(1) brightness(2); }
+  .name {
+    font-size: 1.15rem; font-weight: 500; letter-spacing: -0.03em; white-space: nowrap;
+    color: rgba(255, 255, 255, 0.45);
+    transition: color var(--t) var(--ease);
+  }
+  li:hover .name { color: #fff; }
+
+  @keyframes marquee { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
+    li[aria-hidden='true'] { display: none; }
+  }
+</style>

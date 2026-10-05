@@ -1,0 +1,73 @@
+---
+/** Compact one-line work rows. Data: src/content/site.ts → work */
+import { work } from '../content/site';
+import Arrow from './Arrow.astro';
+---
+<section class="section work" id="work">
+  <div class="container">
+    <div class="head">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Work</span>
+        <h2 class="h-display">Recent work</h2>
+      </div>
+      <a href="/work" class="link" data-reveal>All work <Arrow /></a>
+    </div>
+    <ul class="pills">
+      {work.map((w, i) => (
+        <li data-reveal style={`--i:${i}`}>
+          <a class="pill" href={`/work#${w.client.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+            <span class="client">{w.client}</span>
+            <span class="what">{w.what}</span>
+            {w.result && <span class="result">{w.result}</span>}
+            <span class="svc">{w.services.join(' · ')}</span>
+            <span class="go" aria-hidden="true"><Arrow /></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: clamp(36px, 5vw, 56px); }
+  .head .section-head { margin-bottom: 0; }
+  .pills { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .pill {
+    display: grid; grid-template-columns: 200px 1fr auto auto auto; align-items: center; gap: 24px;
+    padding: 18px 18px 18px 28px; border-radius: 999px;
+    background: var(--surface), var(--bg-raised);
+    box-shadow: var(--surface-edge);
+    transition: box-shadow var(--t) var(--ease), transform var(--t) var(--ease), background var(--t) var(--ease);
+  }
+  .pill:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03)), var(--bg-raised);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 20px 40px -20px rgba(0, 0, 0, 1);
+  }
+  .client { font-weight: 500; font-size: 1.05rem; letter-spacing: -0.02em; }
+  .what { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .result {
+    font-size: 0.875rem; font-weight: 500; color: #111;
+    padding: 4px 12px; border-radius: 999px;
+    background: linear-gradient(180deg, #fff, #dcdad6);
+  }
+  .svc { font-size: 0.875rem; color: var(--ink-3); white-space: nowrap; }
+  .go {
+    display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: background var(--t) var(--ease), color var(--t) var(--ease);
+  }
+  .go :global(svg) { width: 14px; transition: transform var(--t) var(--ease); }
+  .pill:hover .go { background: #fff; color: #111; }
+  .pill:hover .go :global(svg) { transform: translateX(2px); }
+
+  @media (max-width: 900px) {
+    .pill { grid-template-columns: 1fr auto; gap: 4px 16px; padding: 18px 14px 18px 22px; border-radius: 22px; }
+    .client { grid-column: 1; }
+    .what { grid-column: 1; white-space: normal; font-size: 0.95rem; }
+    .svc { grid-column: 1; }
+    .result { grid-column: 1; justify-self: start; margin-top: 6px; }
+    .go { grid-column: 2; grid-row: 1 / span 4; }
+  }
+</style>

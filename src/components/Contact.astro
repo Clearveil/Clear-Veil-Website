@@ -1,0 +1,189 @@
+---
+/**
+ * Contact form → POST /api/contact → email via Resend.
+ * On success it fires a Meta Pixel "Lead" event and a GTM "generate_lead" event.
+ */
+import { contact, site } from '../content/site';
+import Arrow from './Arrow.astro';
+---
+<section class="section contact" id="contact">
+  <div class="container">
+    <div class="panel card">
+      <div class="intro" data-reveal>
+        <span class="eyebrow">{contact.eyebrow}</span>
+        <h2 class="h-display">{contact.title}</h2>
+        <p>{contact.sub}</p>
+        <div class="book">
+          <a class="btn btn-light" href={site.bookingUrl} target="_blank" rel="noopener">Book a 15-minute call<Arrow /></a>
+          <span class="or">or send a message</span>
+        </div>
+      </div>
+
+      <form class="form" data-contact-form novalidate data-reveal style="--i:1">
+        <div class="row2">
+          <label class="field">
+            <span>Name</span>
+            <input name="name" type="text" autocomplete="name" required maxlength="120" />
+          </label>
+          <label class="field">
+            <span>Email</span>
+            <input name="email" type="email" autocomplete="email" required maxlength="200" />
+          </label>
+        </div>
+        <div class="row2">
+          <label class="field">
+            <span>Business or website</span>
+            <input name="business" type="text" autocomplete="organization" maxlength="200" />
+          </label>
+          <label class="field">
+            <span>Monthly ad budget</span>
+            <select name="budget">
+              <option value="" selected>Select one</option>
+              {contact.budgets.map((b) => <option>{b}</option>)}
+            </select>
+          </label>
+        </div>
+        <label class="field">
+          <span>What do you need help with?</span>
+          <textarea name="message" rows="4" required maxlength="5000"></textarea>
+        </label>
+
+        <!-- Honeypot: hidden from people, irresistible to bots -->
+        <div class="hp" aria-hidden="true">
+          <label>Company fax <input name="fax" type="text" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <input type="hidden" name="t" value="" />
+
+        <div class="submit">
+          <button class="btn btn-glass" type="submit">
+            <span class="label">{contact.button}</span><Arrow />
+          </button>
+          <span class="note" data-status role="status" aria-live="polite">{contact.note}</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  declare global {
+    interface Window { fbq?: (...args: unknown[]) => void; dataLayer?: unknown[] }
+  }
+
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    const label = button.querySelector<HTMLElement>('.label')!;
+    const defaultNote = status.textContent;
+    const defaultLabel = label.textContent;
+    // Records when the form appeared; submissions faster than a human could type are dropped.
+    (form.elements.namedItem('t') as HTMLInputElement).value = String(Date.now());
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      form.classList.add('was-validated');
+      if (!form.checkValidity()) {
+        status.textContent = 'Please fill in your name, a valid email and a short message.';
+        status.dataset.state = 'error';
+        form.querySelector<HTMLElement>(':invalid')?.focus();
+        return;
+      }
+
+      button.disabled = true;
+      label.textContent = 'Sending…';
+      status.textContent = defaultNote;
+      delete status.dataset.state;
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Something went wrong.');
+
+        window.fbq?.('track', 'Lead');
+        (window.dataLayer ||= []).push({ event: 'generate_lead', form: 'contact' });
+
+        form.reset();
+        form.classList.remove('was-validated');
+        form.classList.add('is-sent');
+        label.textContent = 'Sent';
+        status.textContent = "Thanks, we've got it. We'll be in touch within one business day.";
+        status.dataset.state = 'ok';
+      } catch (err) {
+        button.disabled = false;
+        label.textContent = defaultLabel;
+        status.textContent = `${(err as Error).message} You can also book a call directly.`;
+        status.dataset.state = 'error';
+      }
+    });
+  }
+</script>
+
+<style>
+  .panel {
+    display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(40px, 6vw, 88px);
+    padding: clamp(28px, 5vw, 72px);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+  }
+  /* Light catching the top edge of the panel */
+  .panel::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(60% 50% at 20% 0%, rgba(255, 255, 255, 0.08), transparent 70%);
+  }
+  .intro { display: grid; gap: 20px; align-content: start; position: relative; }
+  .intro p { color: var(--ink-2); font-size: var(--fs-lede); }
+  .book { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 12px; }
+  .or { color: var(--ink-3); font-size: 0.9rem; }
+
+  .form { display: grid; gap: 16px; position: relative; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: grid; gap: 8px; }
+  .field > span { font-size: 0.875rem; color: var(--ink-2); }
+
+  input, select, textarea {
+    width: 100%; font: inherit; color: #fff;
+    padding: 14px 16px; border: 0; border-radius: 12px;
+    background: rgba(0, 0, 0, 0.55);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.8),          /* recessed */
+      inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+      0 1px 0 rgba(255, 255, 255, 0.05);            /* lit lower lip */
+    transition: box-shadow var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+    appearance: none;
+  }
+  textarea { resize: vertical; min-height: 128px; }
+  select {
+    cursor: pointer; padding-right: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%23999' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; background-size: 16px;
+  }
+  select option { background: #111; }
+  input:hover, select:hover, textarea:hover { box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 1px 0 rgba(255, 255, 255, 0.05); }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 0 0 4px rgba(255, 255, 255, 0.07);
+  }
+  .was-validated :invalid { box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 120, 120, 0.7); }
+
+  .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+  .submit { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 8px; }
+  .submit .btn:disabled { cursor: default; opacity: 0.75; transform: none; }
+  .note { font-size: 0.875rem; color: var(--ink-3); transition: color var(--t) var(--ease); }
+  .note[data-state='ok'] { color: #fff; }
+  .note[data-state='error'] { color: #ff9b9b; }
+
+  @media (max-width: 900px) {
+    .panel { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .row2 { grid-template-columns: 1fr; }
+    .submit .btn { width: 100%; }
+  }
+</style>
