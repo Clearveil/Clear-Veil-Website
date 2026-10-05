@@ -36,7 +36,7 @@ export const hero = {
   status: 'Now booking new clients',
   headline: ['Marketing', 'built for you.'],
   lede:
-    'We run your ads, build your website and make the creative that ties them together. You work directly with the people doing the work, and you always know what your money is doing.',
+    'We run your ads, build your website and make the creative. You work directly with the people doing it.',
   primary: { label: 'Book a 15-minute call', href: site.bookingUrl },
   secondary: { label: 'Send us a message', href: '/#contact' },
   // The 9:16 reel. Clip 1 loads with the page; 2 and 3 load only when needed.
@@ -90,7 +90,7 @@ export const services = {
   eyebrow: 'Services',
   title: 'What we do',
   intro:
-    'Most clients come to us for ads or a website. Most stay because we handle everything around them too.',
+    'Most clients come for ads or a website. They stay because we handle the rest.',
   items: [
     {
       name: 'Paid ads',
@@ -248,7 +248,7 @@ export const reviews = [
 export const contact = {
   eyebrow: 'Contact',
   title: "We treat every project like it's our own.",
-  sub: 'Tell us what you\'re working on. We reply within one business day, or grab 15 minutes on the calendar and skip the back and forth.',
+  sub: "Tell us what you're working on. We reply within one business day.",
   budgets: [
     'Not running ads yet',
     'Under $2,000',
