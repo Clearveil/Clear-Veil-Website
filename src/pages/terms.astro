@@ -1,0 +1,48 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site } from '../content/site';
+const co = site.legalName;
+---
+<Legal title="Terms & Conditions" updated="October 4, 2026" description={`Terms and conditions for using the ${site.name} website.`}>
+  <h2>1. Acceptance of terms</h2>
+  <p>By using clearveilmarketing.com (the "Site"), operated by {co} ("Clear Veil", "we", "us"), you acknowledge that you have read, understood and agree to be bound by these Terms and Conditions and our <a href="/privacy">Privacy Policy</a>. These Terms apply to everyone who visits or uses the Site.</p>
+
+  <h2>2. Use of the site</h2>
+  <p>To keep the Site working smoothly and lawfully, you agree to the following:</p>
+  <ul>
+    <li><strong>Eligibility:</strong> You must be at least 13 years old to use the Site.</li>
+    <li><strong>Accurate information:</strong> Information you send us through the contact form or booking links should be accurate and your own.</li>
+    <li><strong>Prohibited activities:</strong> You agree not to use the Site for unlawful purposes, attempt to gain unauthorized access to our systems, upload viruses or other malicious code, or harass, threaten or defame anyone.</li>
+  </ul>
+
+  <h2>3. Information you submit</h2>
+  <p>You keep ownership of anything you send us, such as messages and project details. By submitting it, you allow us to use it to respond to you and to provide our services. You are responsible for what you submit, and we may decline or remove submissions that break these Terms or the law.</p>
+
+  <h2>4. Intellectual property</h2>
+  <p>The Site and its content, including text, video, graphics, logos and design, are owned by {co} or its licensors and are protected by intellectual property laws. Client names, logos and reviews remain the property of their owners. You may not copy, modify, distribute or create derivative works from any part of the Site without our prior written permission.</p>
+
+  <h2>5. Services and results</h2>
+  <p>Information on the Site describes our services in general terms. Specific work, pricing, deliverables and timelines are agreed separately in writing with each client, and those agreements take precedence over anything on the Site. Figures such as ad spend managed and return on ad spend reflect past client work and are not a guarantee of future results.</p>
+
+  <h2>6. Termination</h2>
+  <p>We may suspend or block access to the Site at any time and for any reason, including if you violate these Terms.</p>
+
+  <h2>7. Disclaimers</h2>
+  <ul>
+    <li><strong>No warranty:</strong> The Site is provided "as is" and "as available," without warranties of any kind, express or implied. We do not guarantee that the Site will be uninterrupted, secure or error-free.</li>
+    <li><strong>Accuracy:</strong> We work to keep information on the Site accurate and up to date, but we do not guarantee its completeness or usefulness for any particular purpose.</li>
+    <li><strong>Third-party links:</strong> The Site links to services we don't control, such as our booking calendar, social profiles and Google reviews. We are not responsible for their content or practices.</li>
+  </ul>
+
+  <h2>8. Limitation of liability</h2>
+  <p>To the fullest extent permitted by law, {co} and its owners, employees and partners will not be liable for any indirect, incidental, special, consequential or punitive damages, including loss of profits, data or goodwill, arising from your use of the Site or these Terms.</p>
+
+  <h2>9. Changes to these terms</h2>
+  <p>We may update these Terms from time to time. Changes will be posted on this page with a new "last updated" date. Continuing to use the Site after changes are posted means you accept the updated Terms.</p>
+
+  <h2>10. Governing law</h2>
+  <p>These Terms and your use of the Site are governed by the laws of the United States of America, without regard to conflict of law provisions.</p>
+
+  <h2>11. Contact us</h2>
+  <p>Questions about these Terms? Reach us through the <a href="/#contact">contact form</a>.</p>
+</Legal>

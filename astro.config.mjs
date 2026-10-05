@@ -12,5 +12,11 @@ export default defineConfig({
   integrations: [sitemap({ filter: (page) => !page.includes('/404') })],
   trailingSlash: 'never',
   devToolbar: { enabled: false },
+  // Old Framer URLs → new pages, so existing links and Google results keep working.
+  redirects: {
+    '/terms-conditions': '/terms',
+    '/privacy-policy': '/privacy',
+    '/contact': '/#contact',
+  },
   build: { format: 'file' },
 });

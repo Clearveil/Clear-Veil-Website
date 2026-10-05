@@ -1,0 +1,23 @@
+---
+/** Layout for long-form text pages (Terms, Privacy). */
+import Base from './Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+interface Props { title: string; updated: string; description: string }
+const { title, updated, description } = Astro.props;
+---
+<Base title={title} description={description}>
+  <PageHeader eyebrow="Legal" title={title} lede={`Last updated ${updated}`} />
+  <article class="container prose">
+    <slot />
+  </article>
+</Base>
+
+<style>
+  .prose { max-width: calc(760px + var(--gutter) * 2); padding-bottom: var(--section); color: var(--ink-2); font-size: 1.0625rem; }
+  .prose :global(h2) { color: #fff; font-size: 1.5rem; letter-spacing: -0.03em; margin: 56px 0 14px; }
+  .prose :global(h2:first-child) { margin-top: 0; }
+  .prose :global(p), .prose :global(ul) { margin: 0 0 16px; }
+  .prose :global(ul) { padding-left: 1.2em; display: grid; gap: 8px; }
+  .prose :global(strong) { color: #fff; font-weight: 500; }
+  .prose :global(a) { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255, 255, 255, 0.35); }
+</style>

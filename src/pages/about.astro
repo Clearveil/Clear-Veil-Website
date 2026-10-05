@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Stats from '../components/Stats.astro';
+import Process from '../components/Process.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { about } from '../content/site';
+---
+<Base title="About" description="Clear Veil is a small, founder-led marketing team in Michigan. You work directly with the people running your ads, building your site and making your creative.">
+  <PageHeader eyebrow="About" title={about.title} />
+
+  <section class="container story">
+    <figure class="photo main">
+      <img src={about.images[0].src} alt={about.images[0].alt} width="720" height="900" fetchpriority="high" />
+    </figure>
+    <div class="text">
+      {about.paragraphs.map((p, i) => <p class:list={{ lead: i === 0 }}>{p}</p>)}
+      <figure class="photo small" data-reveal>
+        <img src={about.images[1].src} alt={about.images[1].alt} width="720" height="900" loading="lazy" decoding="async" />
+      </figure>
+    </div>
+  </section>
+
+  <Stats />
+  <Process />
+  <CtaBand />
+</Base>
+
+<style>
+  .story { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); align-items: start; }
+  .photo { margin: 0; }
+  .photo img {
+    width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-lg);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 40px 80px -30px rgba(0, 0, 0, 1);
+  }
+  .main { position: sticky; top: 110px; }
+  .text { display: grid; gap: 22px; color: var(--ink-2); font-size: var(--fs-lede); padding-top: 12px; }
+  .lead { color: #fff; font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.7rem); line-height: 1.4; letter-spacing: -0.025em; }
+  .small { width: 62%; margin-top: 28px; justify-self: end; }
+  @media (max-width: 900px) {
+    .story { grid-template-columns: 1fr; }
+    .main { position: static; }
+    .small { display: none; }
+  }
+</style>

@@ -79,9 +79,13 @@ import { nav, site } from '../content/site';
 
   /* Mobile menu: animates height with the grid 0fr → 1fr technique */
   .mobile {
+    position: absolute; top: 100%; left: 0; right: 0;
     display: grid; grid-template-rows: 0fr;
+    background: #050505;
+    box-shadow: 0 1px 0 var(--line), 0 30px 60px -20px rgba(0, 0, 0, 0.9);
     transition: grid-template-rows var(--t) var(--ease-in-out);
   }
+  .nav:not(.is-open) .mobile { box-shadow: none; }
   .mobile-clip { overflow: hidden; }
   .nav.is-open .mobile { grid-template-rows: 1fr; }
   .mobile-inner { display: grid; gap: 4px; padding-top: 8px; padding-bottom: 28px; }

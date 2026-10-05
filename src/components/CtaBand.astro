@@ -1,0 +1,37 @@
+---
+/** Closing call-to-action used at the bottom of inner pages. */
+import Arrow from './Arrow.astro';
+import Mark from './Mark.astro';
+import { contact, site } from '../content/site';
+interface Props { title?: string; sub?: string }
+const { title = contact.title, sub = contact.sub } = Astro.props;
+---
+<section class="section">
+  <div class="container">
+    <div class="cta card" data-reveal>
+      <Mark class="mark" />
+      <h2 class="h-display">{title}</h2>
+      <p>{sub}</p>
+      <div class="actions">
+        <a class="btn btn-light" href={site.bookingUrl} target="_blank" rel="noopener">Book a 15-minute call<Arrow /></a>
+        <a class="btn btn-glass" href="/#contact">Send us a message</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    display: grid; justify-items: center; text-align: center; gap: 20px;
+    padding: clamp(48px, 7vw, 96px) clamp(24px, 5vw, 64px);
+    border-radius: var(--r-xl); overflow: hidden;
+  }
+  .cta::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(50% 60% at 50% 0%, rgba(255, 255, 255, 0.12), transparent 70%);
+  }
+  .mark { width: 72px; position: relative; filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.3)); }
+  h2 { max-width: 16ch; position: relative; }
+  p { color: var(--ink-2); font-size: var(--fs-lede); max-width: 520px; position: relative; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 12px; position: relative; }
+</style>

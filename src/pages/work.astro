@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { work, reviews, site } from '../content/site';
+import Arrow from '../components/Arrow.astro';
+
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+// Pair each project with that client's Google review, when there is one.
+const projects = work.map((w) => ({ ...w, review: reviews.find((r) => r.company === w.client) }));
+---
+<Base title="Work" description="Selected Clear Veil Marketing client work across paid ads, websites and creative, in the clients' own words.">
+  <PageHeader eyebrow="Work" title="Selected work" lede="What we did, for whom, in their words." />
+
+  <section class="container list">
+    {projects.map((p, i) => (
+      <article class="project card" id={slug(p.client)} data-reveal style={`--i:${i % 2}`}>
+        <div class="meta">
+          <span class="idx">0{i + 1}</span>
+          <h2>{p.client}</h2>
+          <p class="what">{p.what}</p>
+          <ul>{p.services.map((s) => <li class="tag">{s}</li>)}</ul>
+          {p.result && <p class="result">{p.result}</p>}
+        </div>
+        {p.review && (
+          <figure class="quote">
+            <blockquote>“{p.review.quote}”</blockquote>
+            <figcaption>{p.review.name}, {p.review.role}</figcaption>
+          </figure>
+        )}
+      </article>
+    ))}
+    <p class="more">
+      More client feedback on <a class="link" href={site.reviewsUrl} target="_blank" rel="noopener">Google <Arrow /></a>
+    </p>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .list { display: grid; gap: 16px; }
+  .project {
+    display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 72px);
+    padding: clamp(28px, 4vw, 48px); scroll-margin-top: 110px;
+  }
+  .meta { display: grid; gap: 12px; align-content: start; justify-items: start; }
+  .idx { font-size: 0.8125rem; color: var(--ink-3); }
+  h2 { font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.75rem); }
+  .what { color: var(--ink-2); font-size: var(--fs-lede); }
+  ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .result {
+    margin-top: 8px; font-weight: 500; color: #111; padding: 6px 14px; border-radius: 999px;
+    background: linear-gradient(180deg, #fff, #dcdad6);
+  }
+  .quote { margin: 0; display: grid; gap: 16px; align-content: center; padding-left: clamp(0px, 3vw, 40px); border-left: 1px solid var(--line); }
+  blockquote { margin: 0; font-size: 1.125rem; line-height: 1.6; color: rgba(255, 255, 255, 0.86); }
+  figcaption { color: var(--ink-3); font-size: 0.9rem; }
+  .more { color: var(--ink-2); margin-top: 24px; text-align: center; }
+  @media (max-width: 800px) {
+    .project { grid-template-columns: 1fr; }
+    .quote { border-left: 0; padding-left: 0; padding-top: 24px; border-top: 1px solid var(--line); }
+  }
+</style>

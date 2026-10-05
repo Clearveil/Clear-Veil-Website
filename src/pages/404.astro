@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Mark from '../components/Mark.astro';
+---
+<Base title="Page not found" noindex>
+  <section class="container nf">
+    <Mark class="mark" />
+    <span class="code">404</span>
+    <h1>This page took a different turn.</h1>
+    <p>The link may be old, or the page has moved. Everything important is one click away.</p>
+    <div class="actions">
+      <a class="btn btn-light" href="/">Back to home</a>
+      <a class="btn btn-glass" href="/#contact">Contact us</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { min-height: 70vh; display: grid; place-content: center; justify-items: center; text-align: center; gap: 18px; padding-block: 80px; }
+  .mark { width: 88px; filter: drop-shadow(0 0 22px rgba(255, 255, 255, 0.35)); }
+  .code { font-size: 0.875rem; color: var(--ink-3); letter-spacing: 0.2em; margin-top: 12px; }
+  h1 {
+    font-size: clamp(2.4rem, 1.6rem + 3vw, 4rem); max-width: 14ch;
+    background: linear-gradient(100deg, #fff 35%, rgba(255, 255, 255, 0.5) 130%);
+    -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 0.06em;
+  }
+  p { color: var(--ink-2); max-width: 440px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+</style>
