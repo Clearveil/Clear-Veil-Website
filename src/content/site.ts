@@ -41,7 +41,6 @@ export const hero = {
   lede:
     'We run your ads, build your website and make the creative. You work directly with the people doing it.',
   primary: { label: 'Book a 15-minute call', href: site.bookingUrl },
-  secondary: { label: 'Send us a message', href: '/#contact' },
   // The 9:16 reel. Clip 1 loads with the page; 2 and 3 load only when needed.
   clips: [
     { src: '/media/clip-1.mp4', poster: '/media/clip-1.jpg' },
