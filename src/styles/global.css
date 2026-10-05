@@ -139,6 +139,7 @@ p { text-wrap: pretty; }
 
 .glass,
 .btn-glass,
+.btn-light,
 .card {
   --glass-blur: 16px;
   --glass-fill-top: rgba(255, 255, 255, 0.11);
@@ -160,6 +161,7 @@ p { text-wrap: pretty; }
 }
 .glass::before,
 .btn-glass::before,
+.btn-light::before,
 .card::before {
   content: '';
   position: absolute; inset: 0; z-index: -1;
@@ -171,6 +173,7 @@ p { text-wrap: pretty; }
 }
 .glass::after,
 .btn-glass::after,
+.btn-light::after,
 .card::after {
   content: '';
   position: absolute; inset: 0; z-index: -1;
@@ -181,6 +184,7 @@ p { text-wrap: pretty; }
 }
 .glass:hover::after,
 .btn-glass:hover::after,
+.btn-light:hover::after,
 .card:hover::after { opacity: 1; }
 
 /* Large surfaces: quieter fill and a wider sheen */
@@ -215,16 +219,21 @@ p { text-wrap: pretty; }
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────────────
-   Capsules. Glass for secondary, liquid-white for primary. An arrow sits in
-   its own round chip at the end. Hover lifts; press sinks.             */
+   Capsules, both made of liquid glass:
+   - .btn-light: frosted white glass — the primary action. More white in the
+     fill, a brighter rim and a soft halo, so it leads without being a flat
+     white block.
+   - .btn-glass: clear glass — secondary.
+   Hover lifts; press sinks.                                             */
 
 .btn {
   --lift: 0px;
   position: relative;
-  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
-  height: 52px; padding: 0 26px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  height: 52px; padding: 0 28px;
   border: 0; border-radius: 999px;
   font-size: 0.975rem; font-weight: 500; letter-spacing: -0.01em; white-space: nowrap;
+  color: #fff;
   cursor: pointer;
   isolation: isolate;
   transform: translateY(var(--lift));
@@ -238,42 +247,36 @@ p { text-wrap: pretty; }
 .btn:hover { --lift: -2px; }
 .btn:active { --lift: 1px; transition-duration: 120ms; }
 
-/* Arrow chip: a small round button-within-the-button */
-.btn > svg {
-  box-sizing: content-box;
-  width: 14px; height: 14px; padding: 9px;
-  margin-right: -18px;
-  border-radius: 50%;
-  transition: transform var(--t) var(--ease), background var(--t) var(--ease);
-}
-.btn:has(> svg) { padding-right: 24px; }
-.btn:hover > svg { transform: translateX(3px) rotate(-45deg); }
-
-/* Primary — liquid white. Bright body, glass rim, light pooling at the top */
+/* Primary — frosted white glass */
 .btn-light {
-  color: #0b0b0b;
-  background:
-    radial-gradient(120% 90% at 50% -10%, #ffffff 0%, rgba(255, 255, 255, 0) 60%),
-    linear-gradient(180deg, #f6f5f3 0%, #e4e2de 100%);
+  --glass-blur: 20px;
+  --glass-fill-top: rgba(255, 255, 255, 0.4);
+  --glass-fill-bottom: rgba(255, 255, 255, 0.07);
+  --rim: rgba(255, 255, 255, 0.95);
+  --rim-low: rgba(255, 255, 255, 0.4);
+  --sheen: rgba(255, 255, 255, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   box-shadow:
-    inset 0 1px 0 #fff,
-    inset 0 -2px 4px rgba(0, 0, 0, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 14px 22px -14px rgba(255, 255, 255, 0.55),
+    inset 0 -10px 20px -14px rgba(255, 255, 255, 0.3),
     0 1px 2px rgba(0, 0, 0, 0.5),
-    0 10px 34px -10px rgba(255, 255, 255, 0.45);
+    0 18px 40px -18px rgba(0, 0, 0, 0.85),
+    0 8px 30px -10px rgba(255, 255, 255, 0.3);
 }
 .btn-light:hover {
+  --glass-fill-top: rgba(255, 255, 255, 0.42);
+  --glass-fill-bottom: rgba(255, 255, 255, 0.2);
   box-shadow:
-    inset 0 1px 0 #fff,
-    inset 0 -2px 4px rgba(0, 0, 0, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
-    0 2px 4px rgba(0, 0, 0, 0.5),
-    0 16px 48px -10px rgba(255, 255, 255, 0.6);
+    inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    inset 0 14px 22px -14px rgba(255, 255, 255, 0.65),
+    inset 0 -10px 20px -14px rgba(255, 255, 255, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    0 18px 40px -18px rgba(0, 0, 0, 0.85),
+    0 10px 40px -8px rgba(255, 255, 255, 0.45);
 }
-.btn-light > svg { color: #fff; background: #0b0b0b; }
 
-/* Secondary — clear liquid glass (material rules above) */
-.btn-glass { color: #fff; }
+/* Secondary — clear glass */
 .btn-glass:hover {
   --glass-fill-top: rgba(255, 255, 255, 0.17);
   --rim: rgba(255, 255, 255, 0.7);
@@ -285,11 +288,8 @@ p { text-wrap: pretty; }
     0 18px 40px -18px rgba(0, 0, 0, 0.85),
     0 0 36px -12px rgba(255, 255, 255, 0.35);
 }
-.btn-glass > svg { color: #0b0b0b; background: rgba(255, 255, 255, 0.92); }
 
-.btn-sm { height: 42px; padding: 0 18px; font-size: 0.9rem; }
-.btn-sm > svg { padding: 6px; margin-right: -12px; }
-.btn-sm:has(> svg) { padding-right: 18px; }
+.btn-sm { height: 42px; padding: 0 20px; font-size: 0.9rem; }
 
 /* Text link with sliding underline */
 .link {

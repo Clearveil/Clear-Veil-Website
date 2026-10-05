@@ -1,6 +1,5 @@
 ---
 /** Closing call-to-action used at the bottom of inner pages. */
-import Arrow from './Arrow.astro';
 import Mark from './Mark.astro';
 import { contact, site } from '../content/site';
 interface Props { title?: string; sub?: string }
@@ -13,7 +12,7 @@ const { title = contact.title, sub = contact.sub } = Astro.props;
       <h2 class="h-display">{title}</h2>
       <p>{sub}</p>
       <div class="actions">
-        <a class="btn btn-light" href={site.bookingUrl} target="_blank" rel="noopener">Book a 15-minute call<Arrow /></a>
+        <a class="btn btn-light" href={site.bookingUrl} target="_blank" rel="noopener">Book a 15-minute call</a>
         <a class="btn btn-glass" href="/#contact">Send us a message</a>
       </div>
     </div>

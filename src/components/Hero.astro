@@ -1,7 +1,6 @@
 ---
 import Reel from './Reel.astro';
 import Mark from './Mark.astro';
-import Arrow from './Arrow.astro';
 import { hero } from '../content/site';
 ---
 <section class="hero">
@@ -16,7 +15,7 @@ import { hero } from '../content/site';
       <p class="lede">{hero.lede}</p>
       <div class="actions">
         <a class="btn btn-light" href={hero.primary.href} target="_blank" rel="noopener">
-          {hero.primary.label}<Arrow />
+          {hero.primary.label}
         </a>
         <a class="btn btn-glass" href={hero.secondary.href}>{hero.secondary.label}</a>
       </div>
@@ -43,8 +42,8 @@ import { hero } from '../content/site';
   .status b {
     padding: 3px 9px; border-radius: 999px;
     font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
-    color: #0b0b0b; background: radial-gradient(120% 90% at 50% -10%, #fff, rgba(255, 255, 255, 0) 60%), linear-gradient(180deg, #f6f5f3, #dcdad6);
-    box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 12px -2px rgba(255, 255, 255, 0.35);
+    color: #fff; background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.14));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 0 12px -2px rgba(255, 255, 255, 0.3);
   }
 
   .mark { width: 96px; margin: 40px 0 26px; color: #fff; filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.25)); }
