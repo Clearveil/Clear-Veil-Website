@@ -64,6 +64,7 @@ export const clients: { name: string; logo: string; w: number; h: number }[] = [
   { name: 'Church On The Move USA', logo: '/logos/church-on-the-move.webp', w: 156, h: 160 },
   { name: 'Revival Clothing', logo: '/logos/revival-clothing.webp', w: 520, h: 141 },
   { name: 'Voren Bio', logo: '/logos/voren-bio.webp', w: 165, h: 160 },
+  { name: 'Only Curse', logo: '/logos/only-curse.webp', w: 265, h: 160 },
   { name: 'Alert Index', logo: '/logos/alert.webp', w: 407, h: 160 },
   { name: 'McKenna Brothers Paving', logo: '/logos/mckenna-bros-paving.webp', w: 451, h: 160 },
   { name: 'Sunnyday Sourdough Co.', logo: '/logos/sunnyday-sourdough.webp', w: 188, h: 160 },
@@ -73,10 +74,9 @@ export const clients: { name: string; logo: string; w: number; h: number }[] = [
   { name: "Pezzuto's Excavating", logo: '/logos/pezzutos-excavating.webp', w: 337, h: 160 },
   { name: 'Dylan Burrows Concrete', logo: '/logos/dylan-burrows-concrete.webp', w: 236, h: 160 },
   { name: 'Triple JJJ Bar & Grill', logo: '/logos/triple-jjj.webp', w: 273, h: 160 },
-  // TODO(owner): real names for these four marks (used as alt text)
+  // TODO(owner): real names for these three marks (used as alt text)
   { name: 'Client', logo: '/logos/client-06.webp', w: 279, h: 160 },
   { name: 'Client', logo: '/logos/client-10.webp', w: 162, h: 160 },
-  { name: 'Client', logo: '/logos/client-11.webp', w: 265, h: 160 },
   { name: 'Client', logo: '/logos/client-12.webp', w: 175, h: 160 },
 ];
 
