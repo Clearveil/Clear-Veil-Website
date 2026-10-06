@@ -63,6 +63,7 @@ export const clients: { name: string; logo: string; w: number; h: number }[] = [
   { name: 'Visionworld', logo: '/logos/visionworld.webp', w: 496, h: 160 },
   { name: 'Church On The Move USA', logo: '/logos/church-on-the-move.webp', w: 156, h: 160 },
   { name: 'Revival Clothing', logo: '/logos/revival-clothing.webp', w: 520, h: 141 },
+  { name: 'Voren Bio', logo: '/logos/voren-bio.webp', w: 165, h: 160 },
   { name: 'Alert Index', logo: '/logos/alert.webp', w: 407, h: 160 },
   { name: 'McKenna Brothers Paving', logo: '/logos/mckenna-bros-paving.webp', w: 451, h: 160 },
   { name: 'Sunnyday Sourdough Co.', logo: '/logos/sunnyday-sourdough.webp', w: 188, h: 160 },
@@ -371,6 +372,37 @@ export const work: CaseStudy[] = [
         heading: 'The result',
         body: [
           'Instagram following has more than doubled, the SMS list has grown over 5x, and monthly revenue has scaled with higher order values and ROAS on every release.',
+        ],
+      },
+    ],
+  },
+  {
+    // TODO(owner): add results (conversion rate, email revenue, list growth) + site link when ready
+    slug: 'voren-bio',
+    client: 'Voren Bio',
+    what: 'A high-performing, fully compliant peptide website with automated email',
+    services: ['Website', 'Email flows', 'Automation'],
+    story: [
+      {
+        heading: 'The brief',
+        body: [
+          'Voren Bio sells peptides, a category where a website has to do two jobs at once: convert visitors and stay fully compliant.',
+          'They needed a site built to perform from day one, plus the email systems to keep customers coming back without manual work.',
+        ],
+      },
+      {
+        heading: 'What we did',
+        points: [
+          'Designed and built a high-performing peptide website',
+          'Kept every page fully compliant for the category',
+          'Set up email flows to welcome, convert and bring back customers',
+          'Automated the follow-up so it runs without manual work',
+        ],
+      },
+      {
+        heading: 'The result',
+        body: [
+          'Voren Bio launched with a fast, compliant site and automated email flows working from the start, set up for success as they grow.',
         ],
       },
     ],
