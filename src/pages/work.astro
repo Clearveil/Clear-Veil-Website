@@ -5,7 +5,6 @@ import CtaBand from '../components/CtaBand.astro';
 import { work, reviews, site, logoFor } from '../content/site';
 import Arrow from '../components/Arrow.astro';
 
-const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 // Pair each project with that client's Google review, when there is one.
 const projects = work.map((w) => {
   const c = logoFor(w.client);
@@ -22,16 +21,17 @@ const projects = work.map((w) => {
 
   <section class="container list">
     {projects.map((p, i) => (
-      <article class="project card" id={slug(p.client)} data-reveal style={`--i:${i % 2}`}>
+      <article class="project card" id={p.slug} data-reveal style={`--i:${i % 2}`}>
         <div class="meta">
           <div class="idrow">
             <span class="idx">0{i + 1}</span>
             {p.logo && <img class="logo" src={p.logo.src} alt="" width={p.logo.w} height={p.logo.h} loading="lazy" decoding="async" />}
           </div>
-          <h2>{p.client}</h2>
+          <h2><a href={`/work/${p.slug}`}>{p.client}</a></h2>
           <p class="what">{p.what}</p>
           <ul>{p.services.map((s) => <li class="tag">{s}</li>)}</ul>
           {p.result && <p class="result">{p.result}</p>}
+          <a class="link read" href={`/work/${p.slug}`}>Read case study <Arrow /></a>
         </div>
         {p.review && (
           <figure class="quote">
@@ -60,6 +60,9 @@ const projects = work.map((w) => {
   .idx { font-size: var(--fs-card-meta); color: var(--ink-3); }
   .logo { opacity: 0.85; }
   h2 { font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.75rem); }
+  h2 a { transition: opacity var(--t-fast) var(--ease); }
+  h2 a:hover { opacity: 0.8; }
+  .read { margin-top: 14px; font-size: 0.9rem; }
   .what { color: var(--ink-2); font-size: var(--fs-card); }
   ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
   .result {

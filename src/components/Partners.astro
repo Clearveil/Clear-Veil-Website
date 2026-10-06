@@ -1,0 +1,64 @@
+---
+/** Certified-partner section with a slow white logo scroll. */
+import { partnersSection } from '../content/site';
+import { partners } from '../content/partners';
+// Four copies so the strip is always wider than the screen; the loop
+// slides exactly half its width, so it repeats seamlessly.
+const loop = [...partners, ...partners, ...partners, ...partners];
+---
+<section class="section partners">
+  <div class="container">
+    <div class="section-head center" data-reveal>
+      <span class="eyebrow">{partnersSection.eyebrow}</span>
+      <h2 class="h-display">{partnersSection.title}</h2>
+      <p>{partnersSection.sub}</p>
+    </div>
+  </div>
+
+  <div class="viewport" data-reveal style="--i:1">
+    <ul class="track">
+      {loop.map((p, i) => (
+        <li aria-hidden={i >= partners.length ? 'true' : undefined}>
+          <svg viewBox="0 0 24 24" fill="currentColor" role={p.showLabel ? undefined : 'img'} aria-label={p.showLabel ? undefined : p.name} aria-hidden={p.showLabel ? 'true' : undefined} class:list={['mark', { wide: !p.showLabel }]}>
+            <path d={p.path} />
+          </svg>
+          {p.showLabel && <span>{p.label}</span>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .center { justify-items: center; text-align: center; margin-inline: auto; }
+  .center p { margin-inline: auto; }
+  .center .eyebrow { justify-self: center; }
+
+  .viewport {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  }
+  .track {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; align-items: center; width: max-content;
+    animation: marquee 50s linear infinite;
+  }
+  .viewport:hover .track { animation-play-state: paused; }
+  li {
+    flex: none; display: flex; align-items: center; gap: 12px;
+    padding: 0 clamp(28px, 4vw, 56px); height: 64px;
+    color: #fff; opacity: 0.6;
+    transition: opacity var(--t) var(--ease), filter var(--t) var(--ease);
+  }
+  li:hover { opacity: 1; filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.35)); }
+  .mark { width: 28px; height: 28px; flex: none; }
+  .mark.wide { width: 56px; height: 56px; }
+  span { font-size: 1.2rem; font-weight: 500; letter-spacing: -0.03em; white-space: nowrap; }
+
+  @keyframes marquee { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
+    li[aria-hidden='true'] { display: none; }
+  }
+</style>

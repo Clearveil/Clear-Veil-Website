@@ -1,45 +1,91 @@
 ---
+/** Homepage About: two staggered architecture photos + copy with glass fact cards. */
 import { about } from '../content/site';
 import Arrow from './Arrow.astro';
+const [a, b] = about.homeImages;
 ---
 <section class="section about" id="about">
   <div class="container grid">
     <div class="photos" data-reveal>
-      <img class="p1" src={about.images[0].src} alt={about.images[0].alt} width="720" height="900" loading="lazy" decoding="async" />
-      <img class="p2" src={about.images[1].src} alt={about.images[1].alt} width="720" height="900" loading="lazy" decoding="async" />
+      <figure class="frame f1 glass">
+        <img src={a.src} alt={a.alt} width={a.w} height={a.h} loading="lazy" decoding="async" />
+      </figure>
+      <figure class="frame f2 glass">
+        <img src={b.src} alt={b.alt} width={b.w} height={b.h} loading="lazy" decoding="async" />
+      </figure>
     </div>
+
     <div class="copy">
       <div class="section-head" data-reveal>
         <span class="eyebrow">{about.eyebrow}</span>
         <h2 class="h-display">{about.title}</h2>
       </div>
-      <div class="body" data-reveal style="--i:1">
-        {about.paragraphs.map((p) => <p>{p}</p>)}
-      </div>
-      <a href="/about" class="link" data-reveal style="--i:2">More about us <Arrow /></a>
+      <p class="lead" data-reveal style="--i:1">{about.paragraphs[0]}</p>
+
+      <ul class="facts">
+        {about.highlights.map((h, i) => (
+          <li class="fact card" data-reveal style={`--i:${i + 2}`}>
+            <span class="value">{h.value}</span>
+            <span class="label">{h.label}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a href="/about" class="link" data-reveal style="--i:5">More about us <Arrow /></a>
     </div>
   </div>
 </section>
 
 <style>
-  .grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(48px, 7vw, 112px); align-items: center; }
-  .photos { position: relative; aspect-ratio: 4 / 5; }
-  .photos img {
-    position: absolute; object-fit: cover; border-radius: var(--r-lg);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 40px 80px -30px rgba(0, 0, 0, 1);
+  .grid {
+    display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(48px, 7vw, 112px); align-items: center;
   }
-  .p1 { inset: 0 22% 12% 0; width: 78%; height: 88%; }
-  .p2 {
-    right: 0; bottom: 0; width: 50%; height: 56%;
-    outline: 6px solid #000; /* separates the overlapping photo */
-    filter: grayscale(0.15);
+
+  /* Two tall photos, offset vertically like a magazine spread */
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .frame { margin: 0; padding: 6px; border-radius: 26px; }
+  .frame::after { display: none; }
+  .frame img {
+    width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 20px;
+    filter: contrast(1.05);
+    transition: transform var(--t-slow) var(--ease), filter var(--t-slow) var(--ease);
   }
-  .copy .section-head { margin-bottom: 28px; }
-  .body { display: grid; gap: 16px; color: var(--ink-2); font-size: var(--fs-lede); max-width: 500px; }
-  .link { margin-top: 32px; }
+  .frame:hover img { transform: scale(1.015); filter: contrast(1.1) brightness(1.04); }
+  .f1 { margin-top: 64px; }
+  .f2 { margin-bottom: 64px; }
+
+  .copy .section-head { margin-bottom: 22px; }
+  .lead { color: var(--ink-2); font-size: var(--fs-lede); max-width: var(--measure); }
+
+  /* Glass fact cards */
+  .facts {
+    list-style: none; margin: 32px 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;
+  }
+  .fact {
+    display: grid; align-content: start; gap: 8px;
+    padding: 18px 18px 20px; border-radius: 18px;
+    transition: transform var(--t) var(--ease);
+  }
+  .fact:hover { transform: translateY(-2px); --rim: rgba(255, 255, 255, 0.5); }
+  .value {
+    font-size: 1.15rem; letter-spacing: -0.03em; line-height: 1.1;
+    background: linear-gradient(180deg, #fff 40%, rgba(255, 255, 255, 0.6));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .label { color: var(--ink-2); font-size: var(--fs-card-meta); line-height: 1.55; }
+
+  .link { margin-top: 30px; }
 
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
-    .photos { order: 2; max-width: 520px; }
+    .photos { order: 2; max-width: 560px; }
+  }
+  @media (max-width: 560px) {
+    .facts { grid-template-columns: 1fr; }
+    .fact { grid-template-columns: 110px 1fr; align-items: baseline; gap: 12px; padding: 16px 18px; }
+    .f1 { margin-top: 32px; }
+    .f2 { margin-bottom: 32px; }
   }
 </style>

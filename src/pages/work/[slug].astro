@@ -1,0 +1,180 @@
+---
+/**
+ * Case study page — one per item in src/content/site.ts → work, at /work/<slug>.
+ * Sections only render when their data exists. In local dev, empty sections
+ * show a dashed "draft" outline so the page flow can be reviewed; those
+ * outlines never appear on the live site.
+ */
+import Base from '../../layouts/Base.astro';
+import WorkPills from '../../components/WorkPills.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Arrow from '../../components/Arrow.astro';
+import { work, reviews, logoFor, type CaseStudy } from '../../content/site';
+
+export function getStaticPaths() {
+  return work.map((w) => ({ params: { slug: w.slug }, props: { study: w } }));
+}
+
+const { study } = Astro.props as { study: CaseStudy };
+const review = reviews.find((r) => r.company === study.client);
+const c = logoFor(study.client);
+const logo = c && (() => {
+  const ratio = c.w / c.h;
+  const h = Math.round(Math.min(64, Math.max(30, Math.sqrt(5200 / ratio))));
+  return { src: c.logo, h, w: Math.round(h * ratio) };
+})();
+const draft = import.meta.env.DEV;
+const draftSections = ['The brief', 'What we did', 'The result'];
+---
+<Base title={`${study.client} case study`} description={`${study.client}: ${study.what}. A Clear Veil Marketing case study.`}>
+  <article>
+    <header class="container head">
+      <a class="back" href="/work"><Arrow /> All work</a>
+      <div class="intro">
+        {logo && (
+          <div class="logo-tile glass">
+            <img src={logo.src} alt={`${study.client} logo`} width={logo.w} height={logo.h} />
+          </div>
+        )}
+        <span class="eyebrow">Case study</span>
+        <h1>{study.client}</h1>
+        <p class="lede">{study.what}</p>
+        <ul class="tags">{study.services.map((s) => <li class="tag">{s}</li>)}</ul>
+      </div>
+    </header>
+
+    <section class="container">
+      <dl class="meta card">
+        <div><dt>Client</dt><dd>{study.client}</dd></div>
+        <div><dt>Scope</dt><dd>{study.what}</dd></div>
+        <div><dt>Services</dt><dd>{study.services.join(', ')}</dd></div>
+        {study.result && <div><dt>Headline result</dt><dd>{study.result}</dd></div>}
+      </dl>
+    </section>
+
+    {study.cover && (
+      <section class="container">
+        <figure class="cover glass"><img src={study.cover} alt={`${study.client} project`} loading="lazy" decoding="async" /></figure>
+      </section>
+    )}
+
+    {study.results?.length ? (
+      <section class="container">
+        <div class="results card">
+          {study.results.map((r) => (
+            <div class="stat"><span class="value">{r.value}</span><span class="label">{r.label}</span></div>
+          ))}
+        </div>
+      </section>
+    ) : draft && (
+      <section class="container"><div class="draft">Draft · Results band: big numbers go here (e.g. 3.1x ROAS · $240k revenue · 90 days)</div></section>
+    )}
+
+    <section class="container story">
+      {study.story?.length
+        ? study.story.map((sec) => (
+            <div class="block" data-reveal>
+              <h2>{sec.heading}</h2>
+              <div class="body">{sec.body.map((p) => <p>{p}</p>)}</div>
+            </div>
+          ))
+        : draft && draftSections.map((h) => (
+            <div class="block">
+              <h2>{h}</h2>
+              <div class="draft">Draft · Write-up for “{h}” goes here</div>
+            </div>
+          ))}
+    </section>
+
+    {review && (
+      <section class="container">
+        <figure class="quote card" data-reveal>
+          <span class="mark" aria-hidden="true">“</span>
+          <blockquote>{review.quote}</blockquote>
+          <figcaption>
+            <b>{review.name}</b>
+            <small>{review.role}, {review.company}</small>
+          </figcaption>
+        </figure>
+      </section>
+    )}
+  </article>
+
+  <WorkPills eyebrow="Keep reading" title="More work" exclude={study.slug} id="more-work" />
+  <CtaBand />
+</Base>
+
+<style>
+  .head { padding-top: clamp(40px, 6vw, 80px); padding-bottom: clamp(36px, 5vw, 56px); }
+  .back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.875rem; color: var(--ink-2);
+    transition: color var(--t-fast) var(--ease);
+  }
+  .back :global(svg) { width: 14px; transform: rotate(180deg); transition: transform var(--t) var(--ease); }
+  .back:hover { color: #fff; }
+  .back:hover :global(svg) { transform: rotate(180deg) translateX(3px); }
+
+  .intro { display: grid; justify-items: start; gap: 18px; margin-top: 40px; }
+  .logo-tile {
+    display: grid; place-items: center;
+    min-width: 120px; height: 104px; padding: 0 28px; border-radius: 26px;
+    margin-bottom: 8px;
+  }
+  .logo-tile::after { display: none; }
+  h1 {
+    font-size: clamp(2.8rem, 1.6rem + 4.6vw, 5.4rem); line-height: 1; letter-spacing: -0.05em;
+    background: linear-gradient(100deg, #fff 35%, rgba(255, 255, 255, 0.5) 130%);
+    -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 0.06em;
+  }
+  .lede { color: var(--ink-2); font-size: var(--fs-lede); max-width: var(--measure); }
+  .tags { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .meta {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin: 0; padding: 0; border-radius: var(--r-xl); overflow: hidden;
+  }
+  .meta > div { padding: 24px 28px; display: grid; gap: 6px; }
+  .meta > div + div { box-shadow: inset 1px 0 0 var(--line); }
+  dt { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  dd { margin: 0; font-size: var(--fs-card); color: #fff; }
+
+  .cover { margin: 16px 0 0; padding: 6px; border-radius: var(--r-xl); }
+  .cover::after { display: none; }
+  .cover img { width: 100%; border-radius: calc(var(--r-xl) - 6px); }
+
+  .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-top: 16px; border-radius: var(--r-xl); overflow: hidden; }
+  .stat { padding: 36px 28px; display: grid; gap: 6px; text-align: center; }
+  .stat + .stat { box-shadow: inset 1px 0 0 var(--line); }
+  .value {
+    font-size: clamp(2.2rem, 1.6rem + 2.4vw, 3.4rem); letter-spacing: -0.05em; line-height: 1;
+    background: linear-gradient(180deg, #fff 30%, rgba(255, 255, 255, 0.55));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .label { font-size: var(--fs-card); color: var(--ink-2); }
+
+  .story { display: grid; gap: clamp(40px, 5vw, 64px); padding-block: clamp(64px, 8vw, 104px); }
+  .block { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); gap: clamp(24px, 4vw, 64px); }
+  .block h2 { font-size: var(--fs-h3); letter-spacing: -0.035em; }
+  .body { display: grid; gap: 16px; color: var(--ink-2); font-size: 0.98rem; line-height: 1.75; max-width: 620px; }
+
+  .quote { margin: 0 0 clamp(24px, 4vw, 40px); padding: clamp(32px, 5vw, 64px); border-radius: var(--r-xl); display: grid; gap: 24px; }
+  .quote .mark { font-size: 4rem; line-height: 0.6; color: rgba(255, 255, 255, 0.35); height: 28px; }
+  blockquote { margin: 0; font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem); line-height: 1.5; letter-spacing: -0.02em; color: #fff; max-width: 860px; }
+  figcaption { display: grid; gap: 2px; }
+  figcaption b { font-weight: 500; font-size: 0.95rem; }
+  figcaption small { font-size: var(--fs-card-meta); color: var(--ink-3); }
+
+  /* Dev-only placeholder outline */
+  .draft {
+    margin-top: 16px; padding: 22px 24px; border-radius: 18px;
+    border: 1px dashed rgba(255, 255, 255, 0.22);
+    color: var(--ink-3); font-size: var(--fs-card-meta); letter-spacing: 0.01em;
+  }
+  .block .draft { margin-top: 0; min-height: 120px; }
+
+  @media (max-width: 760px) {
+    .block { grid-template-columns: 1fr; }
+    .meta > div + div, .stat + .stat { box-shadow: inset 0 1px 0 var(--line); }
+  }
+</style>

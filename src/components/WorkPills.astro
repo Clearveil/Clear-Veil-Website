@@ -1,21 +1,29 @@
 ---
-/** Compact one-line work rows. Data: src/content/site.ts → work */
+/**
+ * Compact one-line work rows, each linking to its case study.
+ * Used on the homepage ("Recent work") and at the bottom of every case study
+ * ("More work", with the current one left out). Data: src/content/site.ts → work
+ */
 import { work } from '../content/site';
 import Arrow from './Arrow.astro';
+
+interface Props { eyebrow?: string; title?: string; exclude?: string; id?: string }
+const { eyebrow = 'Work', title = 'Recent work', exclude, id = 'work' } = Astro.props;
+const items = work.filter((w) => w.slug !== exclude);
 ---
-<section class="section work" id="work">
+<section class="section work" id={id}>
   <div class="container">
     <div class="head">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">Work</span>
-        <h2 class="h-display">Recent work</h2>
+        <span class="eyebrow">{eyebrow}</span>
+        <h2 class="h-display">{title}</h2>
       </div>
       <a href="/work" class="link" data-reveal>All work <Arrow /></a>
     </div>
     <ul class="pills">
-      {work.map((w, i) => (
+      {items.map((w, i) => (
         <li data-reveal style={`--i:${i}`}>
-          <a class="pill card" href={`/work#${w.client.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+          <a class="pill card" href={`/work/${w.slug}`}>
             <span class="client">{w.client}</span>
             <span class="what">{w.what}</span>
             {w.result && <span class="result">{w.result}</span>}

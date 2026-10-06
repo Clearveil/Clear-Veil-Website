@@ -160,31 +160,52 @@ export const process = {
   ],
 };
 
-/** Work pills. TODO(owner): add real results (e.g. "3.1x ROAS in 90 days"). */
-export const work = [
+/**
+ * Work / case studies. Each item powers a homepage pill, a card on /work and
+ * its own page at /work/<slug>.
+ *
+ * To build out a case study, fill in the optional fields:
+ *   result  — a short headline number shown on the pill, e.g. "3.1x ROAS in 90 days"
+ *   cover   — an image path in /public, shown at the top of the case study
+ *   results — big numbers for the results band: [{ value: '3.1x', label: 'ROAS' }]
+ *   story   — the write-up, as sections: [{ heading: 'The brief', body: ['para', 'para'] }]
+ * Empty fields are simply left off the page.
+ */
+export type CaseStudy = {
+  slug: string;
+  client: string;
+  what: string;
+  services: string[];
+  result?: string;
+  cover?: string;
+  results?: { value: string; label: string }[];
+  story?: { heading: string; body: string[] }[];
+};
+
+export const work: CaseStudy[] = [
   {
+    slug: 'girlyman',
     client: 'Girlyman',
     what: 'Entire marketing operation from launch',
     services: ['Amazon', 'Meta', 'Google'],
-    result: '',
   },
   {
+    slug: 'apex-aminos',
     client: 'Apex Aminos',
     what: 'New website built from scratch in two weeks',
     services: ['Design', 'Build'],
-    result: '',
   },
   {
+    slug: 'safeplace-ny',
     client: 'Safeplace NY',
     what: 'A side project turned into a real business over a year',
     services: ['Paid ads', 'Creative'],
-    result: '',
   },
   {
+    slug: 'revival-clothing',
     client: 'Revival Clothing',
     what: 'Ongoing marketing and advertising support',
     services: ['Paid ads', 'Strategy'],
-    result: '',
   },
 ];
 
@@ -196,10 +217,30 @@ export const about = {
     "We've managed over $5 million in ad spend for clients across e-commerce, services and nonprofits, from the first campaign through to the systems that keep leads from slipping through the cracks.",
     'Based in Michigan, working with clients across the country.',
   ],
+  // Founder stills — used on the About page
   images: [
     { src: '/media/about.jpg', alt: 'Clear Veil founder explaining a campaign in front of the Clear Veil website' },
     { src: '/media/about-2.jpg', alt: 'Clear Veil founder recording a video in the studio' },
   ],
+  // Architecture photos — used in the homepage About section
+  homeImages: [
+    { src: '/media/about-building-1.jpg', alt: 'Black and white corner of a concrete office tower against an overcast sky', w: 900, h: 1196 },
+    { src: '/media/about-building-2.jpg', alt: 'Black and white glass office building rising into a grey sky', w: 900, h: 1413 },
+  ],
+  // Small glass fact cards on the homepage (drawn from the paragraphs above)
+  highlights: [
+    { value: 'Founder-led', label: 'You work directly with the founders. No layers of account managers.' },
+    { value: '$5M+', label: 'Ad spend managed across e-commerce, services and nonprofits.' },
+    { value: 'Michigan', label: 'Based here, working with clients across the country.' },
+  ],
+};
+
+/** About page: certifications + platform partners. Logos: src/content/partners.ts */
+// TODO(owner): confirm wording
+export const partnersSection = {
+  eyebrow: 'Certified partners',
+  title: 'Certified and partnered with the platforms you run on.',
+  sub: 'We hold certifications and partner access across Meta, Google, Shopify, Wix and more, so your campaigns, store and tracking are set up the way each platform intends.',
 };
 
 /** Verbatim from Google. Don't edit the wording. */
