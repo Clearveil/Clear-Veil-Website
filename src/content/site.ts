@@ -63,8 +63,8 @@ export const clients: { name: string; logo: string; w: number; h: number }[] = [
   { name: 'Visionworld', logo: '/logos/visionworld.webp', w: 496, h: 160 },
   { name: 'Church On The Move USA', logo: '/logos/church-on-the-move.webp', w: 156, h: 160 },
   { name: 'Revival Clothing', logo: '/logos/revival-clothing.webp', w: 520, h: 141 },
-  { name: 'Älert', logo: '/logos/alert.webp', w: 407, h: 160 },
-  { name: 'McKenna Bros. Paving Co.', logo: '/logos/mckenna-bros-paving.webp', w: 451, h: 160 },
+  { name: 'Alert Index', logo: '/logos/alert.webp', w: 407, h: 160 },
+  { name: 'McKenna Brothers Paving', logo: '/logos/mckenna-bros-paving.webp', w: 451, h: 160 },
   { name: 'Sunnyday Sourdough Co.', logo: '/logos/sunnyday-sourdough.webp', w: 188, h: 160 },
   { name: 'Kandy', logo: '/logos/kandy.webp', w: 520, h: 140 },
   { name: 'The Green Door', logo: '/logos/the-green-door.webp', w: 160, h: 160 },
@@ -162,13 +162,15 @@ export const process = {
 
 /**
  * Work / case studies. Each item powers a homepage pill, a card on /work and
- * its own page at /work/<slug>.
+ * its own page at /work/<slug>. Order here = order on the site (strongest first).
+ * Source: owner's 2025 case study PDFs, condensed for easy reading.
  *
- * To build out a case study, fill in the optional fields:
- *   result  — a short headline number shown on the pill, e.g. "3.1x ROAS in 90 days"
- *   cover   — an image path in /public, shown at the top of the case study
- *   results — big numbers for the results band: [{ value: '3.1x', label: 'ROAS' }]
- *   story   — the write-up, as sections: [{ heading: 'The brief', body: ['para', 'para'] }]
+ * Fields (all optional except slug/client/what/services):
+ *   result    — short headline shown on the pill, e.g. "3,470 leads in 4 months"
+ *   instagram — handle without @, shown in the snapshot card
+ *   cover     — an image path in /public, shown at the top of the case study
+ *   results   — big numbers for the results band: [{ value: '4x', label: 'Average ROAS' }]
+ *   story     — sections: [{ heading, body: ['paragraph'], points: ['bullet'] }]
  * Empty fields are simply left off the page.
  */
 export type CaseStudy = {
@@ -177,35 +179,299 @@ export type CaseStudy = {
   what: string;
   services: string[];
   result?: string;
+  instagram?: string;
   cover?: string;
   results?: { value: string; label: string }[];
-  story?: { heading: string; body: string[] }[];
+  story?: { heading: string; body?: string[]; points?: string[] }[];
 };
 
 export const work: CaseStudy[] = [
   {
-    slug: 'girlyman',
-    client: 'Girlyman',
-    what: 'Entire marketing operation from launch',
-    services: ['Amazon', 'Meta', 'Google'],
+    slug: 'mckenna-brothers-paving',
+    client: 'McKenna Brothers Paving',
+    what: 'A peak-season lead engine for Alaska’s largest locally owned paver',
+    services: ['Google Ads', 'Website', 'SEO'],
+    result: '3,470 leads in 4 months',
+    results: [
+      { value: '3,470', label: 'Calls and quote requests' },
+      { value: '10k+', label: 'Clicks' },
+      { value: '451k+', label: 'Impressions' },
+      { value: '4 mo', label: 'During peak season' },
+    ],
+    story: [
+      {
+        heading: 'The brief',
+        body: [
+          'McKenna Brothers is the largest locally owned paving company in Alaska, known for its bright blue trucks and its residential, commercial and government work.',
+          'Summer is make-or-break for paving in Alaska. During peak season they weren’t showing up when people searched for a paving company, so leads went to competitors every day.',
+        ],
+        points: ['Outdated website', 'Weak search rankings', 'No Google Ads running'],
+      },
+      {
+        heading: 'What we did',
+        points: [
+          'Rebuilt the website around one goal: get visitors to call or request a quote',
+          'Rewrote titles, descriptions and service pages for searches like “asphalt paving near me” and “driveway paving in Alaska”',
+          'Launched Google Search campaigns on high-intent keywords across their service areas',
+          'Tracked every call and quote request, then tuned bids and targeting week by week',
+        ],
+      },
+      {
+        heading: 'The result',
+        body: [
+          'In four months of peak season, the campaigns brought in 3,470 calls and quote requests from more than 10,000 clicks. McKenna Brothers took back local market share and now has a lead system they can measure.',
+        ],
+      },
+    ],
   },
   {
-    slug: 'apex-aminos',
-    client: 'Apex Aminos',
-    what: 'New website built from scratch in two weeks',
-    services: ['Design', 'Build'],
+    slug: 'visionworld',
+    client: 'Visionworld',
+    what: 'From a failed release to $30k+ in sales at a 4x ROAS',
+    services: ['Meta ads', 'SMS', 'Strategy'],
+    instagram: 'visionworldus',
+    result: '$30k+ sales, 4x ROAS',
+    results: [
+      { value: '$30k+', label: 'In sales' },
+      { value: '4x', label: 'Average ROAS' },
+      { value: '4x', label: 'SMS list growth' },
+      { value: '+10k', label: 'Instagram followers' },
+    ],
+    story: [
+      {
+        heading: 'The brief',
+        body: [
+          'Visionworld is an urban streetwear label known for oversized outerwear and bold graphic layering.',
+          'Before us, they had worked with several agencies that overpromised and underdelivered while the invoices added up. We came in right after a release failed under another agency’s watch.',
+        ],
+      },
+      {
+        heading: 'What we did',
+        points: [
+          'Audited the ad account and shut off campaigns spending without results',
+          'Realigned marketing goals directly with the CEO',
+          'Rebuilt the ads around one proven best seller',
+          'Set weekly meetings and a shared content and ad schedule',
+          'Added SMS list targeting in the middle of the funnel',
+        ],
+      },
+      {
+        heading: 'The result',
+        body: [
+          'The first rollout did $12,000+ in sales at a 4x average ROAS, and the SMS list doubled in two weeks.',
+          'Since then, sales have passed $30,000, the SMS list has grown more than 4x and Instagram is up 10,000+ followers. We’re on pace for over $250k in revenue in our first year together.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'alert-index',
+    client: 'Alert Index',
+    what: 'Fixed broken tracking and turned zero conversions into a 4x ROAS',
+    services: ['Meta ads', 'Tracking', 'SMS'],
+    instagram: 'alertindex',
+    result: '4x average ROAS',
+    results: [
+      { value: '4x', label: 'Average ROAS across all ads' },
+      { value: 'Record', label: 'SMS sign-ups' },
+    ],
+    story: [
+      {
+        heading: 'The brief',
+        body: [
+          'Alert Index is a streetwear label with a retro-modern, workwear-inspired look.',
+          'During a recent release, their ad account recorded zero conversions, and their previous team was spreading the budget thin across too many creatives.',
+        ],
+      },
+      {
+        heading: 'What we did',
+        points: [
+          'Found the real problem: the pixel wasn’t tracking conversions, so the ad spend produced no usable data',
+          'Fixed the tracking and rebuilt the ad account to our standards',
+          'Set clear budgets across the full funnel, from first look to purchase',
+          'Planned a hybrid release: a proven best seller relaunched next to a new, complementary item to lift order value',
+        ],
+      },
+      {
+        heading: 'The result',
+        body: [
+          'The first release turned things around: a 4x average ROAS across all ads, record SMS sign-ups, and clean conversion data flowing back into the pixel, so every future release gets smarter.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'girlyman',
+    client: 'Girlyman',
+    what: 'The entire launch and marketing operation, from day one',
+    services: ['Amazon', 'Meta', 'Website', 'Launch'],
+    instagram: 'girlymanproducts',
+    result: '3M+ views in year one',
+    results: [
+      { value: '3M+', label: 'Views across Amazon and Meta' },
+      { value: '1,000s', label: 'Repeat buyers' },
+      { value: 'Year 1', label: 'Revenue goals hit' },
+    ],
+    story: [
+      {
+        heading: 'The brief',
+        body: [
+          'Girlyman is a natural skincare brand for sensitive skin: no toxins, no artificial fragrance, no fillers, inspired by real experience with chronic illness.',
+          'They came to us with a vision and needed the whole launch built, ready for both Amazon and their own online store.',
+        ],
+      },
+      {
+        heading: 'What we did',
+        points: [
+          'Set up Amazon FBA: inventory, fulfillment and brand registry',
+          'Designed and built their website, optimized for search',
+          'Ran a three-month Amazon ads testing phase to find profitable keywords',
+          'Connected Shopify and Amazon so inventory and orders sync automatically',
+          'Launched Meta awareness campaigns across Facebook and Instagram',
+          'Added Subscribe & Save plus SMS and email capture to keep buyers coming back',
+        ],
+      },
+      {
+        heading: 'The result',
+        body: [
+          'In year one, Girlyman reached more than 3 million views across Amazon and Meta, hit its revenue goals and built a base of thousands of repeat buyers, on a foundation made to scale.',
+        ],
+      },
+    ],
   },
   {
     slug: 'safeplace-ny',
     client: 'Safeplace NY',
-    what: 'A side project turned into a real business over a year',
-    services: ['Paid ads', 'Creative'],
+    what: 'A side project turned into a real business',
+    services: ['Meta ads', 'Marketing management'],
+    instagram: 'safeplaceny',
+    result: 'SMS list grew 5x',
+    results: [
+      { value: '2x+', label: 'Instagram following' },
+      { value: '5x+', label: 'SMS list growth' },
+    ],
+    story: [
+      {
+        heading: 'The brief',
+        body: [
+          'Safeplace NY is a New York streetwear label that mixes nature-inspired design with tactical function.',
+          'The owner had been running the ads on their own and learning as they went. As the business grew, they needed the workload off their plate and more revenue from every release.',
+        ],
+      },
+      {
+        heading: 'What we did',
+        points: [
+          'Planned collections and campaigns together, with a set content and ad schedule',
+          'Took over the full marketing workload so the owner could focus on design and operations',
+          'Used sales data to find the products and details customers loved, and built releases around them',
+          'Ran every rollout across the full funnel, from first look to checkout',
+        ],
+      },
+      {
+        heading: 'The result',
+        body: [
+          'Instagram following has more than doubled, the SMS list has grown over 5x, and monthly revenue has scaled with higher order values and ROAS on every release.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'only-curse',
+    client: 'Only Curse',
+    what: 'Rebuilt the funnel to restart momentum after the organic wave',
+    services: ['Meta ads', 'Strategy'],
+    instagram: 'onlycurse',
+    story: [
+      {
+        heading: 'The brief',
+        body: [
+          'Curse is a dark, cinematic streetwear label with over 100K Instagram followers.',
+          'Early growth came from a big organic wave. When it cooled, revenue was hard to sustain. The product, branding and creative were all strong. The ads weren’t.',
+        ],
+      },
+      {
+        heading: 'What we did',
+        points: [
+          'Audited campaign structure, creative, audience overlap and budget',
+          'Reviewed sell-through by product to see which items actually drove profit',
+          'Rebuilt the funnel to reach new audiences, re-engage warm ones and retarget buyers',
+          'Added lead flows to grow SMS and email lists',
+        ],
+      },
+      {
+        heading: 'The result',
+        body: [
+          'After our first release together, follower loss reversed and the brand reached a bigger, more engaged audience, with a clear lift in impressions, engagement and purchases.',
+          'Next up: ongoing inventory analysis and always-on optimization for sell-through.',
+        ],
+      },
+    ],
   },
   {
     slug: 'revival-clothing',
     client: 'Revival Clothing',
-    what: 'Ongoing marketing and advertising support',
-    services: ['Paid ads', 'Strategy'],
+    what: 'Structure and better content behind every release',
+    services: ['Meta ads', 'Strategy', 'Content'],
+    instagram: 'revivalclothing303',
+    story: [
+      {
+        heading: 'The brief',
+        body: [
+          'Revival is a streetwear brand built on bold graphics and street culture.',
+          'They were running ads and releases without structure or clear data, which meant wasted spend and limited results.',
+        ],
+      },
+      {
+        heading: 'What we did',
+        points: [
+          'Joined mid-release to stabilize it: refined targeting and moved budget to what was working',
+          'Rebuilt their marketing with a set budget plan for every release',
+          'Elevated content with IRL photo shoots, sharper product photography and creative built for Meta',
+        ],
+      },
+      {
+        heading: 'The result',
+        body: [
+          'Revival’s funnel is now structured and ready to scale. Content quality is up, reach keeps growing, and the budget works with purpose instead of guesswork.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'the-green-door',
+    client: 'The Green Door',
+    what: 'A website that matches the in-store experience',
+    services: ['Website'],
+    story: [
+      {
+        heading: 'The brief',
+        body: [
+          'The Green Door is a family-owned cannabis dispensary in Michigan, known for a warm, welcoming store.',
+          'Their website didn’t match it: it was dated, hard to use on phones, and buried their rewards and discounts.',
+        ],
+      },
+      {
+        heading: 'What we did',
+        points: [
+          'Redesigned the site to reflect the brand’s welcoming, professional feel',
+          'Made it work smoothly on phones, tablets and desktop',
+          'Put rewards, discounts and store details front and center with clear calls to action',
+        ],
+      },
+      {
+        heading: 'The result',
+        body: [
+          'The new site gives The Green Door a professional online presence that matches the store, sends customers to rewards and locations, and is ready for future marketing and online ordering.',
+        ],
+      },
+    ],
+  },
+  {
+    // TODO(owner): no case study yet — write this one together
+    slug: 'apex-aminos',
+    client: 'Apex Aminos',
+    what: 'New website built from scratch in two weeks',
+    services: ['Design', 'Build'],
   },
 ];
 

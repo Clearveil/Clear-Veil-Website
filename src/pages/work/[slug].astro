@@ -49,6 +49,9 @@ const draftSections = ['The brief', 'What we did', 'The result'];
         <div><dt>Scope</dt><dd>{study.what}</dd></div>
         <div><dt>Services</dt><dd>{study.services.join(', ')}</dd></div>
         {study.result && <div><dt>Headline result</dt><dd>{study.result}</dd></div>}
+        {study.instagram && (
+          <div><dt>Instagram</dt><dd><a href={`https://www.instagram.com/${study.instagram}/`} target="_blank" rel="noopener">@{study.instagram}</a></dd></div>
+        )}
       </dl>
     </section>
 
@@ -75,7 +78,12 @@ const draftSections = ['The brief', 'What we did', 'The result'];
         ? study.story.map((sec) => (
             <div class="block" data-reveal>
               <h2>{sec.heading}</h2>
-              <div class="body">{sec.body.map((p) => <p>{p}</p>)}</div>
+              <div class="body">
+                {sec.body?.map((p) => <p>{p}</p>)}
+                {sec.points?.length && (
+                  <ul class="points">{sec.points.map((pt) => <li>{pt}</li>)}</ul>
+                )}
+              </div>
             </div>
           ))
         : draft && draftSections.map((h) => (
@@ -100,7 +108,7 @@ const draftSections = ['The brief', 'What we did', 'The result'];
     )}
   </article>
 
-  <WorkPills eyebrow="Keep reading" title="More work" exclude={study.slug} id="more-work" />
+  <WorkPills eyebrow="Keep reading" title="More work" exclude={study.slug} limit={4} id="more-work" />
   <CtaBand />
 </Base>
 
@@ -156,6 +164,15 @@ const draftSections = ['The brief', 'What we did', 'The result'];
   .story { display: grid; gap: clamp(40px, 5vw, 64px); padding-block: clamp(64px, 8vw, 104px); }
   .block { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); gap: clamp(24px, 4vw, 64px); }
   .block h2 { font-size: var(--fs-h3); letter-spacing: -0.035em; }
+  /* Bulleted list with small glass dots */
+  .points { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 12px; }
+  .points li { position: relative; padding-left: 26px; }
+  .points li::before {
+    content: ''; position: absolute; left: 4px; top: 0.62em; width: 7px; height: 7px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08), 0 0 10px rgba(255, 255, 255, 0.45);
+  }
+  dd a { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255, 255, 255, 0.3); }
+  dd a:hover { text-decoration-color: #fff; }
   .body { display: grid; gap: 16px; color: var(--ink-2); font-size: 0.98rem; line-height: 1.75; max-width: 620px; }
 
   .quote { margin: 0 0 clamp(24px, 4vw, 40px); padding: clamp(32px, 5vw, 64px); border-radius: var(--r-xl); display: grid; gap: 24px; }
@@ -175,6 +192,12 @@ const draftSections = ['The brief', 'What we did', 'The result'];
 
   @media (max-width: 760px) {
     .block { grid-template-columns: 1fr; }
-    .meta > div + div, .stat + .stat { box-shadow: inset 0 1px 0 var(--line); }
+    .meta > div + div { box-shadow: inset 0 1px 0 var(--line); }
+    /* Results as a 2x2 grid on phones */
+    .results { grid-template-columns: 1fr 1fr; }
+    .stat { padding: 26px 16px; }
+    .stat + .stat { box-shadow: none; }
+    .stat:nth-child(even) { box-shadow: inset 1px 0 0 var(--line); }
+    .stat:nth-child(n + 3) { border-top: 1px solid var(--line); }
   }
 </style>

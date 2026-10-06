@@ -7,9 +7,9 @@
 import { work } from '../content/site';
 import Arrow from './Arrow.astro';
 
-interface Props { eyebrow?: string; title?: string; exclude?: string; id?: string }
-const { eyebrow = 'Work', title = 'Recent work', exclude, id = 'work' } = Astro.props;
-const items = work.filter((w) => w.slug !== exclude);
+interface Props { eyebrow?: string; title?: string; exclude?: string; limit?: number; id?: string }
+const { eyebrow = 'Work', title = 'Recent work', exclude, limit = 5, id = 'work' } = Astro.props;
+const items = work.filter((w) => w.slug !== exclude).slice(0, limit);
 ---
 <section class="section work" id={id}>
   <div class="container">
@@ -49,9 +49,11 @@ const items = work.filter((w) => w.slug !== exclude);
   .client { font-weight: 500; font-size: 0.98rem; letter-spacing: -0.02em; }
   .what { color: var(--ink-2); font-size: var(--fs-card); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .result {
-    font-size: var(--fs-card-meta); font-weight: 500; color: #111;
+    font-size: var(--fs-card-meta); font-weight: 500; white-space: nowrap;
     padding: 4px 12px; border-radius: 999px;
-    background: linear-gradient(180deg, #fff, #dcdad6);
+    color: #fff;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 14px -4px rgba(255, 255, 255, 0.25);
   }
   .svc { font-size: var(--fs-card-meta); color: var(--ink-3); white-space: nowrap; }
   .go {
