@@ -349,10 +349,10 @@ export const work: CaseStudy[] = [
     what: 'A side project turned into a real business',
     services: ['Meta ads', 'Marketing management'],
     instagram: 'safeplaceny',
-    result: 'SMS list grew 5x',
+    result: '6x Instagram, 8x SMS',
     results: [
-      { value: '2x+', label: 'Instagram following' },
-      { value: '5x+', label: 'SMS list growth' },
+      { value: '6x', label: 'Instagram following' },
+      { value: '8x', label: 'SMS list growth' },
     ],
     story: [
       {
@@ -374,7 +374,7 @@ export const work: CaseStudy[] = [
       {
         heading: 'The result',
         body: [
-          'Instagram following has more than doubled, the SMS list has grown over 5x, and monthly revenue has scaled with higher order values and ROAS on every release.',
+          'Instagram following has grown 6x, the SMS list has grown 8x, and monthly revenue has scaled with higher order values and ROAS on every release.',
         ],
       },
     ],
