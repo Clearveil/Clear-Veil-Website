@@ -59,6 +59,9 @@
 *::after { box-sizing: border-box; }
 
 html {
+  /* Never allow sideways scrolling on phones (clip keeps the sticky nav working) */
+  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: 96px;

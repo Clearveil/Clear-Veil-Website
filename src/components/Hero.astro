@@ -28,7 +28,11 @@ import { hero } from '../content/site';
 </section>
 
 <style>
-  .hero { padding-top: clamp(40px, 7vw, 96px); padding-bottom: clamp(64px, 8vw, 112px); }
+  .hero {
+    padding-top: clamp(40px, 7vw, 96px); padding-bottom: clamp(64px, 8vw, 112px);
+    /* The faded clips behind the reel peek out; keep them inside the screen */
+    overflow-x: hidden; overflow-x: clip;
+  }
   .grid {
     display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
     gap: clamp(40px, 6vw, 96px); align-items: center;

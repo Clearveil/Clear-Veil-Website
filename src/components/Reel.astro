@@ -28,6 +28,7 @@ const clips = hero.clips;
           width="540"
           height="960"
           aria-label={`Clear Veil client ad, clip ${i + 1} of ${clips.length}`}
+          data-audio={c.audio ? '' : undefined}
         />
       ))}
       <div class="shade" aria-hidden="true"></div>
@@ -41,7 +42,7 @@ const clips = hero.clips;
       ))}
     </div>
 
-    <button type="button" class="sound" data-sound aria-pressed="false">
+    <button type="button" class="sound" data-sound aria-pressed="false" hidden={!clips[0]?.audio}>
       <span class="sr-only">Sound</span>
       <svg class="off" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="m16 9 5 6m0-6-5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       <svg class="on" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -96,6 +97,8 @@ const clips = hero.clips;
       const v = videos[current];
       load(v);
       v.muted = muted;
+      // Only offer the sound toggle on clips that actually have audio
+      soundBtn.hidden = !v.hasAttribute('data-audio');
       v.currentTime = 0;
       if (started && inView) play(v);
     };
@@ -220,6 +223,7 @@ const clips = hero.clips;
   }
   .sound:hover, .play:hover { transform: scale(1.06); background: rgba(40, 40, 40, 0.6); }
   .sound { right: 18px; bottom: 18px; width: 40px; height: 40px; }
+  .sound[hidden] { display: none; }
   .sound svg { width: 18px; }
   .sound .on, .sound[aria-pressed='true'] .off { display: none; }
   .sound[aria-pressed='true'] .on { display: block; }

@@ -30,8 +30,10 @@ const projects = work.map((w) => {
           <h2><a href={`/work/${p.slug}`}>{p.client}</a></h2>
           <p class="what">{p.what}</p>
           <ul>{p.services.map((s) => <li class="tag">{s}</li>)}</ul>
-          {p.result && <p class="result">{p.result}</p>}
-          <a class="link read" href={`/work/${p.slug}`}>Read case study <Arrow /></a>
+          <div class="foot">
+            {p.result && <p class="result">{p.result}</p>}
+            <a class="link read" href={`/work/${p.slug}`}>Read case study <Arrow /></a>
+          </div>
         </div>
         {p.review && (
           <figure class="quote">
@@ -50,12 +52,14 @@ const projects = work.map((w) => {
 </Base>
 
 <style>
+  /* ── Phones (base) ─────────────────────────────────────────────────── */
   .list { display: grid; gap: 16px; }
   .project {
-    display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 72px);
+    display: grid; grid-template-columns: 1fr; gap: clamp(28px, 5vw, 72px);
     padding: clamp(28px, 4vw, 48px); scroll-margin-top: 110px;
   }
   .meta { display: grid; gap: 12px; align-content: start; justify-items: start; }
+  .foot { display: contents; } /* children sit in .meta's grid as before */
   .idrow { display: flex; align-items: center; justify-content: space-between; justify-self: stretch; min-height: 52px; }
   .idx { font-size: var(--fs-card-meta); color: var(--ink-3); }
   .logo { opacity: 0.85; }
@@ -71,12 +75,45 @@ const projects = work.map((w) => {
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 14px -4px rgba(255, 255, 255, 0.25);
   }
-  .quote { margin: 0; display: grid; gap: 16px; align-content: center; padding-left: clamp(0px, 3vw, 40px); border-left: 1px solid var(--line); }
+  .quote { margin: 0; display: grid; gap: 16px; align-content: center; border-top: 1px solid var(--line); padding-top: 24px; }
   blockquote { margin: 0; font-size: var(--fs-card-quote); line-height: 1.65; color: rgba(255, 255, 255, 0.86); }
   figcaption { color: var(--ink-3); font-size: var(--fs-card-meta); }
   .more { color: var(--ink-2); margin-top: 24px; text-align: center; }
-  @media (max-width: 800px) {
-    .project { grid-template-columns: 1fr; }
-    .quote { border-left: 0; padding-left: 0; padding-top: 24px; border-top: 1px solid var(--line); }
+
+  /* ── Desktop: two-column gallery of equal-height cards ─────────────── */
+  @media (min-width: 801px) {
+    .list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .more { grid-column: 1 / -1; }
+    .project {
+      display: flex; flex-direction: column; gap: 0;
+      padding: 30px 32px 26px;
+      transition: transform var(--t) var(--ease);
+    }
+    .project:hover { transform: translateY(-3px); --rim: rgba(255, 255, 255, 0.5); }
+    .meta { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; flex: 1; }
+
+    /* Logo in a small glass tile on the left, index on the right */
+    .idrow { flex-direction: row-reverse; align-self: stretch; min-height: 0; margin-bottom: 14px; }
+    .logo {
+      box-sizing: content-box;
+      max-height: 34px; width: auto; padding: 14px 18px; border-radius: 16px; opacity: 1;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+    }
+    h2 { font-size: clamp(1.6rem, 1.2rem + 0.9vw, 2.1rem); }
+    .what { max-width: 440px; }
+
+    /* Result + read link pinned to the bottom so every card lines up */
+    .foot {
+      display: flex; align-items: center; gap: 16px; align-self: stretch;
+      margin-top: auto; padding-top: 22px;
+    }
+    .meta > ul { margin-bottom: 22px; }
+    .foot { border-top: 1px solid var(--line); }
+    .result { margin-top: 0; }
+    .read { margin-top: 0; margin-left: auto; }
+
+    /* Quotes live on each case study page; keep the gallery tidy */
+    .quote { display: none; }
   }
 </style>
