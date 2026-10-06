@@ -42,12 +42,14 @@ export const hero = {
     'We run your ads, build your website and make the creative. You work directly with the people doing it.',
   primary: { label: 'Book a 15-minute call', href: site.bookingUrl },
   // The 9:16 reel. Clip 1 loads with the page; 2 and 3 load only when needed.
+  // When replacing a video, give it a new file name (e.g. clip-1-v3.mp4) —
+  // videos are cached for a year, so a reused name would keep serving the old one.
   // audio: true once a clip file has a sound track (the sound button only
   // shows for clips that do).
   clips: [
-    { src: '/media/clip-1.mp4', poster: '/media/clip-1.jpg', audio: true },
-    { src: '/media/clip-2.mp4', poster: '/media/clip-2.jpg', audio: true },
-    { src: '/media/clip-3.mp4', poster: '/media/clip-3.jpg', audio: true },
+    { src: '/media/clip-1-v2.mp4', poster: '/media/clip-1.jpg', audio: true },
+    { src: '/media/clip-2-v2.mp4', poster: '/media/clip-2.jpg', audio: true },
+    { src: '/media/clip-3-v2.mp4', poster: '/media/clip-3.jpg', audio: true },
   ],
 };
 
