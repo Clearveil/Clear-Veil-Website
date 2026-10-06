@@ -243,6 +243,20 @@ export const partnersSection = {
   sub: 'We hold certifications and partner access across Meta, Google, Shopify, Wix and more, so your campaigns, store and tracking are set up the way each platform intends.',
 };
 
+/** About page: community / chamber memberships. Add badges to `badges` as you join more. */
+// TODO(owner): confirm wording
+export const community = {
+  eyebrow: 'Community',
+  title: 'Rooted in our community.',
+  body: [
+    "We're proud members of the South Haven Area Chamber of Commerce, and we're growing our involvement with chambers and business groups across Michigan.",
+    "Run a chamber or local business group? We'd love to connect.",
+  ],
+  badges: [
+    { src: '/badges/south-haven-chamber.png', alt: 'Proud Member, South Haven Area Chamber of Commerce', w: 854, h: 317 },
+  ],
+};
+
 /** Verbatim from Google. Don't edit the wording. */
 export const reviews = [
   {

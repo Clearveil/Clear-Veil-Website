@@ -1,0 +1,47 @@
+---
+/** About page: chamber / community memberships with white member badges. */
+import { community } from '../content/site';
+import Arrow from './Arrow.astro';
+---
+<section class="section community">
+  <div class="container">
+    <div class="panel card" data-reveal>
+      <div class="copy">
+        <span class="eyebrow">{community.eyebrow}</span>
+        <h2 class="h-display">{community.title}</h2>
+        {community.body.map((p) => <p>{p}</p>)}
+        <a class="link" href="/contact">Get in touch <Arrow /></a>
+      </div>
+      <ul class="badges">
+        {community.badges.map((b) => (
+          <li><img src={b.src} alt={b.alt} width={b.w} height={b.h} loading="lazy" decoding="async" /></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .panel {
+    display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(32px, 5vw, 72px); align-items: center;
+    padding: clamp(28px, 5vw, 64px); border-radius: var(--r-xl);
+  }
+  .copy { display: grid; gap: 16px; justify-items: start; }
+  .copy p { color: var(--ink-2); font-size: var(--fs-card); line-height: 1.7; max-width: 440px; }
+  .copy .link { margin-top: 6px; font-size: 0.92rem; }
+
+  .badges { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; justify-items: center; }
+  .badges img {
+    width: 100%; max-width: 340px; height: auto;
+    opacity: 0.85;
+    transition: opacity var(--t) var(--ease), filter var(--t) var(--ease);
+  }
+  .badges li:hover img { opacity: 1; filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.25)); }
+
+  @media (max-width: 800px) {
+    .panel { grid-template-columns: 1fr; }
+    .badges { justify-items: start; }
+    .badges img { max-width: 280px; }
+  }
+</style>
