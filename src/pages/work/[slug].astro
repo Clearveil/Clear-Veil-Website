@@ -24,6 +24,8 @@ const logo = c && (() => {
   return { src: c.logo, h, w: Math.round(h * ratio) };
 })();
 const draft = import.meta.env.DEV;
+// 'https://www.example.com/' → 'example.com' for display
+const siteLabel = study.site && new URL(study.site).hostname.replace(/^www\./, '');
 const draftSections = ['The brief', 'What we did', 'The result'];
 ---
 <Base title={`${study.client} case study`} description={`${study.client}: ${study.what}. A Clear Veil Marketing case study.`}>
@@ -40,6 +42,9 @@ const draftSections = ['The brief', 'What we did', 'The result'];
         <h1>{study.client}</h1>
         <p class="lede">{study.what}</p>
         <ul class="tags">{study.services.map((s) => <li class="tag">{s}</li>)}</ul>
+        {study.site && (
+          <a class="btn btn-glass btn-sm visit" href={study.site} target="_blank" rel="noopener">View site</a>
+        )}
       </div>
     </header>
 
@@ -49,6 +54,9 @@ const draftSections = ['The brief', 'What we did', 'The result'];
         <div><dt>Scope</dt><dd>{study.what}</dd></div>
         <div><dt>Services</dt><dd>{study.services.join(', ')}</dd></div>
         {study.result && <div><dt>Headline result</dt><dd>{study.result}</dd></div>}
+        {study.site && (
+          <div><dt>Website</dt><dd><a href={study.site} target="_blank" rel="noopener">{siteLabel}</a></dd></div>
+        )}
         {study.instagram && (
           <div><dt>Instagram</dt><dd><a href={`https://www.instagram.com/${study.instagram}/`} target="_blank" rel="noopener">@{study.instagram}</a></dd></div>
         )}
@@ -136,6 +144,7 @@ const draftSections = ['The brief', 'What we did', 'The result'];
     -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 0.06em;
   }
   .lede { color: var(--ink-2); font-size: var(--fs-lede); max-width: var(--measure); }
+  .visit { margin-top: 10px; }
   .tags { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 
   .meta {

@@ -169,6 +169,7 @@ export const process = {
  * Fields (all optional except slug/client/what/services):
  *   result    — short headline shown on the pill, e.g. "3,470 leads in 4 months"
  *   instagram — handle without @, shown in the snapshot card
+ *   site      — the client's live website, shown as a "View site" button
  *   cover     — an image path in /public, shown at the top of the case study
  *   results   — big numbers for the results band: [{ value: '4x', label: 'Average ROAS' }]
  *   story     — sections: [{ heading, body: ['paragraph'], points: ['bullet'] }]
@@ -181,6 +182,7 @@ export type CaseStudy = {
   services: string[];
   result?: string;
   instagram?: string;
+  site?: string;
   cover?: string;
   results?: { value: string; label: string }[];
   story?: { heading: string; body?: string[]; points?: string[] }[];
@@ -383,6 +385,7 @@ export const work: CaseStudy[] = [
     client: 'Voren Bio',
     what: 'A high-performing, fully compliant peptide website with automated email',
     services: ['Website', 'Email flows', 'Automation'],
+    site: 'https://vorenbio.com',
     story: [
       {
         heading: 'The brief',
