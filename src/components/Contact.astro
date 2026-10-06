@@ -7,6 +7,7 @@
  * page's <h1> and nothing waits on a scroll animation.
  */
 import ContactIcons from './ContactIcons.astro';
+import SignalDoodle from './SignalDoodle.astro';
 import { contact, site } from '../content/site';
 
 interface Props { page?: boolean }
@@ -69,6 +70,7 @@ const Heading = page ? 'h1' : 'h2';
         </div>
       </form>
     </div>
+    {page && <SignalDoodle />}
   </div>
 </section>
 
@@ -112,6 +114,7 @@ const Heading = page ? 'h1' : 'h2';
         if (!res.ok || !data.ok) throw new Error(data.error || 'Something went wrong.');
 
         window.fbq?.('track', 'Lead');
+        window.dispatchEvent(new CustomEvent('cv:sent'));
         (window.dataLayer ||= []).push({ event: 'generate_lead', form: 'contact' });
 
         form.reset();
