@@ -42,11 +42,15 @@ const clips = hero.clips;
       ))}
     </div>
 
-    <button type="button" class="sound" data-sound aria-pressed="false" hidden={!clips[0]?.audio}>
+    <!-- Sound: toggle + (desktop only) volume slider that slides out when on -->
+    <div class="audio" data-audio-ctrl hidden={!clips[0]?.audio}>
+    <input class="vol" data-vol type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume" style="--val: 80%" tabindex="-1" />
+    <button type="button" class="sound" data-sound aria-pressed="false">
       <span class="sr-only">Sound</span>
       <svg class="off" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="m16 9 5 6m0-6-5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       <svg class="on" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
     </button>
+    </div>
 
     <button type="button" class="play" data-play hidden>
       <span class="sr-only">Play</span>
@@ -62,6 +66,8 @@ const clips = hero.clips;
     const ticks = [...root.querySelectorAll<HTMLButtonElement>('[data-tick]')];
     const fills = ticks.map((t) => t.querySelector<HTMLElement>('.fill')!);
     const soundBtn = root.querySelector<HTMLButtonElement>('[data-sound]')!;
+    const audioCtrl = root.querySelector<HTMLElement>('[data-audio-ctrl]')!;
+    const vol = root.querySelector<HTMLInputElement>('[data-vol]')!;
     const playBtn = root.querySelector<HTMLButtonElement>('[data-play]')!;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -69,6 +75,8 @@ const clips = hero.clips;
     let inView = true;
     let started = !reduced; // with reduced motion, wait for a tap
     let muted = true;
+    let volume = 0.8; // shared by all clips; set from the desktop slider
+    videos.forEach((v) => (v.volume = volume));
 
     const load = (v: HTMLVideoElement) => {
       if (!v.getAttribute('src') && v.dataset.src) {
@@ -97,8 +105,9 @@ const clips = hero.clips;
       const v = videos[current];
       load(v);
       v.muted = muted;
-      // Only offer the sound toggle on clips that actually have audio
-      soundBtn.hidden = !v.hasAttribute('data-audio');
+      v.volume = volume;
+      // Only offer the sound controls on clips that actually have audio
+      audioCtrl.hidden = !v.hasAttribute('data-audio');
       v.currentTime = 0;
       if (started && inView) play(v);
     };
@@ -122,10 +131,19 @@ const clips = hero.clips;
       muted = !muted;
       videos[current].muted = muted;
       soundBtn.setAttribute('aria-pressed', String(!muted));
+      audioCtrl.classList.toggle('is-on', !muted);
+      vol.tabIndex = muted ? -1 : 0;
       if (videos[current].paused) { started = true; play(videos[current]); }
     });
 
     playBtn.addEventListener('click', () => { started = true; play(videos[current]); });
+
+    // Volume slider (desktop): applies to every clip and fills the track
+    vol.addEventListener('input', () => {
+      volume = Number(vol.value);
+      videos.forEach((v) => (v.volume = volume));
+      vol.style.setProperty('--val', `${volume * 100}%`);
+    });
 
     // Pause when off screen, resume when back
     new IntersectionObserver(([e]) => {
@@ -222,8 +240,46 @@ const clips = hero.clips;
     transition: transform var(--t) var(--ease), background var(--t) var(--ease);
   }
   .sound:hover, .play:hover { transform: scale(1.06); background: rgba(40, 40, 40, 0.6); }
-  .sound { right: 18px; bottom: 18px; width: 40px; height: 40px; }
-  .sound[hidden] { display: none; }
+  .sound { position: relative; width: 40px; height: 40px; flex: none; }
+
+  /* Sound control: the icon, plus a slider that slides out on desktop */
+  .audio {
+    position: absolute; right: 18px; bottom: 18px;
+    display: flex; align-items: center;
+    border-radius: 999px;
+    transition: background var(--t) var(--ease), box-shadow var(--t) var(--ease), padding var(--t) var(--ease);
+  }
+  .audio[hidden] { display: none; }
+  .vol {
+    width: 0; margin: 0; opacity: 0; pointer-events: none;
+    height: 16px; background: transparent; cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+    transition: width var(--t) var(--ease), opacity var(--t) var(--ease), margin var(--t) var(--ease);
+  }
+  .vol::-webkit-slider-runnable-track {
+    height: 3px; border-radius: 3px;
+    background: linear-gradient(90deg, #fff var(--val), rgba(255, 255, 255, 0.25) var(--val));
+  }
+  .vol::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 12px; height: 12px; margin-top: -4.5px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  }
+  .vol::-moz-range-track { height: 3px; border-radius: 3px; background: rgba(255, 255, 255, 0.25); }
+  .vol::-moz-range-progress { height: 3px; border-radius: 3px; background: #fff; }
+  .vol::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); }
+  .vol:focus-visible { outline: none; }
+  .vol:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35); }
+
+  /* Desktop with a mouse only: when sound is on, the control becomes a glass pill */
+  @media (hover: hover) and (pointer: fine) and (min-width: 901px) {
+    .audio.is-on {
+      padding-left: 14px;
+      background: rgba(20, 20, 20, 0.5);
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    .audio.is-on .vol { width: 84px; margin-right: 10px; opacity: 1; pointer-events: auto; }
+  }
   .sound svg { width: 18px; }
   .sound .on, .sound[aria-pressed='true'] .off { display: none; }
   .sound[aria-pressed='true'] .on { display: block; }
