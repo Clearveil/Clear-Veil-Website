@@ -32,7 +32,7 @@ export const nav = [
   { label: 'Work', href: '/work' },
   { label: 'About', href: '/about' },
   { label: 'Reviews', href: '/#reviews' },
-  { label: 'Contact', href: '/#contact' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 export const hero = {

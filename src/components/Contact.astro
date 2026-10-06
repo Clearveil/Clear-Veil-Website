@@ -2,16 +2,23 @@
 /**
  * Contact form → POST /api/contact → email via Resend.
  * On success it fires a Meta Pixel "Lead" event and a GTM "generate_lead" event.
+ *
+ * `page` = rendered as the top of the /contact page: the title becomes the
+ * page's <h1> and nothing waits on a scroll animation.
  */
 import ContactIcons from './ContactIcons.astro';
 import { contact, site } from '../content/site';
+
+interface Props { page?: boolean }
+const { page = false } = Astro.props;
+const Heading = page ? 'h1' : 'h2';
 ---
-<section class="section contact" id="contact">
+<section class:list={['section contact', { 'is-page': page }]} id="contact">
   <div class="container">
     <div class="panel card">
-      <div class="intro" data-reveal>
+      <div class="intro" data-reveal={page ? undefined : ''}>
         <span class="eyebrow">{contact.eyebrow}</span>
-        <h2 class="h-display">{contact.title}</h2>
+        <Heading class="h-display">{contact.title}</Heading>
         <p>{contact.sub}</p>
         <div class="book">
           <a class="btn btn-glass" href={site.bookingUrl} target="_blank" rel="noopener">Book a 15-minute call</a>
@@ -19,7 +26,7 @@ import { contact, site } from '../content/site';
         </div>
       </div>
 
-      <form class="form" data-contact-form novalidate data-reveal style="--i:1">
+      <form class="form" data-contact-form novalidate data-reveal={page ? undefined : ''} style="--i:1">
         <div class="row2">
           <label class="field">
             <span>Name</span>
@@ -124,6 +131,7 @@ import { contact, site } from '../content/site';
 </script>
 
 <style>
+  .is-page { padding-top: clamp(32px, 5vw, 64px); }
   .panel {
     display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     gap: clamp(40px, 6vw, 88px);
@@ -132,6 +140,7 @@ import { contact, site } from '../content/site';
     overflow: hidden;
   }
   /* Light catching the top edge of the panel */
+  .is-page { padding-top: clamp(32px, 5vw, 64px); }
   .panel { background: radial-gradient(60% 50% at 20% 0%, rgba(255, 255, 255, 0.07), transparent 70%), linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)); }
   .intro { display: grid; gap: 20px; align-content: start; position: relative; }
   .intro p { color: var(--ink-2); font-size: 0.92rem; max-width: 400px; }
@@ -176,7 +185,8 @@ import { contact, site } from '../content/site';
   .note[data-state='error'] { color: #ff9b9b; }
 
   @media (max-width: 900px) {
-    .panel { grid-template-columns: 1fr; }
+    .is-page { padding-top: clamp(32px, 5vw, 64px); }
+  .panel { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) {
     .row2 { grid-template-columns: 1fr; }

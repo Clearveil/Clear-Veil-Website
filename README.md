@@ -54,6 +54,8 @@ src/
     index.astro          → /
     about.astro          → /about
     work.astro           → /work
+    work/[slug].astro    → /work/<client>   (one case study per item in site.ts → work)
+    contact.astro        → /contact
     terms.astro          → /terms
     privacy.astro        → /privacy
     404.astro            → any missing page
@@ -64,8 +66,8 @@ public/                  ← files served as-is (videos, images, icons, og.png)
 Every page is pre-built as plain HTML, so the site is fast and almost nothing can
 break at runtime. The only server code is `api/contact.ts`.
 
-Old Framer URLs (`/terms-conditions`, `/privacy-policy`, `/contact`) redirect to
-the new pages, so existing links keep working.
+Old Framer URLs (`/terms-conditions`, `/privacy-policy`) redirect to the new
+pages, so existing links keep working. `/contact` is a real page, same URL as before.
 
 ## Environment variables (keys and IDs)
 

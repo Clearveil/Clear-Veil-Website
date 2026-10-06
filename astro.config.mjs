@@ -16,7 +16,6 @@ export default defineConfig({
   redirects: {
     '/terms-conditions': '/terms',
     '/privacy-policy': '/privacy',
-    '/contact': '/#contact',
   },
   build: { format: 'file' },
 });
