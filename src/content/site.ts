@@ -243,6 +243,21 @@ export const partnersSection = {
   sub: 'We hold certifications and partner access across Meta, Google, Shopify, Wix and more, so your campaigns, store and tracking are set up the way each platform intends.',
 };
 
+/** About page: "The difference" comparison (consolidated from the old site's 8 rows). */
+export const comparison = {
+  eyebrow: 'The difference',
+  title: 'Simple, and transparent at every step.',
+  them: 'Other agencies',
+  us: 'Clear Veil',
+  rows: [
+    { topic: 'Contracts', them: 'Long-term contracts', us: 'Month-to-month' },
+    { topic: 'Communication', them: 'Monthly meetings, slow replies', us: 'Weekly meetings and prompt team chats' },
+    { topic: 'Reporting', them: 'Little to no reporting', us: 'Weekly, monthly and yearly reports, plus a client portal' },
+    { topic: 'Billing', them: 'Service fees blended into ad spend', us: 'Service fees kept separate from your ad spend' },
+    { topic: 'Focus', them: 'Focused on their profit', us: 'Focused on your business' },
+  ],
+};
+
 /** About page: community / chamber memberships. Add badges to `badges` as you join more. */
 // TODO(owner): confirm wording
 export const community = {

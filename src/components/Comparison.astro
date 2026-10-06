@@ -1,0 +1,114 @@
+---
+/**
+ * "Other agencies vs Clear Veil" comparison. The Clear Veil column is a lit
+ * glass card running the full height. Data: src/content/site.ts → comparison
+ */
+import { comparison as c } from '../content/site';
+const rows = c.rows.length;
+---
+<section class="section comparison">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">{c.eyebrow}</span>
+      <h2 class="h-display">{c.title}</h2>
+    </div>
+
+    <div class="table" role="table" aria-label={`${c.them} compared with ${c.us}`} data-reveal>
+      <div class="hl glass" aria-hidden="true" style={`grid-row: 1 / span ${rows + 1}`}></div>
+
+      <div class="row head" role="row">
+        <span class="topic" role="columnheader"><span class="sr-only">Topic</span></span>
+        <span class="them" role="columnheader">{c.them}</span>
+        <span class="us" role="columnheader">{c.us}</span>
+      </div>
+
+      {c.rows.map((r) => (
+        <div class="row" role="row">
+          <span class="topic" role="rowheader">{r.topic}</span>
+          <span class="them" role="cell">
+            <i class="x" aria-hidden="true"></i>{r.them}
+          </span>
+          <span class="us" role="cell">
+            <i class="check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="m4 8.5 2.6 2.5L12 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </i>{r.us}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .table {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(120px, 0.6fr) minmax(0, 1fr) minmax(0, 1.15fr);
+  }
+  /* Rows share the table's columns so the highlight lines up exactly */
+  .row { display: contents; }
+  .row > span {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid var(--line);
+    font-size: var(--fs-card); line-height: 1.5;
+  }
+  .row.head > span { border-top: 0; padding-top: 28px; padding-bottom: 18px; }
+
+  .topic { color: var(--ink-3); font-size: var(--fs-card-meta) !important; letter-spacing: 0.02em; }
+  .them { color: rgba(255, 255, 255, 0.45); }
+  .us { color: #fff; }
+  .row.head .them { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  .row.head .us { font-size: 1.05rem; font-weight: 500; letter-spacing: -0.02em; }
+
+  /* Lit glass column behind "Clear Veil" */
+  .hl {
+    /* Floats behind column 3 without taking a grid cell */
+    position: absolute; inset: 0; z-index: 0;
+    grid-column: 3;
+    border-radius: var(--r-lg);
+    --glass-fill-top: rgba(255, 255, 255, 0.09);
+    --rim: rgba(255, 255, 255, 0.55);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.22),
+      inset 0 12px 24px -16px rgba(255, 255, 255, 0.28),
+      0 18px 40px -18px rgba(0, 0, 0, 0.85),
+      0 0 60px -20px rgba(255, 255, 255, 0.18);
+  }
+  .hl::after { display: none; }
+  .us { border-top-color: rgba(255, 255, 255, 0.07) !important; }
+
+  .x, .check {
+    flex: none; display: grid; place-items: center;
+    width: 22px; height: 22px; border-radius: 50%;
+  }
+  .x { position: relative; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+  .x::before, .x::after {
+    content: ''; position: absolute; width: 8px; height: 1.3px; border-radius: 1px;
+    background: rgba(255, 255, 255, 0.35); transform: rotate(45deg);
+  }
+  .x::after { transform: rotate(-45deg); }
+  .check {
+    color: #fff;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.06));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 12px -2px rgba(255, 255, 255, 0.3);
+  }
+  .check svg { width: 13px; height: 13px; }
+
+  /* Phones: each topic becomes its own small block, ours on top of theirs */
+  @media (max-width: 720px) {
+    .table { grid-template-columns: 1fr; gap: 10px; }
+    .hl, .row.head { display: none; }
+    .row {
+      display: grid; gap: 0;
+      border-radius: 18px; overflow: hidden;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+    .row > span { border-top: 0; padding: 12px 18px; }
+    .topic { padding-top: 16px !important; padding-bottom: 4px !important; }
+    .us { order: 2; padding-bottom: 6px !important; }
+    .them { order: 3; padding-bottom: 16px !important; }
+  }
+</style>
