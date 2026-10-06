@@ -43,11 +43,11 @@ export const hero = {
   primary: { label: 'Book a 15-minute call', href: site.bookingUrl },
   // The 9:16 reel. Clip 1 loads with the page; 2 and 3 load only when needed.
   // audio: true once a clip file has a sound track (the sound button only
-  // shows for clips that do). TODO(owner): current files are video-only.
+  // shows for clips that do).
   clips: [
-    { src: '/media/clip-1.mp4', poster: '/media/clip-1.jpg', audio: false },
-    { src: '/media/clip-2.mp4', poster: '/media/clip-2.jpg', audio: false },
-    { src: '/media/clip-3.mp4', poster: '/media/clip-3.jpg', audio: false },
+    { src: '/media/clip-1.mp4', poster: '/media/clip-1.jpg', audio: true },
+    { src: '/media/clip-2.mp4', poster: '/media/clip-2.jpg', audio: true },
+    { src: '/media/clip-3.mp4', poster: '/media/clip-3.jpg', audio: true },
   ],
 };
 
