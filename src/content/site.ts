@@ -228,15 +228,15 @@ export const work: CaseStudy[] = [
   {
     slug: 'visionworld',
     client: 'Visionworld',
-    what: 'From a failed release to $30k+ in sales at a 4x ROAS',
+    what: 'From a failed release to $75k+ in sales on a single product',
     services: ['Meta ads', 'SMS', 'Strategy'],
     instagram: 'visionworldus',
-    result: '$30k+ sales, 4x ROAS',
+    result: '$12k in 15 minutes',
     results: [
-      { value: '$30k+', label: 'In sales' },
+      { value: '$75k+', label: 'In sales on one product' },
+      { value: '$12k', label: 'In 15 minutes on the re-release' },
       { value: '4x', label: 'Average ROAS' },
       { value: '4x', label: 'SMS list growth' },
-      { value: '+10k', label: 'Instagram followers' },
     ],
     story: [
       {
@@ -260,7 +260,8 @@ export const work: CaseStudy[] = [
         heading: 'The result',
         body: [
           'The first rollout did $12,000+ in sales at a 4x average ROAS, and the SMS list doubled in two weeks.',
-          'Since then, sales have passed $30,000, the SMS list has grown more than 4x and Instagram is up 10,000+ followers. We’re on pace for over $250k in revenue in our first year together.',
+          'When we brought that product back, the re-release did $12,000 in 15 minutes. It has now brought in more than $75,000 in sales on its own.',
+          'Along the way, the SMS list has grown more than 4x and Instagram is up 10,000+ followers. We’re on pace for over $250k in revenue in our first year together.',
         ],
       },
     ],
