@@ -14,8 +14,8 @@ export const apparel = {
   },
 
   hero: {
-    badge: 'Apparel',
-    status: 'For streetwear, fashion & outdoor brands',
+    badge: 'New',
+    status: 'Now booking growing brands',
     headline: ['Marketing built', 'for your next drop.'],
     lede:
       'We run Meta, Google and Pinterest ads for clothing brands, build every release around your best sellers, and grow the list that sells out the next one.',
