@@ -90,8 +90,11 @@ const Heading = page ? 'h1' : 'h2';
     const label = button.querySelector<HTMLElement>('.label')!;
     const defaultNote = status.textContent;
     const defaultLabel = label.textContent;
-    // Records when the form appeared; submissions faster than a human could type are dropped.
-    (form.elements.namedItem('t') as HTMLInputElement).value = String(Date.now());
+    // Spam check: how long the visitor spent on the form, measured on their own
+    // device (so clock differences between device and server don't matter).
+    // Submissions faster than a human could type are dropped by the server.
+    const loadedAt = performance.now();
+    const elapsedField = form.elements.namedItem('t') as HTMLInputElement;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -112,7 +115,10 @@ const Heading = page ? 'h1' : 'h2';
         const res = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+          body: (() => {
+          elapsedField.value = String(Math.round(performance.now() - loadedAt));
+          return JSON.stringify(Object.fromEntries(new FormData(form)));
+        })(),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) throw new Error(data.error || 'Something went wrong.');

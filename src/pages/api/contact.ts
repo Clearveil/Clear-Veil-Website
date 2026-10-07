@@ -29,8 +29,11 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // Spam checks: pretend success so bots don't learn anything.
-  const startedAt = Number(data.t);
-  if (clean(data.fax, 200) || (startedAt && Date.now() - startedAt < 2500)) {
+  // t = milliseconds the visitor spent on the form, measured in their browser
+  const elapsed = Number(data.t);
+  // Real visitors always send it (the form only submits via its script); bots that
+  // post directly, fill the hidden field, or submit in under 2.5s are dropped quietly.
+  if (clean(data.fax, 200) || !Number.isFinite(elapsed) || elapsed < 2500) {
     return json({ ok: true });
   }
 
