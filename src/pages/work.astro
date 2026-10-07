@@ -6,6 +6,10 @@ import { work, reviews, site, logoFor } from '../content/site';
 import Arrow from '../components/Arrow.astro';
 
 // Pair each project with that client's Google review, when there is one.
+// Search snippet built from the top results, so it stays current as numbers change
+const topResults = work.filter((w) => w.result).slice(0, 2).map((w) => `${w.result} for ${w.client}`).join(', ');
+const workDescription = `Real client results: ${topResults}. Case studies in paid ads, websites and creative.`;
+
 const projects = work.map((w) => {
   const c = logoFor(w.client);
   const logo = c && (() => {
@@ -16,7 +20,11 @@ const projects = work.map((w) => {
   return { ...w, logo, review: reviews.find((r) => r.company === w.client) };
 });
 ---
-<Base title="Work" description="Selected Clear Veil Marketing client work across paid ads, websites and creative, in the clients' own words.">
+<Base
+  seoTitle="Case Studies & Client Results | Clear Veil Marketing"
+  description={workDescription}
+  breadcrumbs={[{ name: 'Work', path: '/work' }]}
+>
   <PageHeader eyebrow="Work" title="Selected work" lede="What we did, for whom, in their words." />
 
   <section class="container list">

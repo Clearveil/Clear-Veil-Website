@@ -5,7 +5,7 @@ import PageHeader from '../components/PageHeader.astro';
 interface Props { title: string; updated: string; description: string }
 const { title, updated, description } = Astro.props;
 ---
-<Base title={title} description={description}>
+<Base title={title} description={description} breadcrumbs={[{ name: title, path: Astro.url.pathname }]}>
   <PageHeader eyebrow="Legal" title={title} lede={`Last updated ${updated}`} />
   <article class="container prose">
     <slot />

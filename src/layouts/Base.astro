@@ -10,14 +10,21 @@ import Tracking from '../components/Tracking.astro';
 import { site } from '../content/site';
 
 interface Props {
-  title?: string;        // page title; the site name is appended automatically
-  description?: string;
+  title?: string;        // short page name; "| Clear Veil Marketing" is appended
+  seoTitle?: string;     // full title for search results (overrides title), aim for ≤ 60 characters
+  description?: string;  // search snippet, aim for 120–160 characters
   image?: string;        // social share image (1200×630), defaults to /og.png
-  noindex?: boolean;
+  noindex?: boolean;     // keep a page out of Google (e.g. unfinished case studies)
+  type?: 'website' | 'article';
+  breadcrumbs?: { name: string; path: string }[]; // trail after Home, for Google's breadcrumb display
+  schema?: Record<string, unknown>[];             // extra structured data for this page
 }
 
-const { title, description = site.description, image = '/og.png', noindex = false } = Astro.props;
-const fullTitle = title ? `${title} | ${site.name}` : `${site.title} | Marketing built for you`;
+const {
+  title, seoTitle, description = site.description, image = '/og.png', noindex = false,
+  type = 'website', breadcrumbs, schema = [],
+} = Astro.props;
+const fullTitle = seoTitle ?? (title ? `${title} | ${site.name}` : `${site.name} | Paid Ads, Websites & Creative`);
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', site.url).href;
 const ogImage = new URL(image, site.url).href;
 
@@ -34,6 +41,21 @@ const orgSchema = {
   address: { '@type': 'PostalAddress', addressRegion: 'MI', addressCountry: 'US' },
   sameAs: site.social.map((s) => s.href),
 };
+
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
+const pageSchema: Record<string, unknown>[] = [orgSchema];
+if (isHome) {
+  pageSchema.push({ '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url });
+}
+if (breadcrumbs?.length) {
+  const trail = [{ name: 'Home', path: '/' }, ...breadcrumbs];
+  pageSchema.push({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((b, i) => ({ '@type': 'ListItem', position: i + 1, name: b.name, item: new URL(b.path, site.url).href })),
+  });
+}
+pageSchema.push(...schema);
 ---
 <!doctype html>
 <html lang="en">
@@ -50,7 +72,7 @@ const orgSchema = {
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -63,7 +85,7 @@ const orgSchema = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+    {pageSchema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
 
     <!-- Marks JS as available so scroll reveals can hide content until it's in view -->
     <script is:inline>document.documentElement.classList.add('js')</script>

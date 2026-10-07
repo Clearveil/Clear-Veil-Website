@@ -24,11 +24,40 @@ const logo = c && (() => {
   return { src: c.logo, h, w: Math.round(h * ratio) };
 })();
 const draft = import.meta.env.DEV;
+
+// ── SEO ──
+// Pages without a write-up stay out of Google until the story is added.
+const hasStory = Boolean(study.story?.length);
+const lowerFirst = (t: string) => t.charAt(0).toLowerCase() + t.slice(1);
+const withResult = study.result ? `${study.client} Case Study: ${study.result} | Clear Veil` : '';
+const seoTitle = withResult && withResult.length <= 62 ? withResult : `${study.client} Case Study | Clear Veil Marketing`;
+// Add the services list only if the description still fits Google's ~160 characters
+const seoBase = `How Clear Veil Marketing helped ${study.client}: ${lowerFirst(study.what)}.${study.result ? ` ${study.result}.` : ''}`;
+const seoWithServices = `${seoBase} ${study.services.join(', ')}.`;
+const seoDescription = seoWithServices.length <= 160 ? seoWithServices : seoBase;
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: `${study.client} case study`,
+  description: seoDescription,
+  url: new URL(`/work/${study.slug}`, Astro.site).href,
+  about: { '@type': 'Organization', name: study.client, ...(study.site ? { url: study.site } : {}) },
+  author: { '@type': 'Organization', name: 'Clear Veil Marketing Inc.', url: Astro.site?.href },
+  publisher: { '@type': 'Organization', name: 'Clear Veil Marketing Inc.', url: Astro.site?.href },
+  ...(c ? { image: new URL(c.logo, Astro.site).href } : {}),
+};
 // 'https://www.example.com/' → 'example.com' for display
 const siteLabel = study.site && new URL(study.site).hostname.replace(/^www\./, '');
 const draftSections = ['The brief', 'What we did', 'The result'];
 ---
-<Base title={`${study.client} case study`} description={`${study.client}: ${study.what}. A Clear Veil Marketing case study.`}>
+<Base
+  seoTitle={seoTitle}
+  description={seoDescription}
+  type="article"
+  noindex={!hasStory}
+  breadcrumbs={[{ name: 'Work', path: '/work' }, { name: study.client, path: `/work/${study.slug}` }]}
+  schema={[articleSchema]}
+>
   <article>
     <header class="container head">
       <a class="back" href="/work"><Arrow /> All work</a>
