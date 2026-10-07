@@ -6,10 +6,14 @@
  * 3. Emails the submission to CONTACT_TO_EMAIL via Resend, with Reply-To set to
  *    the visitor so you can just hit "reply".
  *
- * Env vars (see .env.example): RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL
+ * 4. Reports the Lead to Meta from the server (Conversions API) — see src/lib/meta-capi.ts.
+ *
+ * Env vars (see .env.example): RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL,
+ * META_CAPI_TOKEN
  */
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
+import { sendMetaEvent } from '../../lib/meta-capi';
 
 export const prerender = false;
 
@@ -96,6 +100,13 @@ export const POST: APIRoute = async ({ request }) => {
     if (error) throw new Error(error.message);
     // Resend's message ID: proof of delivery handoff, searchable in Resend → Emails
     console.log('Contact form: sent via Resend', sent?.id);
+    // Same event_id as the browser pixel, so Meta counts this lead once
+    await sendMetaEvent({
+      request, eventName: 'Lead', email, name,
+      eventId: clean(data.eventId, 64) || undefined,
+      sourceUrl: clean(data.page, 500) || undefined,
+      customData: source ? { lead_source: source } : undefined,
+    });
     return json({ ok: true });
   } catch (err) {
     console.error('Contact form: Resend error', err);

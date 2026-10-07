@@ -108,6 +108,8 @@ const Heading = page ? 'h1' : 'h2';
         return;
       }
 
+      // Shared by the browser pixel and the server copy (Conversions API) so Meta de-duplicates
+      const eventId = `lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
       button.disabled = true;
       label.textContent = 'Sending…';
       status.textContent = defaultNote;
@@ -119,13 +121,13 @@ const Heading = page ? 'h1' : 'h2';
           headers: { 'Content-Type': 'application/json' },
           body: (() => {
           elapsedField.value = String(Math.round(performance.now() - loadedAt));
-          return JSON.stringify(Object.fromEntries(new FormData(form)));
+          return JSON.stringify({ ...Object.fromEntries(new FormData(form)), eventId, page: location.href });
         })(),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) throw new Error(data.error || 'Something went wrong.');
 
-        window.fbq?.('track', 'Lead');
+        window.fbq?.('track', 'Lead', {}, { eventID: eventId });
         window.dispatchEvent(new CustomEvent('cv:sent'));
         (window.dataLayer ||= []).push({ event: 'generate_lead', form: 'contact' });
 
