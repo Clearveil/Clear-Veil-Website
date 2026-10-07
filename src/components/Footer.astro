@@ -3,6 +3,7 @@ import Mark from './Mark.astro';
 import Wordmark from './Wordmark.astro';
 import { footer, nav, site } from '../content/site';
 const year = new Date().getFullYear();
+const { minimal = false } = Astro.props as { minimal?: boolean };
 ---
 <footer class="footer">
   <div class="container">
@@ -16,7 +17,7 @@ const year = new Date().getFullYear();
         <a class="phone" href={`tel:${site.phone}`}>Call or text {site.phoneDisplay}</a>
         <a href={site.bookingUrl} class="btn btn-glass btn-sm" target="_blank" rel="noopener">Book a 15-minute call</a>
       </div>
-      <div class="cols">
+      <div class="cols" hidden={minimal}>
         <div>
           <h2>Navigate</h2>
           <ul>
@@ -60,6 +61,7 @@ const year = new Date().getFullYear();
   .phone { color: #fff; font-weight: 500; margin-top: -8px; transition: opacity var(--t-fast) var(--ease); }
   .phone:hover { opacity: 0.75; }
 
+  .cols[hidden] { display: none; }
   .cols { display: flex; gap: clamp(48px, 8vw, 120px); }
   h2 { font-size: 0.8125rem; letter-spacing: 0; color: var(--ink-3); font-weight: 500; margin-bottom: 18px; }
   ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }

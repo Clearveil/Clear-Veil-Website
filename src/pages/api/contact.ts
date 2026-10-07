@@ -42,6 +42,7 @@ export const POST: APIRoute = async ({ request }) => {
   const business = clean(data.business, 200);
   const budget = clean(data.budget, 60);
   const referral = clean(data.referral, 200);
+  const source = clean(data.source, 80); // set by landing pages, e.g. "Apparel landing page"
   const message = clean(data.message, 5000);
 
   if (!name || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -59,6 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
     ['Business / website', business || '—'],
     ['Monthly ad budget', budget || '—'],
     ['Heard about us / Referral', referral || '—'],
+    ...(source ? [['Came from', source] as [string, string]] : []),
   ];
   const text = `${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\n${message}`;
 
@@ -87,7 +89,7 @@ export const POST: APIRoute = async ({ request }) => {
       from,
       to: to.split(',').map((s: string) => s.trim()),
       replyTo: email,
-      subject: `New enquiry: ${name}${business ? ` (${business})` : ''}`,
+      subject: `${source ? `[${source}] ` : ''}New enquiry: ${name}${business ? ` (${business})` : ''}`,
       text,
       html,
     });

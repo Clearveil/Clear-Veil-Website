@@ -1,9 +1,11 @@
 ---
-import { stats } from '../content/site';
+import { stats as defaultStats } from '../content/site';
+interface Props { items?: { value: string; label: string }[] }
+const { items: stats = defaultStats } = Astro.props;
 ---
 <section class="stats-section">
   <div class="container">
-    <div class="band card" data-reveal>
+    <div class="band card" data-reveal style={`--n:${stats.length}`}>
       {stats.map((s, i) => (
         <div class="stat" style={`--i:${i}`}>
           <span class="value">{s.value}</span>
@@ -17,7 +19,7 @@ import { stats } from '../content/site';
 <style>
   .stats-section { padding-top: clamp(56px, 7vw, 96px); }
   .band {
-    display: grid; grid-template-columns: repeat(3, 1fr);
+    display: grid; grid-template-columns: repeat(var(--n, 3), 1fr);
     border-radius: var(--r-xl); overflow: hidden;
   }
   .stat {
@@ -33,8 +35,14 @@ import { stats } from '../content/site';
   }
   .label { color: var(--ink-2); font-size: var(--fs-card); }
 
+  /* Four numbers: 2x2 on tablets and phones */
+  @media (max-width: 900px) {
+    .band[style*="--n:4"] { grid-template-columns: 1fr 1fr; }
+    .band[style*="--n:4"] .stat:nth-child(odd) { box-shadow: none; }
+    .band[style*="--n:4"] .stat:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  }
   @media (max-width: 720px) {
-    .band { grid-template-columns: 1fr; }
+    .band:not([style*="--n:4"]) { grid-template-columns: 1fr; }
     .stat + .stat { box-shadow: inset 0 1px 0 var(--line); }
     .stat { padding: 28px 24px; }
   }

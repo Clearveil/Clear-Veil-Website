@@ -1,0 +1,259 @@
+---
+/**
+ * Unbranded e-commerce dashboard animation for the apparel landing page.
+ * When it scrolls into view: the sales chart draws, KPIs count up, then new
+ * orders keep sliding into the live feed (adding to the totals) while visible.
+ * Illustrative only — the caption says so.
+ */
+interface Props { eyebrow?: string; title?: string; sub?: string }
+const {
+  eyebrow = 'Release day',
+  title = 'What a drop looks like when the plan works.',
+  sub = 'Ads warm up your audience before launch, your SMS list gets first access, and spend follows what’s selling.',
+} = Astro.props;
+
+// Chart: a quiet morning, the drop at ~6 PM, then a strong evening.
+const W = 600, H = 200;
+const values = [6, 8, 7, 10, 9, 12, 11, 14, 13, 17, 16, 20, 62, 88, 80, 92, 84, 96, 90, 100];
+const pts = values.map((v, i) => [Math.round((i / (values.length - 1)) * W), Math.round(H - 12 - (v / 100) * (H - 30))]);
+// Smooth line (Catmull-Rom → Bézier)
+const d = pts.reduce((acc, p, i, a) => {
+  if (i === 0) return `M${p[0]},${p[1]}`;
+  const p0 = a[i - 2] || a[i - 1], p1 = a[i - 1], p3 = a[i + 1] || p;
+  const c1 = [p1[0] + (p[0] - p0[0]) / 6, p1[1] + (p[1] - p0[1]) / 6];
+  const c2 = [p[0] - (p3[0] - p1[0]) / 6, p[1] - (p3[1] - p1[1]) / 6];
+  return `${acc} C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p[0]},${p[1]}`;
+}, '');
+const area = `${d} L${W},${H} L0,${H} Z`;
+const drop = pts[12];
+
+const kpis = [
+  { key: 'sales', label: 'Total sales', prefix: '$', value: 14280 },
+  { key: 'orders', label: 'Orders', value: 168 },
+  { key: 'conv', label: 'Conversion rate', suffix: '%', value: 3.8, decimals: 1 },
+  { key: 'sessions', label: 'Sessions', value: 4420 },
+];
+---
+<section class="section dash-section">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 class="h-display">{title}</h2>
+      <p>{sub}</p>
+    </div>
+
+    <div class="dash card" data-dash data-reveal style="--i:1">
+      <div class="bar">
+        <span class="store">Store overview</span>
+        <span class="live"><i></i>Live</span>
+        <span class="chip">Today</span>
+      </div>
+
+      <div class="body">
+        <div class="main">
+          <div class="kpis">
+            {kpis.map((k) => (
+              <div class="kpi">
+                <span class="k-label">{k.label}</span>
+                <span class="k-value" data-kpi={k.key} data-to={k.value} data-prefix={k.prefix ?? ''} data-suffix={k.suffix ?? ''} data-dec={k.decimals ?? 0}>
+                  {k.prefix}{k.value.toLocaleString('en-US', { minimumFractionDigits: k.decimals ?? 0, maximumFractionDigits: k.decimals ?? 0 })}{k.suffix}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div class="chart">
+            <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="dash-fill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#fff" stop-opacity="0.22" />
+                  <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              {[0.25, 0.5, 0.75].map((y) => <line x1="0" x2={W} y1={H * y} y2={H * y} class="grid" />)}
+              <path d={area} class="area" fill="url(#dash-fill)" />
+              <path d={d} class="line" />
+              <line x1={drop[0]} x2={drop[0]} y1="8" y2={H} class="drop-line" />
+            </svg>
+            <span class="drop-tag" style={`left:${(drop[0] / W) * 100}%`}>Drop goes live</span>
+            <div class="hours" aria-hidden="true"><span>9 AM</span><span>12 PM</span><span>3 PM</span><span>6 PM</span><span>9 PM</span></div>
+          </div>
+        </div>
+
+        <div class="feed">
+          <span class="f-title">Live orders</span>
+          <ul data-feed aria-live="off"></ul>
+        </div>
+      </div>
+    </div>
+    <p class="note">Illustration of a release-day dashboard, not real client data.</p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-dash]');
+  if (root) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const feed = root.querySelector<HTMLUListElement>('[data-feed]')!;
+    const kpiEls = Object.fromEntries(
+      [...root.querySelectorAll<HTMLElement>('[data-kpi]')].map((el) => [el.dataset.kpi!, el]),
+    );
+    const state = { sales: 14280, orders: 168, conv: 3.8, sessions: 4420 };
+    const fmt = (el: HTMLElement, v: number) => {
+      const dec = Number(el.dataset.dec || 0);
+      el.textContent = `${el.dataset.prefix}${v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec })}${el.dataset.suffix}`;
+    };
+    const render = () => Object.entries(state).forEach(([k, v]) => fmt(kpiEls[k], v));
+
+    const products = [
+      ['Heavyweight Tee', 'Washed Black', 48], ['Logo Hoodie', 'Bone', 92], ['Cargo Pant', 'Stone', 86],
+      ['Fleece Half-Zip', 'Moss', 110], ['Graphic Tee', 'Faded Brown', 44], ['Packable Shell', 'Olive', 138],
+      ['Trucker Cap', 'Black', 36], ['Boxy Tee', 'Slate', 46], ['Puffer Vest', 'Charcoal', 124],
+    ] as const;
+    const cities = ['Brooklyn, NY', 'Austin, TX', 'Denver, CO', 'Portland, OR', 'Chicago, IL', 'Los Angeles, CA', 'Detroit, MI', 'Seattle, WA'];
+    let orderNo = 1043, pi = 0, ci = 0;
+    const shirt = '<svg viewBox="0 0 24 24" fill="none"><path d="M8 4 4 6.5 5.5 10 7 9.3V20h10V9.3l1.5.7L20 6.5 16 4a4 4 0 0 1-8 0Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+
+    const addOrder = (animate = true) => {
+      const [name, color, price] = products[pi++ % products.length];
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="thumb">${shirt}</span><span class="o-main"><b>${name} — ${color}</b><small>#${orderNo++} · ${cities[ci++ % cities.length]}</small></span><span class="o-price">$${price}</span>`;
+      if (animate) li.classList.add('in');
+      feed.prepend(li);
+      while (feed.children.length > 5) feed.lastElementChild!.remove();
+      return price;
+    };
+
+    // Seed the feed so it never starts empty
+    for (let i = 0; i < 4; i++) addOrder(false);
+
+    if (reduced) {
+      root.classList.add('drawn');
+    } else {
+      let timer: number | undefined;
+      let started = false;
+      const countUp = () => {
+        const from = { sales: 0, orders: 0, conv: 0, sessions: 0 };
+        const to = { ...state };
+        const t0 = performance.now(), dur = 2200;
+        const step = (t: number) => {
+          const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+          (Object.keys(to) as (keyof typeof to)[]).forEach((k) => fmt(kpiEls[k], from[k] + (to[k] - from[k]) * e));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      };
+      const tick = () => {
+        const price = addOrder(true);
+        state.orders += 1;
+        state.sales += price;
+        state.sessions += Math.round(18 + Math.random() * 30);
+        state.conv = Math.min(4.6, +(state.conv + 0.02).toFixed(2));
+        render();
+      };
+      new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) {
+          if (!started) { started = true; root.classList.add('drawn'); countUp(); }
+          timer ??= window.setInterval(tick, 1700);
+        } else if (timer) {
+          clearInterval(timer); timer = undefined;
+        }
+      }, { threshold: 0.35 }).observe(root);
+    }
+  }
+</script>
+
+<style>
+  .dash { border-radius: var(--r-xl); padding: 0; overflow: hidden; }
+
+  .bar {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 22px; border-bottom: 1px solid var(--line);
+  }
+  .store { font-size: var(--fs-card); font-weight: 500; }
+  .live { display: inline-flex; align-items: center; gap: 7px; font-size: var(--fs-card-meta); color: var(--ink-2); }
+  .live i {
+    width: 7px; height: 7px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.55);
+    animation: blink 2.4s ease-in-out infinite;
+  }
+  @keyframes blink { 50% { opacity: 0.35; } }
+  .chip {
+    margin-left: auto; font-size: var(--fs-card-meta); color: var(--ink-2);
+    padding: 4px 12px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  .body { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+  .main { padding: 24px 24px 18px; display: grid; gap: 22px; }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .kpi {
+    display: grid; gap: 6px; padding: 14px 16px; border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  .k-label { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  .k-value {
+    font-size: clamp(1.15rem, 0.9rem + 0.8vw, 1.6rem); letter-spacing: -0.04em; line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(180deg, #fff 40%, rgba(255, 255, 255, 0.62));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  .chart { position: relative; height: 210px; }
+  .chart svg { position: absolute; inset: 0 0 22px; width: 100%; height: calc(100% - 22px); overflow: visible; }
+  .grid { stroke: rgba(255, 255, 255, 0.06); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  /* The line wipes in from left to right */
+  .line {
+    fill: none; stroke: #fff; stroke-width: 2; vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.45));
+    clip-path: inset(-20px 100% -20px 0);
+    transition: clip-path 2.4s var(--ease-in-out);
+  }
+  .area { opacity: 0; transition: opacity 1.2s var(--ease) 1.4s; }
+  .drop-line { stroke: rgba(255, 255, 255, 0.28); stroke-width: 1; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; opacity: 0; transition: opacity var(--t) var(--ease) 1.6s; }
+  .drop-tag {
+    position: absolute; top: 0; transform: translateX(-50%);
+    font-size: 0.68rem; color: #fff; white-space: nowrap;
+    padding: 3px 9px; border-radius: 999px;
+    background: rgba(20, 20, 20, 0.85); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    opacity: 0; transition: opacity var(--t) var(--ease) 1.7s;
+  }
+  .dash.drawn .line { clip-path: inset(-20px 0 -20px 0); }
+  .dash.drawn .area, .dash.drawn .drop-line, .dash.drawn .drop-tag { opacity: 1; }
+  .hours { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--ink-3); }
+
+  .feed { border-left: 1px solid var(--line); padding: 24px 20px; display: grid; align-content: start; gap: 14px; }
+  .f-title { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  ul :global(li) {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  ul :global(li.in) { animation: slide-in 700ms var(--ease) both; }
+  @keyframes slide-in { from { opacity: 0; transform: translateY(-10px) scale(0.98); } }
+  ul :global(.thumb) {
+    display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+  ul :global(.thumb svg) { width: 18px; height: 18px; }
+  ul :global(.o-main) { display: grid; gap: 2px; min-width: 0; }
+  ul :global(.o-main b) { font-weight: 500; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ul :global(.o-main small) { font-size: 0.7rem; color: var(--ink-3); }
+  ul :global(.o-price) { font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+
+  .note { margin-top: 12px; font-size: 0.7rem; color: var(--ink-3); text-align: center; }
+
+  @media (max-width: 900px) {
+    .body { grid-template-columns: 1fr; }
+    .feed { border-left: 0; border-top: 1px solid var(--line); }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    ul :global(li:nth-child(n + 4)) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .line { clip-path: none; } .area, .drop-line, .drop-tag { opacity: 1; }
+  }
+</style>

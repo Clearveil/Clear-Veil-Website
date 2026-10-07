@@ -6,12 +6,16 @@
  * - Pauses when scrolled out of view. Respects "reduce motion" (no autoplay).
  */
 import { hero } from '../content/site';
-const clips = hero.clips;
+
+type Clip = { src: string; poster: string; audio?: boolean };
+interface Props { clips?: Clip[]; ghosts?: string[] } // ghosts: faded images stacked behind
+const { clips = hero.clips as Clip[], ghosts } = Astro.props;
+const ghostImgs = ghosts ?? [clips[1]?.poster, clips[2]?.poster].filter(Boolean);
 ---
 <div class="reel-wrap" data-reel>
   <div class="stack" aria-hidden="true">
-    <img src={clips[1]?.poster} alt="" class="ghost g1" width="540" height="960" loading="lazy" decoding="async" />
-    <img src={clips[2]?.poster} alt="" class="ghost g2" width="540" height="960" loading="lazy" decoding="async" />
+    {ghostImgs[0] && <img src={ghostImgs[0]} alt="" class="ghost g1" width="540" height="960" loading="lazy" decoding="async" />}
+    {ghostImgs[1] && <img src={ghostImgs[1]} alt="" class="ghost g2" width="540" height="960" loading="lazy" decoding="async" />}
   </div>
 
   <div class="reel">

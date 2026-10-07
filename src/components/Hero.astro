@@ -3,26 +3,36 @@ import Reel from './Reel.astro';
 import Mark from './Mark.astro';
 import ContactIcons from './ContactIcons.astro';
 import { hero } from '../content/site';
+
+type Clip = { src: string; poster: string; audio?: boolean };
+interface Props {
+  status?: string; badge?: string; headline?: string[]; lede?: string;
+  primary?: { label: string; href: string };
+  clips?: Clip[]; ghosts?: string[];
+}
+const {
+  status = hero.status, badge = 'New', headline = hero.headline, lede = hero.lede,
+  primary = hero.primary, clips, ghosts,
+} = Astro.props;
 ---
 <section class="hero">
   <div class="container grid">
     <div class="copy">
-      <span class="status glass"><b>New</b>{hero.status}</span>
+      <span class="status glass"><b>{badge}</b>{status}</span>
       <Mark class="mark" />
       <h1>
-        <span>{hero.headline[0]}</span>
-        <span>{hero.headline[1]}</span>
+        {headline.map((line) => <span>{line}</span>)}
       </h1>
-      <p class="lede">{hero.lede}</p>
+      <p class="lede">{lede}</p>
       <div class="actions">
-        <a class="btn btn-glass" href={hero.primary.href} target="_blank" rel="noopener">
-          {hero.primary.label}
+        <a class="btn btn-glass" href={primary.href} target="_blank" rel="noopener">
+          {primary.label}
         </a>
         <ContactIcons />
       </div>
     </div>
     <div class="media">
-      <Reel />
+      <Reel clips={clips} ghosts={ghosts} />
     </div>
   </div>
 </section>

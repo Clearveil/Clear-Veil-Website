@@ -1,0 +1,29 @@
+---
+/**
+ * Apparel landing page for ads (Meta/Google/Pinterest traffic).
+ * Not linked from the menu, kept out of Google (noindex) and the sitemap.
+ * All wording lives in src/content/apparel.ts.
+ */
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import LogoStrip from '../components/LogoStrip.astro';
+import Stats from '../components/Stats.astro';
+import SalesDashboard from '../components/SalesDashboard.astro';
+import Channels from '../components/Channels.astro';
+import Process from '../components/Process.astro';
+import WorkPills from '../components/WorkPills.astro';
+import Reviews from '../components/Reviews.astro';
+import Contact from '../components/Contact.astro';
+import { apparel as a } from '../content/apparel';
+---
+<Base seoTitle={a.meta.title} description={a.meta.description} noindex minimal>
+  <Hero {...a.hero} />
+  <LogoStrip only={a.logos} label="Trusted by streetwear, fashion and outdoor brands" />
+  <Stats items={a.stats} />
+  <SalesDashboard />
+  <Channels eyebrow={a.channels.eyebrow} title={a.channels.title} intro={a.channels.intro} channels={a.channels.items} />
+  <Process content={a.playbook} />
+  <WorkPills eyebrow="Apparel work" title="Brands we’ve grown" only={a.work} limit={5} />
+  <Reviews only={a.reviews} title="What clothing brands say about working with us." />
+  <Contact title={a.contact.title} sub={a.contact.sub} source={a.contact.source} />
+</Base>

@@ -18,11 +18,12 @@ interface Props {
   type?: 'website' | 'article';
   breadcrumbs?: { name: string; path: string }[]; // trail after Home, for Google's breadcrumb display
   schema?: Record<string, unknown>[];             // extra structured data for this page
+  minimal?: boolean;     // ad landing pages: stripped-down header/footer
 }
 
 const {
   title, seoTitle, description = site.description, image = '/og.png', noindex = false,
-  type = 'website', breadcrumbs, schema = [],
+  type = 'website', breadcrumbs, schema = [], minimal = false,
 } = Astro.props;
 const fullTitle = seoTitle ?? (title ? `${title} | ${site.name}` : `${site.name} | Paid Ads, Websites & Creative`);
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', site.url).href;
@@ -96,11 +97,11 @@ pageSchema.push(...schema);
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="glow" aria-hidden="true"></div>
     <div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
-    <Nav />
+    <Nav minimal={minimal} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer minimal={minimal} />
 
     <script>
       // Liquid-glass sheen: tell each glass element where the cursor is so its

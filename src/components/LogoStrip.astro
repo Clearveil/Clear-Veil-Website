@@ -1,6 +1,11 @@
 ---
 /** Slow client-logo marquee. Logos are set in src/content/site.ts → clients. */
-import { clients } from '../content/site';
+import { clients as allClients } from '../content/site';
+
+interface Props { only?: string[]; label?: string } // only: client names, in display order
+const { only, label = 'Trusted by growing brands' } = Astro.props;
+// match by name, or by logo path for marks that don't have a name yet
+const clients = only ? only.map((n) => allClients.find((c) => c.name === n || c.logo === n)!).filter(Boolean) : allClients;
 
 // Give every logo roughly the same visual area, so a wide wordmark and a round
 // badge feel equally weighted instead of one dwarfing the other.
@@ -14,7 +19,7 @@ const sized = clients.map((c) => {
 const loop = [...sized, ...sized];
 ---
 <section class="strip" aria-label="Clients we work with">
-  <p class="label">Trusted by growing brands</p>
+  <p class="label">{label}</p>
   <div class="viewport">
     <ul class="track">
       {loop.map((c, i) => (

@@ -7,9 +7,10 @@
 import { work } from '../content/site';
 import Arrow from './Arrow.astro';
 
-interface Props { eyebrow?: string; title?: string; exclude?: string; limit?: number; id?: string }
-const { eyebrow = 'Work', title = 'Recent work', exclude, limit = 5, id = 'work' } = Astro.props;
-const items = work.filter((w) => w.slug !== exclude).slice(0, limit);
+interface Props { eyebrow?: string; title?: string; exclude?: string; only?: string[]; limit?: number; id?: string }
+const { eyebrow = 'Work', title = 'Recent work', exclude, only, limit = 5, id = 'work' } = Astro.props;
+const items = (only ? only.map((s) => work.find((w) => w.slug === s)!).filter(Boolean) : work)
+  .filter((w) => w.slug !== exclude).slice(0, limit);
 ---
 <section class="section work" id={id}>
   <div class="container">

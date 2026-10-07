@@ -10,8 +10,9 @@ import ContactIcons from './ContactIcons.astro';
 import SignalDoodle from './SignalDoodle.astro';
 import { contact, site } from '../content/site';
 
-interface Props { page?: boolean }
-const { page = false } = Astro.props;
+interface Props { page?: boolean; title?: string; sub?: string; source?: string }
+// source: tags leads from landing pages (shown in the lead email)
+const { page = false, title = contact.title, sub = contact.sub, source } = Astro.props;
 const Heading = page ? 'h1' : 'h2';
 ---
 <section class:list={['section contact', { 'is-page': page }]} id="contact">
@@ -19,8 +20,8 @@ const Heading = page ? 'h1' : 'h2';
     <div class="panel card">
       <div class="intro" data-reveal={page ? undefined : ''}>
         <span class="eyebrow">{contact.eyebrow}</span>
-        <Heading class="h-display">{contact.title}</Heading>
-        <p>{contact.sub}</p>
+        <Heading class="h-display">{title}</Heading>
+        <p>{sub}</p>
         <div class="book">
           <a class="btn btn-glass" href={site.bookingUrl} target="_blank" rel="noopener">Book a 15-minute call</a>
           <ContactIcons label="Prefer to talk? Call or text" form={false} />
@@ -65,6 +66,7 @@ const Heading = page ? 'h1' : 'h2';
           <label>Company fax <input name="fax" type="text" tabindex="-1" autocomplete="off" /></label>
         </div>
         <input type="hidden" name="t" value="" />
+        {source && <input type="hidden" name="source" value={source} />}
 
         <div class="submit">
           <button class="btn btn-glass" type="submit">

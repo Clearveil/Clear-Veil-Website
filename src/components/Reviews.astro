@@ -3,8 +3,11 @@
 import { reviews, site, logoFor } from '../content/site';
 import Arrow from './Arrow.astro';
 
+interface Props { only?: string[]; title?: string } // only: company names to show
+const { only, title = 'What clients say about working with us.' } = Astro.props;
+
 // Each review shows its company's logo, sized to a consistent visual weight.
-const withLogos = reviews.map((r) => {
+const withLogos = reviews.filter((r) => !only || only.includes(r.company)).map((r) => {
   const c = logoFor(r.company);
   if (!c) return { ...r, logo: undefined };
   const ratio = c.w / c.h;
@@ -17,7 +20,7 @@ const withLogos = reviews.map((r) => {
     <div class="head">
       <div class="section-head" data-reveal>
         <span class="eyebrow">Reviews</span>
-        <h2 class="h-display">What clients say about working with us.</h2>
+        <h2 class="h-display">{title}</h2>
       </div>
       <a href={site.reviewsUrl} class="google card" target="_blank" rel="noopener" data-reveal>
         <span class="stars" aria-hidden="true">★★★★★</span>

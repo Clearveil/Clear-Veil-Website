@@ -1,5 +1,7 @@
 ---
-import { process } from '../content/site';
+import { process as defaultProcess } from '../content/site';
+interface Props { content?: typeof defaultProcess }
+const { content: process = defaultProcess } = Astro.props;
 ---
 <section class="section process">
   <div class="container">

@@ -8,6 +8,7 @@ import { work } from './src/content/site.ts';
 // them out of the sitemap too. They're added back automatically once written.
 const unfinished = work.filter((w) => !w.story?.length).map((w) => `/work/${w.slug}`);
 const builtAt = new Date().toISOString();
+const adLanding = ['/apparel'];
 
 // Every page is pre-built as static HTML (fast, cheap). The only server code is
 // src/pages/api/contact.ts, which opts out with `export const prerender = false`
@@ -17,7 +18,8 @@ export default defineConfig({
   adapter: vercel(),
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/404') && !unfinished.some((p) => page.endsWith(p)),
+      // Ad landing pages (adLanding) stay out of the sitemap too
+      filter: (page) => !page.includes('/404') && !adLanding.some((p) => page.endsWith(p)) && !unfinished.some((p) => page.endsWith(p)),
       serialize: (item) => ({ ...item, lastmod: builtAt }),
     }),
   ],

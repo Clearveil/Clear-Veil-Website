@@ -1,0 +1,53 @@
+---
+/** Ad channels for a landing page: three glass cards with platform marks. */
+import { partners, pinterest } from '../content/partners';
+
+type Channel = { platform: 'Meta' | 'Google Ads' | 'Pinterest'; name: string; pitch: string; includes: string[] };
+interface Props { eyebrow: string; title: string; intro?: string; channels: Channel[] }
+const { eyebrow, title, intro, channels } = Astro.props;
+
+const marks: Record<Channel['platform'], string> = {
+  Meta: partners.find((p) => p.name === 'Meta')!.path,
+  'Google Ads': partners.find((p) => p.name === 'Google Ads')!.path,
+  Pinterest: pinterest.path,
+};
+---
+<section class="section channels">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 class="h-display">{title}</h2>
+      {intro && <p>{intro}</p>}
+    </div>
+    <div class="grid">
+      {channels.map((c, i) => (
+        <article class="channel card" data-reveal style={`--i:${i}`}>
+          <span class="mark glass" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d={marks[c.platform]} /></svg>
+          </span>
+          <h3>{c.name}</h3>
+          <p>{c.pitch}</p>
+          <ul>{c.includes.map((x) => <li class="tag">{x}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .channel {
+    display: flex; flex-direction: column; gap: 14px;
+    padding: 28px; transition: transform var(--t) var(--ease);
+  }
+  .channel:hover { transform: translateY(-4px); --rim: rgba(255, 255, 255, 0.5); }
+  .mark {
+    display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; margin-bottom: 18px;
+  }
+  .mark::after { display: none; }
+  .mark svg { width: 24px; height: 24px; }
+  h3 { font-size: var(--fs-h3); letter-spacing: -0.035em; }
+  p { color: var(--ink-2); font-size: var(--fs-card); line-height: 1.65; }
+  ul { list-style: none; margin: auto 0 0; padding: 10px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+</style>

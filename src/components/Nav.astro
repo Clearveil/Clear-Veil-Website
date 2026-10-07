@@ -10,8 +10,10 @@ import Arrow from './Arrow.astro';
 import { nav, site } from '../content/site';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+// minimal: ad landing pages show only the logo + Book a call (no links away)
+const { minimal = false } = Astro.props as { minimal?: boolean };
 ---
-<header class="nav" data-nav>
+<header class:list={['nav', { minimal }]} data-nav>
   <div class="bar glass">
     <div class="row">
       <a href="/" class="brand" aria-label="Clear Veil Marketing, home">
@@ -193,4 +195,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   @media (max-width: 400px) {
     .brand-word { display: none; }
   }
+
+  /* Landing pages: just the logo and the call button */
+  .nav.minimal .links, .nav.minimal .menu-btn, .nav.minimal .mobile { display: none; }
+  .nav.minimal .row { grid-template-columns: 1fr auto; }
 </style>
