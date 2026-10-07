@@ -52,6 +52,10 @@ const Heading = page ? 'h1' : 'h2';
           </label>
         </div>
         <label class="field">
+          <span>How did you hear about us? / Referral</span>
+          <input name="referral" type="text" maxlength="200" placeholder="Google, Instagram, a friend's name…" />
+        </label>
+        <label class="field">
           <span>What do you need help with?</span>
           <textarea name="message" rows="4" required maxlength="5000"></textarea>
         </label>
@@ -166,6 +170,7 @@ const Heading = page ? 'h1' : 'h2';
     appearance: none;
   }
   textarea { resize: vertical; min-height: 128px; }
+  input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.32); }
   select {
     cursor: pointer; padding-right: 40px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%23999' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");

@@ -38,6 +38,7 @@ export const POST: APIRoute = async ({ request }) => {
   const email = clean(data.email, 200);
   const business = clean(data.business, 200);
   const budget = clean(data.budget, 60);
+  const referral = clean(data.referral, 200);
   const message = clean(data.message, 5000);
 
   if (!name || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -54,6 +55,7 @@ export const POST: APIRoute = async ({ request }) => {
     ['Email', email],
     ['Business / website', business || '—'],
     ['Monthly ad budget', budget || '—'],
+    ['Heard about us / Referral', referral || '—'],
   ];
   const text = `${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\n${message}`;
 
@@ -78,7 +80,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const resend = new Resend(apiKey);
-    const { error } = await resend.emails.send({
+    const { data: sent, error } = await resend.emails.send({
       from,
       to: to.split(',').map((s: string) => s.trim()),
       replyTo: email,
@@ -87,6 +89,8 @@ export const POST: APIRoute = async ({ request }) => {
       html,
     });
     if (error) throw new Error(error.message);
+    // Resend's message ID: proof of delivery handoff, searchable in Resend → Emails
+    console.log('Contact form: sent via Resend', sent?.id);
     return json({ ok: true });
   } catch (err) {
     console.error('Contact form: Resend error', err);
