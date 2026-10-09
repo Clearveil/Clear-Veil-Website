@@ -1,0 +1,27 @@
+---
+/**
+ * Sub-page of /contractors: website design for contractors and service businesses.
+ * Linked only from /contractors. noindex, kept out of the sitemap.
+ * All wording lives in src/content/contractors.ts → contractorsWebsites.
+ */
+import Base from '../../layouts/Base.astro';
+import SubHero from '../../components/SubHero.astro';
+import SiteCompare from '../../components/SiteCompare.astro';
+import FeatureGrid from '../../components/FeatureGrid.astro';
+import FeaturedCase from '../../components/FeaturedCase.astro';
+import Process from '../../components/Process.astro';
+import Reviews from '../../components/Reviews.astro';
+import Faq from '../../components/Faq.astro';
+import Contact from '../../components/Contact.astro';
+import { contractors, contractorsWebsites as w } from '../../content/contractors';
+---
+<Base seoTitle={w.meta.title} description={w.meta.description} noindex minimal>
+  <SubHero parent={{ label: 'Contractors & service businesses', href: '/contractors' }} {...w.hero} />
+  <SiteCompare {...w.demo} image="/media/contractors-reel-2.jpg" />
+  <FeatureGrid {...w.included} />
+  <FeaturedCase {...contractors.caseStudy} />
+  <Process content={w.process} />
+  <Reviews only={w.reviews} title="Built from scratch, in weeks." />
+  <Faq {...w.faq} />
+  <Contact title={w.contact.title} sub={w.contact.sub} source={w.source} />
+</Base>

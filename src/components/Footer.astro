@@ -14,7 +14,10 @@ const { minimal = false } = Astro.props as { minimal?: boolean };
           <Wordmark class="word" />
         </a>
         <p>{footer.tagline}</p>
-        <a class="phone" href={`tel:${site.phone}`}>Call or text {site.phoneDisplay}</a>
+        <div class="reach">
+          <a class="phone" href={`tel:${site.phone}`}>Call {site.phoneDisplay}</a>
+          <a class="phone" href={`sms:${site.phone}`}>Text {site.phoneDisplay}</a>
+        </div>
         <a href={site.bookingUrl} class="btn btn-glass btn-sm" target="_blank" rel="noopener">Book a 15-minute call</a>
       </div>
       <div class="cols" hidden={minimal}>
@@ -58,7 +61,8 @@ const { minimal = false } = Astro.props as { minimal?: boolean };
   .mark { width: 40px; }
   .word { width: 108px; }
   .brand p { color: var(--ink-2); }
-  .phone { color: #fff; font-weight: 500; margin-top: -8px; transition: opacity var(--t-fast) var(--ease); }
+  .reach { display: grid; gap: 6px; margin-top: -8px; }
+  .phone { color: #fff; font-size: 0.875rem; font-weight: 500; transition: opacity var(--t-fast) var(--ease); }
   .phone:hover { opacity: 0.75; }
 
   .cols[hidden] { display: none; }

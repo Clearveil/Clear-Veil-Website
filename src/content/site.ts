@@ -203,7 +203,7 @@ export const work: CaseStudy[] = [
       { value: '3,470', label: 'Calls and quote requests' },
       { value: '10k+', label: 'Clicks' },
       { value: '451k+', label: 'Impressions' },
-      { value: '4 mo', label: 'During peak season' },
+      { value: '1 in 3', label: 'Clicks turned into a call or quote request' }, // 3,470 leads from just over 10,000 clicks
     ],
     story: [
       {

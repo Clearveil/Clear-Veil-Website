@@ -1,52 +1,68 @@
 ---
-/** Split section: job-site photo on one side, our story and three fact chips on the other. */
+/**
+ * Split section: our story and three fact chips, with an optional job-site photo.
+ * With a photo: photo | copy + facts. Without: copy | facts stacked.
+ */
 interface Props {
   eyebrow: string; title: string; body: string[];
   facts: { value: string; label: string }[];
-  image: { src: string; alt: string }; tag?: string;
+  image?: { src: string; alt: string }; tag?: string;
 }
 const { eyebrow, title, body, facts, image, tag = 'From the job site' } = Astro.props;
 ---
 <section class="section story">
-  <div class="container split">
-    <figure class="photo card" data-reveal>
-      <img src={image.src} alt={image.alt} width="540" height="960" loading="lazy" decoding="async" />
-      <figcaption class="glass">{tag}</figcaption>
-    </figure>
-    <div class="copy">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">{eyebrow}</span>
-        <h2 class="h-display">{title}</h2>
-        {body.map((p) => <p>{p}</p>)}
-      </div>
-      <ul class="facts">
-        {facts.map((f, i) => (
-          <li class="fact card" data-reveal style={`--i:${i}`}>
-            <span class="v">{f.value}</span>
-            <span class="l">{f.label}</span>
-          </li>
-        ))}
-      </ul>
+  <div class:list={['container split', { 'no-photo': !image }]}>
+    {image && (
+      <figure class="photo card" data-reveal>
+        <img src={image.src} alt={image.alt} width="540" height="960" loading="lazy" decoding="async" />
+        <figcaption class="glass">{tag}</figcaption>
+      </figure>
+    )}
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 class="h-display">{title}</h2>
+      {body.map((p) => <p>{p}</p>)}
     </div>
+    <ul class="facts">
+      {facts.map((f, i) => (
+        <li class="fact card" data-reveal style={`--i:${i}`}>
+          <span class="v">{f.value}</span>
+          <span class="l">{f.label}</span>
+        </li>
+      ))}
+    </ul>
   </div>
 </section>
 
 <style>
-  .split { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
-  .photo { margin: 0; border-radius: var(--r-xl); padding: 8px; aspect-ratio: 4 / 5; }
+  .split {
+    display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    grid-template-areas: 'photo head' 'photo facts'; column-gap: clamp(28px, 5vw, 72px); align-items: center;
+  }
+  .photo { grid-area: photo; margin: 0; border-radius: var(--r-xl); padding: 8px; aspect-ratio: 4 / 5; }
   .photo img { width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--r-xl) - 8px); filter: grayscale(1) contrast(1.05); }
   figcaption {
     position: absolute; left: 22px; bottom: 22px; padding: 7px 14px; border-radius: 999px;
     font-size: var(--fs-card-meta); color: #fff;
   }
-  .section-head { margin-bottom: 32px; gap: 18px; }
-  .facts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .section-head { grid-area: head; align-self: end; margin-bottom: 32px; gap: 18px; }
+  .facts { grid-area: facts; align-self: start; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .fact { display: grid; gap: 8px; align-content: start; padding: 20px 18px; }
   .v { font-size: 1.02rem; letter-spacing: -0.02em; }
   .l { font-size: var(--fs-card-meta); color: var(--ink-2); line-height: 1.55; }
+
+  /* No photo: heading on the left, facts stacked on the right */
+  .no-photo { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); grid-template-areas: 'head facts'; }
+  .no-photo .section-head { align-self: center; margin-bottom: 0; }
+  .no-photo .facts { align-self: center; grid-template-columns: 1fr; }
+  .no-photo .fact { grid-template-columns: 9.5rem 1fr; align-items: baseline; gap: 16px; padding: 20px 22px; }
+
   @media (max-width: 900px) {
-    .split { grid-template-columns: 1fr; }
-    .photo { aspect-ratio: 4 / 3; max-width: 520px; }
+    .split, .no-photo { grid-template-columns: 1fr; grid-template-areas: 'photo' 'head' 'facts'; }
+    .no-photo { grid-template-areas: 'head' 'facts'; }
+    .photo { aspect-ratio: 4 / 3; max-width: 520px; margin-bottom: 32px; }
+    .no-photo .section-head { margin-bottom: 32px; }
     .facts { grid-template-columns: 1fr; }
+    .no-photo .fact { grid-template-columns: 1fr; gap: 8px; }
   }
 </style>

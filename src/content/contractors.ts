@@ -4,6 +4,7 @@
  *    /contractors          main page (ads first, social second)
  *    /contractors/ads      sub-page: Google + Meta lead generation
  *    /contractors/social   sub-page: social media content management
+ *    /contractors/websites sub-page: website design for contractors
  *  Edit the words here. Numbers come from the McKenna case study in site.ts.
  *  TODO(owner): review all new copy, especially the "built homes" story.
  * ─────────────────────────────────────────────────────────────────────────────
@@ -26,7 +27,7 @@ const logos = [
 
 const mckennaStats = [
   { value: '3,470', label: 'Calls and quote requests for McKenna Brothers' },
-  { value: '4 mo', label: 'During their peak paving season' },
+  { value: '451k+', label: 'Ad impressions for McKenna Brothers' },
   { value: '10k+', label: 'Clicks from people ready to hire' },
   { value: '$5M+', label: 'Ad spend managed across all clients' },
 ];
@@ -42,7 +43,7 @@ export const contractors = {
 
   hero: {
     badge: 'New',
-    status: 'Booking contractors for next season',
+    status: 'Now booking contractors',
     headline: ['More calls.', 'More booked jobs.'],
     lede:
       'We run Google and Meta ads for contractors and service businesses, so homeowners in your area find you first and call you, not the next guy.',
@@ -63,21 +64,19 @@ export const contractors = {
     eyebrow: 'Why us',
     title: 'We worked on job sites before we ran ads.',
     body: [
-      'Before Clear Veil, we were helping build homes and working in them. We know what a slow month feels like, why a missed call is a lost job, and that you don’t have time to babysit an agency.',
-      'So we keep it simple: more of the right calls, plain reporting you can read on your phone, and no long contracts.',
+      'Before Clear Veil, we helped build homes and worked in them. We know a missed call is a lost job, and you don’t have time to babysit an agency.',
     ],
     facts: [
       { value: 'Calls first', label: 'Every campaign is built around phone calls and quote requests.' },
       { value: 'Month to month', label: 'No long-term contracts. We earn it every month.' },
       { value: 'Plain reports', label: 'Calls, leads and cost per lead. Nothing to decode.' },
     ],
-    image: { src: '/media/contractors-reel-2.jpg', alt: 'A newly framed house on a fresh concrete slab' },
   },
 
   services: {
     eyebrow: 'What we do',
     title: 'Ads that fill your schedule. Content that builds trust.',
-    intro: 'Most contractors start with ads. Many add social so homeowners see real work before they call.',
+    intro: 'Most contractors start with ads. Many add social and a better website, so homeowners see real work and can call in one tap.',
     items: [
       {
         href: '/contractors/ads',
@@ -95,6 +94,14 @@ export const contractors = {
         body: 'We turn your job sites into steady posts and short videos, so your pages look busy and trustworthy when people check you out.',
         points: ['On-site content', 'Before & after posts', 'Short-form video', 'Posting handled for you'],
         cta: 'See our social service',
+      },
+      {
+        href: '/contractors/websites',
+        tag: 'Add-on',
+        name: 'Website design',
+        body: 'Fast, simple websites built to turn visitors into calls and quote requests, with service pages Google can find.',
+        points: ['Click-to-call on every page', 'Quote request forms', 'Service area pages', 'Built for phones'],
+        cta: 'See our website service',
       },
     ],
   },
@@ -258,5 +265,63 @@ export const contractorsSocial = {
   contact: {
     title: 'Let’s make your work easy to find.',
     sub: 'Tell us what you do and where. We’ll reply within one business day.',
+  },
+};
+
+/* ── Sub-page: Websites ────────────────────────────────────────────────── */
+// TODO(owner): check the FAQ answers (timeline, ownership, updates) match how you sell websites
+export const contractorsWebsites = {
+  meta: {
+    title: 'Website Design for Contractors | Clear Veil',
+    description:
+      'Fast, simple websites for contractors and service businesses: click-to-call on every page, quote request forms, service area pages and tracking set up from day one.',
+  },
+  source: 'Contractors – Websites page',
+  hero: {
+    eyebrow: 'Website design',
+    title: 'A website built to get the call.',
+    lede: 'Most contractor websites look fine and do nothing. We build fast, simple sites where your number is one tap away, quotes are easy to request and Google can find your services.',
+  },
+  demo: {
+    eyebrow: 'Before & after',
+    title: 'Same company. Very different website.',
+    sub: 'Flip between a typical contractor site and one built to get the call. The difference shows up on your phone bill, in a good way.',
+  },
+  included: {
+    eyebrow: 'What’s included',
+    title: 'Everything a homeowner needs to pick up the phone.',
+    items: [
+      { name: 'Click-to-call everywhere', body: 'Your number stays one tap away on every page and every screen size.' },
+      { name: 'Quote request forms', body: 'Short forms that ask for the job details you need and land straight in your inbox.' },
+      { name: 'Service & area pages', body: 'A page for each service and the towns you cover, written the way homeowners search.' },
+      { name: 'Fast on phones', body: 'Most of your visitors are on a phone. Pages load quickly and read easily on a small screen.' },
+      { name: 'Tracking from day one', body: 'Calls, form fills and your ad pixels set up properly, so you know where every lead came from.' },
+      { name: 'Kept up as you grow', body: 'New service, new photos, new town? Send it over and we handle the updates.' },
+    ],
+  },
+  process: {
+    eyebrow: 'The process',
+    title: 'Live in weeks, not months.',
+    intro: 'Designed and built from scratch, the same three steps every time.',
+    steps: [
+      { name: 'Plan', body: 'We learn your services, your area and the jobs you want more of, then map out the pages.', tags: ['Service list', 'Page plan'] },
+      { name: 'Build', body: 'We design and build the site around calls and quote requests, using your real job photos.', tags: ['Design & build', 'Your photos'] },
+      { name: 'Launch', body: 'Tracking goes in, the site goes live, and we keep it updated as your business grows.', tags: ['Call tracking', 'Ongoing updates'] },
+    ],
+  },
+  reviews: ['Apex Aminos'],
+  faq: {
+    eyebrow: 'Questions',
+    title: 'Good to know.',
+    items: [
+      { q: 'How long does a new website take?', a: 'Most sites are designed, built and live within a few weeks, depending on how many services and pages you need.' },
+      { q: 'Can you fix my current website instead?', a: 'Sometimes. We’ll look at it on your free call and tell you honestly whether it’s worth improving or rebuilding.' },
+      { q: 'Do I need to write the content?', a: 'No. We write it with you, based on your services, your area and how homeowners search.' },
+      { q: 'Will it work with my ads?', a: 'Yes. It’s built with your Google and Meta tracking set up from day one, so your ads and your site work together.' },
+    ],
+  },
+  contact: {
+    title: 'Let’s build a site that rings your phone.',
+    sub: 'Tell us your trade, your area and your current website (if you have one). We’ll reply within one business day.',
   },
 };

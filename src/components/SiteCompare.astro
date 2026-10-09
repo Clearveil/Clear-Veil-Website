@@ -1,0 +1,349 @@
+---
+/**
+ * Interactive demo for the websites sub-page: a phone flips between a typical
+ * contractor website (slow, number buried) and one built to get the call.
+ * Starts on "Typical site" when scrolled into view, switches itself after a few
+ * seconds, then a call comes in. Visitors can flip it with the toggle.
+ * Unbranded, black & white liquid glass, labelled as an illustration.
+ */
+interface Props { eyebrow?: string; title?: string; sub?: string; image: string }
+const { eyebrow, title, sub, image } = Astro.props;
+
+const rows = [
+  { label: 'Loads on a phone in', before: '6.8 seconds', after: 'About a second' },
+  { label: 'Phone number', before: 'Buried in the footer', after: 'One tap, every page' },
+  { label: 'Quote requests', before: 'Contact page only', after: 'On every page' },
+  { label: 'Services', before: 'One long list', after: 'A page per service & town' },
+  { label: 'Lead tracking', before: 'None', after: 'Every call and form' },
+];
+---
+<section class="section sc-section">
+  <div class="container">
+    {title && (
+      <div class="section-head" data-reveal>
+        {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+        <h2 class="h-display">{title}</h2>
+        {sub && <p>{sub}</p>}
+      </div>
+    )}
+
+    <div class="sc card" data-sc data-reveal style="--i:1">
+      <div class="phone-wrap">
+        <div class="phone" aria-hidden="true">
+          <span class="notch"></span>
+
+          <!-- Typical site -->
+          <div class="screen s-before">
+            <div class="b-top"><span class="b-logo">YOUR COMPANY</span><span class="b-menu"><i></i><i></i><i></i></span></div>
+            <div class="b-img"><img src={image} alt="" loading="lazy" decoding="async" /></div>
+            <div class="b-text">
+              <span class="b-h">Welcome to our website</span>
+              {Array.from({ length: 9 }, (_, i) => <i style={`width:${[96, 88, 92, 70, 94, 85, 90, 60, 80][i]}%`}></i>)}
+            </div>
+            <span class="b-link">Contact us</span>
+            <div class="b-load"><span class="spin"></span><small>Loading…</small></div>
+          </div>
+
+          <!-- Built to get the call -->
+          <div class="screen s-after">
+            <!-- A clean service-company homepage, scrolled through automatically -->
+            <div class="site" data-site>
+              <header class="w-nav">
+                <span class="w-logo"><i></i><span><b>Your Company</b><small>Paving & Concrete</small></span></span>
+                <span class="w-navcall">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M7.2 4.5h2.4l1.3 3.6-1.7 1.1a9.5 9.5 0 0 0 5.6 5.6l1.1-1.7 3.6 1.3v2.4a1.7 1.7 0 0 1-1.9 1.7A14.6 14.6 0 0 1 5.5 6.4a1.7 1.7 0 0 1 1.7-1.9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                  Call
+                </span>
+              </header>
+
+              <section class="w-hero">
+                <span class="w-kicker">Locally owned · Licensed & insured</span>
+                <b class="w-h1">Driveway paving, done right the first time.</b>
+                <span class="w-sub">Free estimates within 24 hours.</span>
+                <span class="w-btns"><span class="w-solid">Call for a free quote</span><span class="w-outline">Request online</span></span>
+                <span class="w-photo"><img src={image} alt="" loading="lazy" decoding="async" /></span>
+              </section>
+
+              <section class="w-trust">
+                <span><i>✓</i>Free estimates</span>
+                <span><i>✓</i>Fully insured</span>
+                <span><i>★</i>5-star rated</span>
+              </section>
+
+              <section class="w-block">
+                <b class="w-h2">Our services</b>
+                <span class="w-svcs">
+                  {['Driveways', 'Parking lots', 'Sealcoating', 'Repairs'].map((s) => (
+                    <span class="w-svc"><i></i><b>{s}</b><em></em><em class="short"></em></span>
+                  ))}
+                </span>
+              </section>
+
+              <section class="w-block w-review">
+                <span class="w-stars">★★★★★</span>
+                <em></em><em></em><em class="short"></em>
+                <small>Homeowner · Your town</small>
+              </section>
+
+              <section class="w-block w-form">
+                <b class="w-h2">Get a free quote</b>
+                <span class="w-field">Name</span>
+                <span class="w-field">Phone</span>
+                <span class="w-field">Service needed</span>
+                <span class="w-solid">Request my quote</span>
+              </section>
+
+              <footer class="w-foot">
+                <b>Your Company</b>
+                <em></em><em class="short"></em>
+              </footer>
+            </div>
+
+            <div class="w-sticky">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7.2 4.5h2.4l1.3 3.6-1.7 1.1a9.5 9.5 0 0 0 5.6 5.6l1.1-1.7 3.6 1.3v2.4a1.7 1.7 0 0 1-1.9 1.7A14.6 14.6 0 0 1 5.5 6.4a1.7 1.7 0 0 1 1.7-1.9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              Call now
+            </div>
+            <div class="a-toast">
+              <span class="pulse"></span>
+              <span><b>Incoming call</b><small>Driveway quote</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="toggle" role="group" aria-label="Compare websites">
+          <button type="button" data-set="before" aria-pressed="true">Typical site</button>
+          <button type="button" data-set="after" aria-pressed="false">Built to get the call</button>
+          <span class="knob" aria-hidden="true"></span>
+        </div>
+        <ul class="rows">
+          {rows.map((r) => (
+            <li>
+              <span class="r-label">{r.label}</span>
+              <span class="r-val">
+                <span class="b">{r.before}</span>
+                <span class="a">{r.after}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <button type="button" class="replay" data-replay>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Replay
+        </button>
+      </div>
+    </div>
+    <p class="note">Illustration of a typical before and after, not a real client site.</p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-sc]');
+  if (root) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('[data-set]')];
+    let timers: number[] = [];
+    const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+    const clear = () => { timers.forEach(clearTimeout); timers = []; };
+
+    // How far the mock homepage scrolls inside the phone: its height minus the screen's
+    const site = root.querySelector<HTMLElement>('[data-site]')!;
+    const measure = () => root.style.setProperty('--scroll', `${Math.max(0, site.offsetHeight - site.parentElement!.clientHeight)}px`);
+    measure();
+    window.addEventListener('resize', measure);
+
+    const set = (state: 'before' | 'after') => {
+      root.classList.toggle('is-after', state === 'after');
+      btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.set === state)));
+      root.classList.remove('loaded', 'ringing', 'scrolling');
+      if (state === 'before') later(1600, () => root.classList.add('loaded'));
+      else {
+        // Browse down the homepage like a visitor would; the call comes in at the quote form
+        measure();
+        later(900, () => root.classList.add('scrolling'));
+        later(6800, () => root.classList.add('ringing'));
+      }
+    };
+
+    const play = () => {
+      clear(); set('before');
+      later(4200, () => set('after'));
+    };
+
+    btns.forEach((b) => b.addEventListener('click', () => { clear(); set(b.dataset.set as 'before' | 'after'); }));
+    root.querySelector('[data-replay]')!.addEventListener('click', play);
+
+    if (reduced) { root.classList.add('is-after', 'ringing'); btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.set === 'after'))); }
+    else {
+      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); play(); } }, { threshold: 0.35 });
+      io.observe(root);
+    }
+  }
+</script>
+
+<style>
+  .sc {
+    display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: center;
+    gap: clamp(28px, 5vw, 72px); padding: clamp(28px, 4vw, 56px); border-radius: var(--r-xl);
+  }
+
+  /* ── Phone ── */
+  .phone-wrap { display: grid; place-items: center; }
+  .phone {
+    position: relative; width: min(100%, 290px); aspect-ratio: 9 / 18.5; border-radius: 40px; padding: 10px; overflow: hidden;
+    background: #050505;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.22), inset 0 1px 0 2px rgba(255, 255, 255, 0.08), 0 30px 70px -20px rgba(0, 0, 0, 0.95), 0 0 60px -20px rgba(255, 255, 255, 0.12);
+  }
+  .notch { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 70px; height: 20px; border-radius: 999px; background: #000; z-index: 5; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+  .screen {
+    position: absolute; inset: 10px; border-radius: 31px; overflow: hidden; background: #0b0b0b;
+    transition: opacity 700ms var(--ease), transform 800ms var(--ease);
+  }
+  .s-after { opacity: 0; transform: scale(1.04); }
+  .sc.is-after .s-after { opacity: 1; transform: none; }
+  .sc.is-after .s-before { opacity: 0; transform: scale(0.96); }
+
+  /* Typical site: cramped, grey, slow */
+  .s-before { padding: 46px 12px 12px; display: flex; flex-direction: column; gap: 10px; background: #1a1a1a; }
+  .b-top { display: flex; justify-content: space-between; align-items: center; }
+  .b-logo { font-size: 0.55rem; letter-spacing: 0.12em; color: rgba(255, 255, 255, 0.55); font-family: Georgia, serif; }
+  .b-menu { display: grid; gap: 2px; } .b-menu i { width: 12px; height: 1.5px; background: rgba(255, 255, 255, 0.5); }
+  .b-img { height: 26%; overflow: hidden; border-radius: 2px; }
+  .b-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) blur(1.5px) brightness(0.55); }
+  .b-text { display: grid; gap: 5px; }
+  .b-h { font-family: Georgia, serif; font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 2px; }
+  .b-text i { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.16); }
+  .b-link { margin-top: auto; font-size: 0.55rem; color: rgba(255, 255, 255, 0.35); text-decoration: underline; }
+  .b-load {
+    position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 10px;
+    background: rgba(20, 20, 20, 0.92); color: rgba(255, 255, 255, 0.5); font-size: 0.65rem;
+    transition: opacity 400ms var(--ease);
+  }
+  .sc.loaded .b-load { opacity: 0; }
+  .spin { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.15); border-top-color: rgba(255, 255, 255, 0.7); animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Built to get the call: a clean, light service-company homepage (wireframe style) */
+  .s-after { background: #fff; color: #111; }
+  .site {
+    position: absolute; left: 0; right: 0; top: 0; padding-bottom: 56px;
+    transition: transform 6.5s cubic-bezier(0.45, 0, 0.25, 1);
+  }
+  .sc:not(.is-after) .site { transition: none; }
+  .sc.scrolling .site { transform: translateY(calc(var(--scroll, 0px) * -1)); }
+  .site em { display: block; height: 3px; border-radius: 2px; background: #e4e4e4; }
+  .site em.short { width: 60%; }
+
+  .w-nav { display: flex; justify-content: space-between; align-items: center; padding: 38px 14px 10px; border-bottom: 1px solid #eee; }
+  .w-logo { display: flex; align-items: center; gap: 7px; }
+  .w-logo i { width: 18px; height: 18px; border-radius: 5px; background: #111; }
+  .w-logo b { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.1; }
+  .w-logo small { display: block; font-size: 7.5px; color: #777; }
+  .w-navcall { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 999px; background: #111; color: #fff; font-size: 9px; font-weight: 600; }
+  .w-navcall svg { width: 10px; height: 10px; }
+
+  .w-hero { display: grid; gap: 7px; padding: 14px 14px 12px; }
+  .w-kicker { font-size: 7.5px; letter-spacing: 0.04em; text-transform: uppercase; color: #666; }
+  .w-h1 { font-size: 17px; font-weight: 650; line-height: 1.1; letter-spacing: -0.03em; }
+  .w-sub { font-size: 9.5px; color: #555; }
+  .w-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 3px; }
+  .w-solid, .w-outline { display: grid; place-items: center; height: 28px; border-radius: 999px; font-size: 8.5px; font-weight: 600; }
+  .w-solid { background: #111; color: #fff; }
+  .w-outline { box-shadow: inset 0 0 0 1px #111; }
+  .w-photo { height: 108px; margin-top: 5px; border-radius: 10px; overflow: hidden; }
+  .w-photo img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+
+  .w-trust { display: flex; justify-content: space-between; padding: 9px 14px; background: #f3f3f3; font-size: 8px; color: #333; }
+  .w-trust i { font-style: normal; font-weight: 700; margin-right: 3px; }
+
+  .w-block { display: grid; gap: 8px; padding: 14px; }
+  .w-h2 { font-size: 12.5px; font-weight: 650; letter-spacing: -0.02em; }
+  .w-svcs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .w-svc { display: grid; gap: 5px; padding: 9px; border-radius: 9px; box-shadow: inset 0 0 0 1px #e6e6e6; }
+  .w-svc i { width: 16px; height: 16px; border-radius: 5px; background: #111; }
+  .w-svc b { font-size: 9px; font-weight: 600; }
+
+  .w-review { margin: 0 14px; padding: 12px; border-radius: 10px; background: #f5f5f5; gap: 6px; }
+  .w-stars { font-size: 10px; letter-spacing: 0.1em; }
+  .w-review small { font-size: 7.5px; color: #888; margin-top: 2px; }
+
+  .w-field { display: flex; align-items: center; height: 26px; padding: 0 9px; border-radius: 7px; box-shadow: inset 0 0 0 1px #ddd; font-size: 8.5px; color: #999; }
+
+  .w-foot { display: grid; gap: 6px; padding: 14px; background: #111; color: #fff; }
+  .w-foot b { font-size: 10px; }
+  .w-foot em { background: rgba(255, 255, 255, 0.2); }
+
+  .w-sticky {
+    position: absolute; z-index: 2; left: 10px; right: 10px; bottom: 10px; height: 36px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center; gap: 6px; background: #111; color: #fff; font-size: 10px; font-weight: 600;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 20px -6px rgba(0, 0, 0, 0.5);
+  }
+  .w-sticky svg { width: 12px; height: 12px; }
+  .a-toast {
+    position: absolute; z-index: 3; left: 12px; right: 12px; top: 40px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 16px; color: #fff;
+    background: rgba(28, 28, 28, 0.94); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 14px 30px -10px rgba(0, 0, 0, 0.9);
+    opacity: 0; transform: translateY(-14px); transition: opacity 400ms var(--ease), transform 500ms var(--ease);
+  }
+  .a-toast b { display: block; font-weight: 500; font-size: 0.72rem; }
+  .a-toast small { font-size: 0.6rem; color: rgba(255, 255, 255, 0.6); }
+  .pulse { width: 9px; height: 9px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6); animation: pulse 1.4s ease-out infinite; }
+  @keyframes pulse { to { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } }
+  .sc.ringing .a-toast { opacity: 1; transform: none; }
+
+  /* ── Side: toggle + comparison rows ── */
+  .side { display: grid; gap: 22px; align-content: center; }
+  .toggle {
+    position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+  .toggle button {
+    position: relative; z-index: 1; border: 0; background: none; cursor: pointer; padding: 11px 10px; border-radius: 999px;
+    font-size: var(--fs-card); color: var(--ink-2); transition: color var(--t) var(--ease);
+  }
+  .toggle button[aria-pressed='true'] { color: #fff; }
+  .knob {
+    position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: transform 600ms var(--ease);
+  }
+  .sc.is-after .knob { transform: translateX(100%); }
+
+  .rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .rows li {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: box-shadow var(--t) var(--ease);
+  }
+  .sc.is-after .rows li { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.1); }
+  .r-label { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  .r-val { display: grid; text-align: right; font-size: var(--fs-card); }
+  .r-val span { grid-area: 1 / 1; transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
+  .r-val .b { color: var(--ink-2); }
+  .r-val .a { color: #fff; opacity: 0; transform: translateY(6px); }
+  .sc.is-after .r-val .b { opacity: 0; transform: translateY(-6px); }
+  .sc.is-after .r-val .a { opacity: 1; transform: none; }
+
+  .replay {
+    justify-self: start; display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer; background: none;
+    font-size: var(--fs-card-meta); color: var(--ink-2); transition: color var(--t-fast) var(--ease);
+  }
+  .replay:hover { color: #fff; }
+  .replay svg { width: 15px; height: 15px; }
+
+  .note { margin-top: 12px; font-size: 0.7rem; color: var(--ink-3); text-align: center; }
+
+  @media (max-width: 900px) {
+    .sc { grid-template-columns: 1fr; gap: 22px; }
+    /* Toggle above the phone so you see the screen change as you tap */
+    .side { display: contents; }
+    .toggle { order: -1; }
+    .phone { width: min(100%, 260px); }
+    .toggle button { font-size: var(--fs-card-meta); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .screen, .r-val span, .knob { transition: none; }
+  }
+</style>

@@ -2,8 +2,8 @@
 /** One case study, front and centre: logo, story, results grid and a link to the full write-up. */
 import { work, logoFor } from '../content/site';
 
-interface Props { slug: string; eyebrow?: string; title?: string; sub?: string; quote?: string }
-const { slug, eyebrow = 'Case study', title, sub, quote } = Astro.props;
+interface Props { slug: string; eyebrow?: string; title?: string; sub?: string; quote?: string; results?: { value: string; label: string }[] }
+const { slug, eyebrow = 'Case study', title, sub, quote, results } = Astro.props;
 const w = work.find((x) => x.slug === slug)!;
 const logo = logoFor(w.client);
 const did = w.story?.find((s) => s.heading === 'What we did')?.points ?? [];
@@ -21,7 +21,7 @@ const did = w.story?.find((s) => s.heading === 'What we did')?.points ?? [];
       </div>
       <div class="side">
         <div class="results">
-          {(w.results ?? []).map((r) => (
+          {(results ?? w.results ?? []).map((r) => (
             <div class="r">
               <span class="v">{r.value}</span>
               <span class="l">{r.label}</span>

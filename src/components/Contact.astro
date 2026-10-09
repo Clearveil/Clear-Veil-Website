@@ -127,9 +127,11 @@ const Heading = page ? 'h1' : 'h2';
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) throw new Error(data.error || 'Something went wrong.');
 
-        window.fbq?.('track', 'Lead', {}, { eventID: eventId });
+        // Same lead_source as the server copy, so Events Manager can split leads by landing page
+        const leadSource = (form.elements.namedItem('source') as HTMLInputElement | null)?.value;
+        window.fbq?.('track', 'Lead', leadSource ? { lead_source: leadSource } : {}, { eventID: eventId });
         window.dispatchEvent(new CustomEvent('cv:sent'));
-        (window.dataLayer ||= []).push({ event: 'generate_lead', form: 'contact' });
+        (window.dataLayer ||= []).push({ event: 'generate_lead', form: 'contact', ...(leadSource ? { lead_source: leadSource } : {}) });
 
         form.reset();
         form.classList.remove('was-validated');
