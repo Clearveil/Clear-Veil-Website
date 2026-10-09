@@ -1,0 +1,68 @@
+---
+/** One case study, front and centre: logo, story, results grid and a link to the full write-up. */
+import { work, logoFor } from '../content/site';
+
+interface Props { slug: string; eyebrow?: string; title?: string; sub?: string; quote?: string }
+const { slug, eyebrow = 'Case study', title, sub, quote } = Astro.props;
+const w = work.find((x) => x.slug === slug)!;
+const logo = logoFor(w.client);
+const did = w.story?.find((s) => s.heading === 'What we did')?.points ?? [];
+---
+<section class="section featured-case">
+  <div class="container">
+    <article class="case card" data-reveal>
+      <div class="copy">
+        <span class="eyebrow">{eyebrow}</span>
+        {logo && <img class="logo" src={logo.logo} alt={w.client} width={logo.w} height={logo.h} loading="lazy" />}
+        <h2 class="h-display">{title ?? w.client}</h2>
+        <p class="sub">{sub ?? w.what}</p>
+        {did.length > 0 && <ul class="did">{did.map((d) => <li>{d}</li>)}</ul>}
+        <a class="btn btn-glass" href={`/work/${w.slug}`}>Read the full case study</a>
+      </div>
+      <div class="side">
+        <div class="results">
+          {(w.results ?? []).map((r) => (
+            <div class="r">
+              <span class="v">{r.value}</span>
+              <span class="l">{r.label}</span>
+            </div>
+          ))}
+        </div>
+        {quote && <blockquote>{quote}</blockquote>}
+        <ul class="svc">{w.services.map((s) => <li class="tag">{s}</li>)}</ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+<style>
+  .case {
+    display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px);
+    padding: clamp(24px, 4vw, 56px); border-radius: var(--r-xl);
+  }
+  .copy { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+  .logo { height: 44px; width: auto; margin: 6px 0 4px; }
+  .h-display { font-size: clamp(2rem, 1.3rem + 2.4vw, 3.2rem); }
+  .sub { color: var(--ink-2); font-size: var(--fs-lede); max-width: var(--measure); }
+  .did { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 10px; max-width: 520px; }
+  .did li { position: relative; padding-left: 20px; font-size: var(--fs-card); color: var(--ink-2); line-height: 1.55; }
+  .did li::before {
+    content: ''; position: absolute; left: 0; top: 0.55em; width: 6px; height: 6px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.5);
+  }
+  .side { display: flex; flex-direction: column; gap: 18px; }
+  .results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .r {
+    display: grid; gap: 6px; padding: 22px 20px; border-radius: var(--r-md);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  .v {
+    font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.6rem); letter-spacing: -0.05em; line-height: 1;
+    background: linear-gradient(180deg, #fff 40%, rgba(255, 255, 255, 0.6)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .l { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  blockquote { margin: 0; font-size: var(--fs-card-quote); line-height: 1.6; color: #fff; padding-left: 16px; box-shadow: inset 2px 0 0 rgba(255, 255, 255, 0.35); }
+  .svc { list-style: none; margin: auto 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  @media (max-width: 900px) { .case { grid-template-columns: 1fr; } }
+</style>

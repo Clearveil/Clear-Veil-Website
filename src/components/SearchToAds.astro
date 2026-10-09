@@ -1,0 +1,416 @@
+---
+/**
+ * Interactive demo for the contractors pages: a homeowner's Google search
+ * turns into an ads dashboard with calls and leads climbing.
+ *
+ * Sequence (starts when scrolled into view):
+ *   1. Search  — a query types itself, results appear, the sponsored ad is tapped
+ *   2. Results — the dashboard takes over: chart draws, totals count up, then new
+ *                calls and quote requests keep arriving while it's on screen
+ * The two tabs let visitors switch views; "Replay" runs it again.
+ * Unbranded, black & white liquid glass, labelled as an illustration.
+ */
+interface Props { eyebrow?: string; title?: string; sub?: string }
+const { eyebrow, title, sub } = Astro.props;
+
+// Weekly leads over a season: steady climb after launch
+const W = 600, H = 190;
+const values = [6, 8, 7, 12, 15, 14, 21, 26, 25, 33, 38, 41, 47, 52, 58, 63];
+const pts = values.map((v, i) => [Math.round((i / (values.length - 1)) * W), Math.round(H - 10 - (v / 66) * (H - 24))]);
+const d = pts.reduce((acc, p, i, a) => {
+  if (i === 0) return `M${p[0]},${p[1]}`;
+  const p0 = a[i - 2] || a[i - 1], p1 = a[i - 1], p3 = a[i + 1] || p;
+  const c1 = [p1[0] + (p[0] - p0[0]) / 6, p1[1] + (p[1] - p0[1]) / 6];
+  const c2 = [p[0] - (p3[0] - p1[0]) / 6, p[1] - (p3[1] - p1[1]) / 6];
+  return `${acc} C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p[0]},${p[1]}`;
+}, '');
+const area = `${d} L${W},${H} L0,${H} Z`;
+const launch = pts[3];
+
+const kpis = [
+  { key: 'calls', label: 'Phone calls', value: 214 },
+  { key: 'forms', label: 'Quote requests', value: 96 },
+  { key: 'cpl', label: 'Cost per lead', prefix: '$', value: 31 },
+  { key: 'ctr', label: 'Click-through rate', suffix: '%', value: 8.4, decimals: 1 },
+];
+
+const organic = [
+  ['Home Services Directory', 'Compare 10 local pros near you'],
+  ['Local Reviews', 'Top rated in your area · reviews & photos'],
+  ['DIY Guide', 'How to tell if you need a pro'],
+];
+---
+<section class="section s2a-section">
+  <div class="container">
+    {title && (
+      <div class="section-head" data-reveal>
+        {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+        <h2 class="h-display">{title}</h2>
+        {sub && <p>{sub}</p>}
+      </div>
+    )}
+
+    <div class="s2a card" data-s2a data-reveal style="--i:1">
+      <div class="bar">
+        <div class="tabs" role="tablist" aria-label="Demo view">
+          <button type="button" role="tab" class="tab is-on" data-tab="search" aria-selected="true">1 · The search</button>
+          <button type="button" role="tab" class="tab" data-tab="ads" aria-selected="false">2 · Your results</button>
+        </div>
+        <button type="button" class="replay" data-replay aria-label="Replay demo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Replay
+        </button>
+      </div>
+
+      <div class="stage">
+        <!-- 1. Search -->
+        <div class="view v-search is-on" data-view="search" aria-label="A homeowner searching for a local contractor">
+          <div class="searchbar">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span class="q" data-query></span><span class="caret" aria-hidden="true"></span>
+          </div>
+          <div class="results" data-results>
+            <div class="ad" data-ad>
+              <span class="sponsored">Sponsored</span>
+              <span class="ad-url">yourcompany.com</span>
+              <span class="ad-title" data-ad-title>Driveway Paving Near You · Free Estimates</span>
+              <span class="ad-desc">Locally owned · Licensed & insured · Booking this week</span>
+              <span class="ad-actions"><span class="call">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7.2 4.5h2.4l1.3 3.6-1.7 1.1a9.5 9.5 0 0 0 5.6 5.6l1.1-1.7 3.6 1.3v2.4a1.7 1.7 0 0 1-1.9 1.7A14.6 14.6 0 0 1 5.5 6.4a1.7 1.7 0 0 1 1.7-1.9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                Call</span><span class="quote">Get a quote</span></span>
+              <span class="tap" aria-hidden="true"></span>
+            </div>
+            {organic.map(([t, s]) => (
+              <div class="org"><span class="org-title">{t}</span><span class="org-desc">{s}</span></div>
+            ))}
+          </div>
+          <div class="ring" data-ring aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M7.2 4.5h2.4l1.3 3.6-1.7 1.1a9.5 9.5 0 0 0 5.6 5.6l1.1-1.7 3.6 1.3v2.4a1.7 1.7 0 0 1-1.9 1.7A14.6 14.6 0 0 1 5.5 6.4a1.7 1.7 0 0 1 1.7-1.9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <span>Incoming call…</span>
+          </div>
+        </div>
+
+        <!-- 2. Ads dashboard -->
+        <div class="view v-ads" data-view="ads" aria-label="Ad results dashboard">
+          <div class="dash-top">
+            <span class="campaign">Campaign · Local services</span>
+            <span class="live"><i></i>Live</span>
+            <span class="chip">This season</span>
+          </div>
+          <div class="body">
+            <div class="main">
+              <div class="kpis">
+                {kpis.map((k) => (
+                  <div class="kpi">
+                    <span class="k-label">{k.label}</span>
+                    <span class="k-value" data-kpi={k.key} data-prefix={k.prefix ?? ''} data-suffix={k.suffix ?? ''} data-dec={k.decimals ?? 0}>
+                      {k.prefix}{k.value.toLocaleString('en-US', { minimumFractionDigits: k.decimals ?? 0, maximumFractionDigits: k.decimals ?? 0 })}{k.suffix}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div class="chart">
+                <span class="c-label">Leads per week</span>
+                <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="s2a-fill" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="#fff" stop-opacity="0.22" />
+                      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+                    </linearGradient>
+                  </defs>
+                  {[0.25, 0.5, 0.75].map((y) => <line x1="0" x2={W} y1={H * y} y2={H * y} class="grid" />)}
+                  <path d={area} class="area" fill="url(#s2a-fill)" />
+                  <path d={d} class="line" />
+                  <line x1={launch[0]} x2={launch[0]} y1="6" y2={H} class="launch-line" />
+                </svg>
+                <span class="launch-tag" style={`left:${(launch[0] / W) * 100}%`}>Ads go live</span>
+              </div>
+            </div>
+            <div class="feed">
+              <span class="f-title">New leads</span>
+              <ul data-feed aria-live="off"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Illustration of how search ads work, not real client data.</p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-s2a]');
+  if (root) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const $ = <T extends Element>(s: string) => root.querySelector<T>(s)!;
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const views = Object.fromEntries([...root.querySelectorAll<HTMLElement>('[data-view]')].map((v) => [v.dataset.view!, v]));
+    const queryEl = $<HTMLElement>('[data-query]');
+    const results = $<HTMLElement>('[data-results]');
+    const ad = $<HTMLElement>('[data-ad]');
+    const adTitle = $<HTMLElement>('[data-ad-title]');
+    const ring = $<HTMLElement>('[data-ring]');
+    const feed = $<HTMLUListElement>('[data-feed]');
+    const kpiEls = Object.fromEntries([...root.querySelectorAll<HTMLElement>('[data-kpi]')].map((el) => [el.dataset.kpi!, el]));
+
+    const searches = [
+      ['driveway paving near me', 'Driveway Paving Near You · Free Estimates'],
+      ['emergency plumber', '24/7 Emergency Plumbing · Here in 60 Minutes'],
+      ['roof repair kalamazoo', 'Roof Repair in Kalamazoo · Free Inspection'],
+    ];
+    let searchIdx = 0;
+    const state = { calls: 214, forms: 96, cpl: 31, ctr: 8.4 };
+    const fmt = (el: HTMLElement, v: number) => {
+      const dec = Number(el.dataset.dec || 0);
+      el.textContent = `${el.dataset.prefix}${v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec })}${el.dataset.suffix}`;
+    };
+    const render = () => (Object.keys(state) as (keyof typeof state)[]).forEach((k) => fmt(kpiEls[k], state[k]));
+
+    const icons = {
+      call: '<svg viewBox="0 0 24 24" fill="none"><path d="M7.2 4.5h2.4l1.3 3.6-1.7 1.1a9.5 9.5 0 0 0 5.6 5.6l1.1-1.7 3.6 1.3v2.4a1.7 1.7 0 0 1-1.9 1.7A14.6 14.6 0 0 1 5.5 6.4a1.7 1.7 0 0 1 1.7-1.9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
+      form: '<svg viewBox="0 0 24 24" fill="none"><path d="M6 3.5h9l3 3V20.5H6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 11h6M9 14.5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    };
+    const leads = [
+      ['call', 'Phone call · 3m 12s', 'Driveway paving · Portage, MI'],
+      ['form', 'Quote request', 'Roof repair · Kalamazoo, MI'],
+      ['call', 'Phone call · 1m 48s', 'Concrete patio · South Haven, MI'],
+      ['call', 'Phone call · 4m 05s', 'Excavation · Holland, MI'],
+      ['form', 'Quote request', 'Kitchen remodel · Grand Rapids, MI'],
+      ['call', 'Phone call · 2m 31s', 'Emergency plumbing · Paw Paw, MI'],
+      ['form', 'Quote request', 'Fence install · St. Joseph, MI'],
+    ] as const;
+    let li = 0;
+    const addLead = (animate = true) => {
+      const [kind, title, sub] = leads[li++ % leads.length];
+      const el = document.createElement('li');
+      el.innerHTML = `<span class="thumb">${icons[kind]}</span><span class="l-main"><b>${title}</b><small>${sub}</small></span><span class="l-new">New</span>`;
+      if (animate) el.classList.add('in');
+      feed.prepend(el);
+      while (feed.children.length > 5) feed.lastElementChild!.remove();
+      return kind;
+    };
+    for (let i = 0; i < 4; i++) addLead(false);
+
+    const show = (name: 'search' | 'ads') => {
+      tabs.forEach((t) => { const on = t.dataset.tab === name; t.classList.toggle('is-on', on); t.setAttribute('aria-selected', String(on)); });
+      Object.entries(views).forEach(([k, v]) => v.classList.toggle('is-on', k === name));
+      if (name === 'ads') { root.classList.add('drawn'); }
+    };
+
+    let timers: number[] = [];
+    let ticker: number | undefined;
+    const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+    const clear = () => { timers.forEach(clearTimeout); timers = []; };
+
+    const countUp = () => {
+      const to = { ...state }; const t0 = performance.now(), dur = 1800;
+      const step = (t: number) => {
+        const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+        (Object.keys(to) as (keyof typeof to)[]).forEach((k) => fmt(kpiEls[k], to[k] * e));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+    const startTicker = () => {
+      if (ticker) return;
+      ticker = window.setInterval(() => {
+        const kind = addLead(true);
+        if (kind === 'call') state.calls += 1; else state.forms += 1;
+        state.cpl = Math.max(24, +(state.cpl - 0.2).toFixed(0));
+        render();
+      }, 1900);
+    };
+    const stopTicker = () => { if (ticker) { clearInterval(ticker); ticker = undefined; } };
+
+    const play = () => {
+      clear(); stopTicker();
+      root.classList.remove('drawn', 'typed', 'tapped', 'ringing');
+      const [q, title] = searches[searchIdx++ % searches.length];
+      adTitle.textContent = title;
+      queryEl.textContent = '';
+      show('search');
+      results.classList.remove('is-in');
+      // type the query
+      [...q].forEach((ch, i) => later(350 + i * 65, () => { queryEl.textContent += ch; }));
+      const typed = 350 + q.length * 65;
+      later(typed + 250, () => { root.classList.add('typed'); results.classList.add('is-in'); });
+      later(typed + 1500, () => root.classList.add('tapped'));
+      later(typed + 2000, () => root.classList.add('ringing'));
+      later(typed + 3300, () => { show('ads'); countUp(); later(2000, startTicker); });
+    };
+
+    tabs.forEach((t) => t.addEventListener('click', () => {
+      clear();
+      if (t.dataset.tab === 'ads') { show('ads'); render(); startTicker(); }
+      else { stopTicker(); play(); }
+    }));
+    $<HTMLButtonElement>('[data-replay]').addEventListener('click', play);
+
+    if (reduced) {
+      show('ads'); render();
+    } else {
+      let started = false;
+      new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) {
+          if (!started) { started = true; play(); }
+          else if (views.ads.classList.contains('is-on')) startTicker();
+        } else stopTicker();
+      }, { threshold: 0.35 }).observe(root);
+    }
+  }
+</script>
+
+<style>
+  .s2a { border-radius: var(--r-xl); padding: 0; overflow: hidden; }
+
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  .tabs { display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06); }
+  .tab {
+    border: 0; cursor: pointer; padding: 7px 14px; border-radius: 999px; font-size: var(--fs-card-meta); color: var(--ink-2); background: transparent;
+    transition: background var(--t) var(--ease), color var(--t) var(--ease), box-shadow var(--t) var(--ease);
+  }
+  .tab.is-on {
+    color: #fff;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+  .replay {
+    display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer; background: none;
+    font-size: var(--fs-card-meta); color: var(--ink-2); transition: color var(--t-fast) var(--ease);
+  }
+  .replay:hover { color: #fff; }
+  .replay svg { width: 15px; height: 15px; }
+
+  .stage { position: relative; min-height: 430px; }
+  .view {
+    position: absolute; inset: 0; opacity: 0; visibility: hidden; transform: scale(0.985);
+    transition: opacity 600ms var(--ease), transform 700ms var(--ease), visibility 0s linear 600ms;
+  }
+  .view.is-on { opacity: 1; visibility: visible; transform: none; transition: opacity 600ms var(--ease), transform 700ms var(--ease); }
+
+  /* ── 1. Search ── */
+  .v-search { padding: 34px clamp(18px, 6vw, 80px); display: grid; align-content: start; gap: 22px; }
+  .searchbar {
+    display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 20px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 10px 30px -14px rgba(0, 0, 0, 0.9);
+    font-size: 1rem; color: #fff;
+  }
+  .searchbar svg { width: 18px; height: 18px; color: var(--ink-2); flex: none; }
+  .caret { width: 1.5px; height: 20px; background: #fff; margin-left: -10px; animation: caret 1s steps(1) infinite; }
+  @keyframes caret { 50% { opacity: 0; } }
+
+  .results { display: grid; gap: 10px; opacity: 0; transform: translateY(8px); transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
+  .results.is-in { opacity: 1; transform: none; }
+  .ad, .org { display: grid; gap: 3px; padding: 14px 16px; border-radius: 16px; }
+  .ad {
+    position: relative;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: transform 400ms var(--ease), box-shadow 400ms var(--ease);
+  }
+  .sponsored { font-size: 0.68rem; font-weight: 600; color: #fff; letter-spacing: 0.02em; }
+  .ad-url, .org-desc { font-size: 0.75rem; color: var(--ink-3); }
+  .ad-title { font-size: 1.02rem; color: #fff; letter-spacing: -0.01em; }
+  .ad-desc { font-size: 0.8rem; color: var(--ink-2); }
+  .ad-actions { display: flex; gap: 8px; margin-top: 8px; }
+  .ad-actions span { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; padding: 6px 12px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
+  .ad-actions svg { width: 13px; height: 13px; }
+  .call { transition: background 300ms var(--ease), color 300ms var(--ease); }
+  .org { opacity: 0.45; }
+  .org-title { font-size: 0.92rem; color: var(--ink-2); }
+
+  .tap {
+    position: absolute; left: 44px; bottom: 18px; width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35); transform: scale(0); opacity: 0;
+  }
+  .s2a.tapped .tap { animation: tap 700ms var(--ease) forwards; }
+  .s2a.tapped .ad { transform: scale(1.012); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 0 40px -10px rgba(255, 255, 255, 0.35); }
+  .s2a.tapped .call { background: #fff; color: #111; }
+  @keyframes tap { 0% { transform: scale(0); opacity: 0.9; } 100% { transform: scale(2.6); opacity: 0; } }
+
+  .ring {
+    position: absolute; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0;
+    display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 999px;
+    background: rgba(20, 20, 20, 0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 16px 40px -12px rgba(0, 0, 0, 0.9);
+    font-size: 0.9rem; transition: opacity 400ms var(--ease), transform 500ms var(--ease);
+  }
+  .ring svg { width: 18px; height: 18px; animation: wiggle 0.5s ease-in-out infinite; }
+  .s2a.ringing .ring { opacity: 1; transform: translate(-50%, 0); }
+  @keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 75% { transform: rotate(14deg); } }
+
+  /* ── 2. Ads dashboard ── */
+  .dash-top { display: flex; align-items: center; gap: 14px; padding: 16px 22px; border-bottom: 1px solid var(--line); }
+  .campaign { font-size: var(--fs-card); font-weight: 500; }
+  .live { display: inline-flex; align-items: center; gap: 7px; font-size: var(--fs-card-meta); color: var(--ink-2); }
+  .live i { width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.55); animation: blink 2.4s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity: 0.35; } }
+  .chip { margin-left: auto; white-space: nowrap; font-size: var(--fs-card-meta); color: var(--ink-2); padding: 4px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+
+  .body { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+  .main { padding: 22px 24px 18px; display: grid; gap: 18px; }
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .kpi {
+    display: grid; gap: 6px; padding: 14px 16px; border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  .k-label { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  .k-value {
+    font-size: clamp(1.15rem, 0.9rem + 0.8vw, 1.6rem); letter-spacing: -0.04em; line-height: 1.1; font-variant-numeric: tabular-nums;
+    background: linear-gradient(180deg, #fff 40%, rgba(255, 255, 255, 0.62)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .chart { position: relative; height: 210px; }
+  .c-label { position: absolute; left: 0; top: 0; font-size: 0.68rem; color: var(--ink-3); }
+  .chart svg { position: absolute; inset: 22px 0 0; width: 100%; height: calc(100% - 22px); overflow: visible; }
+  .grid { stroke: rgba(255, 255, 255, 0.06); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .line {
+    fill: none; stroke: #fff; stroke-width: 2; vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.45));
+    clip-path: inset(-20px 100% -20px 0); transition: clip-path 2.2s var(--ease-in-out);
+  }
+  .area { opacity: 0; transition: opacity 1.2s var(--ease) 1.2s; }
+  .launch-line { stroke: rgba(255, 255, 255, 0.28); stroke-width: 1; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; opacity: 0; transition: opacity var(--t) var(--ease) 0.6s; }
+  .launch-tag {
+    position: absolute; top: 18px; transform: translateX(-50%); font-size: 0.68rem; color: #fff; white-space: nowrap;
+    padding: 3px 9px; border-radius: 999px; background: rgba(20, 20, 20, 0.85); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    opacity: 0; transition: opacity var(--t) var(--ease) 0.7s;
+  }
+  .s2a.drawn .line { clip-path: inset(-20px 0 -20px 0); }
+  .s2a.drawn .area, .s2a.drawn .launch-line, .s2a.drawn .launch-tag { opacity: 1; }
+
+  .feed { border-left: 1px solid var(--line); padding: 22px 18px; display: grid; align-content: start; gap: 12px; }
+  .f-title { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  ul :global(li) {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  ul :global(li.in) { animation: slide-in 700ms var(--ease) both; }
+  @keyframes slide-in { from { opacity: 0; transform: translateY(-10px) scale(0.98); } }
+  ul :global(.thumb) { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: rgba(255, 255, 255, 0.85); background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+  ul :global(.thumb svg) { width: 17px; height: 17px; }
+  ul :global(.l-main) { display: grid; gap: 2px; min-width: 0; }
+  ul :global(.l-main b) { font-weight: 500; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ul :global(.l-main small) { font-size: 0.7rem; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ul :global(.l-new) { font-size: 0.65rem; padding: 3px 8px; border-radius: 999px; color: var(--ink-2); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+
+  .note { margin-top: 12px; font-size: 0.7rem; color: var(--ink-3); text-align: center; }
+
+  @media (max-width: 900px) {
+    .stage { min-height: 640px; }
+    .body { grid-template-columns: 1fr; }
+    .feed { border-left: 0; border-top: 1px solid var(--line); }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    ul :global(li:nth-child(n + 4)) { display: none; }
+    .tab { padding: 7px 11px; }
+  }
+  @media (max-width: 480px) {
+    .replay { font-size: 0; gap: 0; }
+    .ad-title { font-size: 0.95rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .line { clip-path: none; } .area, .launch-line, .launch-tag { opacity: 1; }
+  }
+</style>

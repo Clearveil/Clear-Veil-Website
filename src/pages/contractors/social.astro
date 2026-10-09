@@ -1,0 +1,25 @@
+---
+/**
+ * Sub-page of /contractors: social media content management for contractors.
+ * Linked only from /contractors. noindex, kept out of the sitemap.
+ * All wording lives in src/content/contractors.ts → contractorsSocial.
+ */
+import Base from '../../layouts/Base.astro';
+import SubHero from '../../components/SubHero.astro';
+import SocialFeed from '../../components/SocialFeed.astro';
+import Story from '../../components/Story.astro';
+import FeatureGrid from '../../components/FeatureGrid.astro';
+import Process from '../../components/Process.astro';
+import Faq from '../../components/Faq.astro';
+import Contact from '../../components/Contact.astro';
+import { contractorsSocial as s } from '../../content/contractors';
+---
+<Base seoTitle={s.meta.title} description={s.meta.description} noindex minimal>
+  <SubHero parent={{ label: 'Contractors & service businesses', href: '/contractors' }} {...s.hero} />
+  <SocialFeed {...s.demo} images={s.gallery} />
+  <Story {...s.why} />
+  <FeatureGrid {...s.included} />
+  <Process content={s.process} />
+  <Faq {...s.faq} />
+  <Contact title={s.contact.title} sub={s.contact.sub} source={s.source} />
+</Base>

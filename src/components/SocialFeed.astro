@@ -1,0 +1,251 @@
+---
+/**
+ * Interactive demo for the social sub-page: a contractor's profile filling up
+ * with job-site posts while this week's content calendar ticks from
+ * "Scheduled" to "Posted". Starts when scrolled into view, "Replay" restarts it.
+ * Unbranded, black & white liquid glass, labelled as an illustration.
+ */
+interface Props { eyebrow?: string; title?: string; sub?: string; images: string[] }
+const { eyebrow, title, sub, images } = Astro.props;
+const [a, b, c] = images;
+
+// 9 tiles: photos (with different crops), a before/after, a reel and a review card
+type Tile = { kind: 'photo' | 'ba' | 'reel' | 'review'; src?: string; pos?: string; label?: string };
+const tiles: Tile[] = [
+  { kind: 'ba', src: b, label: 'Before & after' },
+  { kind: 'photo', src: a, pos: '50% 30%' },
+  { kind: 'reel', src: c, label: '0:15' },
+  { kind: 'photo', src: c, pos: '50% 80%' },
+  { kind: 'review', label: 'New review' },
+  { kind: 'photo', src: b, pos: '30% 60%' },
+  { kind: 'reel', src: a, label: '0:22' },
+  { kind: 'photo', src: b, pos: '80% 20%' },
+  { kind: 'photo', src: a, pos: '50% 90%' },
+];
+
+const week = [
+  { day: 'Mon', what: 'Before & after: driveway' },
+  { day: 'Tue', what: 'Crew spotlight' },
+  { day: 'Wed', what: 'Reel: day on site' },
+  { day: 'Thu', what: 'Customer review' },
+  { day: 'Fri', what: 'Finished project' },
+];
+---
+<section class="section sf-section">
+  <div class="container">
+    {title && (
+      <div class="section-head" data-reveal>
+        {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+        <h2 class="h-display">{title}</h2>
+        {sub && <p>{sub}</p>}
+      </div>
+    )}
+
+    <div class="sf card" data-sf data-reveal style="--i:1">
+      <div class="profile">
+        <span class="avatar" aria-hidden="true">YC</span>
+        <div class="who">
+          <b>Your Company</b>
+          <small>Contractor · Your service area</small>
+        </div>
+        <dl class="counts">
+          <div><dt>Posts</dt><dd data-n="posts">36</dd></div>
+          <div><dt>Followers</dt><dd data-n="followers">1,240</dd></div>
+          <div><dt>Messages</dt><dd data-n="messages">18</dd></div>
+        </dl>
+        <button type="button" class="replay" data-replay aria-label="Replay demo">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Replay
+        </button>
+      </div>
+
+      <div class="body">
+        <ul class="tiles" aria-label="Example posts">
+          {tiles.map((t, i) => (
+            <li class:list={['tile', `k-${t.kind}`]} style={`--d:${i}`}>
+              {t.src && <img src={t.src} alt="" loading="lazy" decoding="async" style={t.pos ? `object-position:${t.pos}` : ''} />}
+              {t.kind === 'ba' && (<><span class="half" aria-hidden="true"></span><span class="lbl l">Before</span><span class="lbl r">After</span></>)}
+              {t.kind === 'reel' && (
+                <span class="play" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+                  {t.label}
+                </span>
+              )}
+              {t.kind === 'review' && (
+                <span class="review"><span class="stars" aria-hidden="true">★★★★★</span><span>{t.label}</span></span>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        <aside class="cal">
+          <span class="c-title">This week</span>
+          <ol>
+            {week.map((w, i) => (
+              <li data-slot={i}>
+                <span class="day">{w.day}</span>
+                <span class="what">{w.what}</span>
+                <span class="st"><i></i><em>Scheduled</em></span>
+              </li>
+            ))}
+          </ol>
+          <div class="toast" data-toast aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5a1.5 1.5 0 0 1-1.5 1.5h-8l-4.5 3.2V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <span>“Can you quote my driveway?”</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+    <p class="note">Illustration of a content calendar, not real client data.</p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-sf]');
+  if (root) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const slots = [...root.querySelectorAll<HTMLLIElement>('[data-slot]')];
+    const toast = root.querySelector<HTMLElement>('[data-toast]')!;
+    const n = Object.fromEntries([...root.querySelectorAll<HTMLElement>('[data-n]')].map((el) => [el.dataset.n!, el]));
+    const base = { posts: 36, followers: 1240, messages: 18 };
+    let state = { ...base };
+    const render = () => (Object.keys(state) as (keyof typeof state)[]).forEach((k) => (n[k].textContent = state[k].toLocaleString('en-US')));
+
+    let timers: number[] = [];
+    const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+
+    const finish = () => {
+      root.classList.add('filled');
+      slots.forEach((s) => { s.classList.add('posted'); s.querySelector('em')!.textContent = 'Posted'; });
+      state = { posts: base.posts + 5, followers: base.followers + 86, messages: base.messages + 7 };
+      render();
+    };
+
+    const play = () => {
+      timers.forEach(clearTimeout); timers = [];
+      state = { ...base }; render();
+      root.classList.remove('filled', 'toasting');
+      slots.forEach((s) => { s.classList.remove('posted'); s.querySelector('em')!.textContent = 'Scheduled'; });
+      later(300, () => root.classList.add('filled'));
+      slots.forEach((s, i) => later(1400 + i * 1300, () => {
+        s.classList.add('posted'); s.querySelector('em')!.textContent = 'Posted';
+        state.posts += 1;
+        state.followers += 12 + Math.round(Math.random() * 14);
+        if (i % 2 === 0) state.messages += 2; else state.messages += 1;
+        render();
+        if (i === 2) { root.classList.add('toasting'); later(2600, () => root.classList.remove('toasting')); }
+      }));
+    };
+
+    root.querySelector('[data-replay]')!.addEventListener('click', play);
+
+    if (reduced) finish();
+    else {
+      const io = new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) { io.disconnect(); play(); }
+      }, { threshold: 0.35 });
+      io.observe(root);
+    }
+  }
+</script>
+
+<style>
+
+  .sf { border-radius: var(--r-xl); padding: 0; overflow: hidden; }
+
+  .profile { display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .avatar {
+    display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.04em;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 0 3px rgba(0, 0, 0, 0.6), 0 0 0 4px rgba(255, 255, 255, 0.35);
+  }
+  .who { display: grid; gap: 2px; }
+  .who b { font-weight: 500; font-size: 0.95rem; }
+  .who small { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  .counts { display: flex; gap: 22px; margin: 0 0 0 auto; }
+  .counts div { display: grid; gap: 2px; text-align: center; }
+  .counts dt { order: 2; font-size: 0.68rem; color: var(--ink-3); }
+  .counts dd { margin: 0; font-size: 1.05rem; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .replay {
+    display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer; background: none; margin-left: 8px;
+    font-size: var(--fs-card-meta); color: var(--ink-2); transition: color var(--t-fast) var(--ease);
+  }
+  .replay:hover { color: #fff; }
+  .replay svg { width: 15px; height: 15px; }
+
+  .body { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+  .tiles { list-style: none; margin: 0; padding: 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .tile {
+    position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    opacity: 0; transform: scale(0.92);
+    transition: opacity 600ms var(--ease) calc(var(--d) * 110ms), transform 700ms var(--ease) calc(var(--d) * 110ms);
+  }
+  .sf.filled .tile { opacity: 1; transform: none; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05) brightness(0.92); transition: transform 900ms var(--ease); }
+  .tile:hover img { transform: scale(1.05); }
+
+  .k-ba .half {
+    position: absolute; inset: 0 50% 0 0; background: rgba(0, 0, 0, 0.6);
+    box-shadow: 1px 0 0 rgba(255, 255, 255, 0.9);
+  }
+  .lbl { position: absolute; bottom: 8px; font-size: 0.6rem; padding: 2px 7px; border-radius: 999px; background: rgba(0, 0, 0, 0.6); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18); }
+  .lbl.l { left: 8px; } .lbl.r { right: 8px; }
+
+  .play {
+    position: absolute; left: 8px; top: 8px; display: inline-flex; align-items: center; gap: 4px; font-size: 0.62rem;
+    padding: 3px 8px 3px 5px; border-radius: 999px; background: rgba(0, 0, 0, 0.6); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  }
+  .play svg { width: 11px; height: 11px; }
+
+  .review {
+    position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; text-align: center; font-size: 0.7rem; color: var(--ink-2);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  }
+  .stars { color: #fff; letter-spacing: 0.1em; font-size: 0.85rem; }
+
+  .cal { position: relative; border-left: 1px solid var(--line); padding: 20px 18px; display: grid; align-content: start; gap: 12px; }
+  .c-title { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  ol li {
+    display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: box-shadow var(--t) var(--ease), background var(--t) var(--ease);
+  }
+  .day { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  .what { font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .st { display: inline-flex; align-items: center; gap: 6px; font-size: 0.65rem; color: var(--ink-3); }
+  .st em { font-style: normal; }
+  .st i { width: 7px; height: 7px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4); transition: background var(--t) var(--ease), box-shadow var(--t) var(--ease); }
+  ol li.posted {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.025));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+  ol li.posted .st { color: #fff; }
+  ol li.posted .st i { background: #fff; box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.55); }
+
+  .toast {
+    display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 14px; font-size: 0.78rem;
+    background: rgba(20, 20, 20, 0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 16px 40px -12px rgba(0, 0, 0, 0.9);
+    opacity: 0; transform: translateY(8px); transition: opacity 400ms var(--ease), transform 500ms var(--ease);
+  }
+  .toast svg { width: 16px; height: 16px; flex: none; }
+  .sf.toasting .toast { opacity: 1; transform: none; }
+
+  .note { margin-top: 12px; font-size: 0.7rem; color: var(--ink-3); text-align: center; }
+
+  @media (max-width: 900px) {
+    .body { grid-template-columns: 1fr; }
+    .cal { border-left: 0; border-top: 1px solid var(--line); }
+    .counts { margin-left: 0; width: 100%; justify-content: space-between; order: 3; }
+    .replay { margin-left: auto; }
+  }
+  @media (max-width: 480px) {
+    .replay { font-size: 0; gap: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tile { opacity: 1; transform: none; transition: none; }
+  }
+</style>

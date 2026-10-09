@@ -8,7 +8,7 @@ import { work } from './src/content/site.ts';
 // them out of the sitemap too. They're added back automatically once written.
 const unfinished = work.filter((w) => !w.story?.length).map((w) => `/work/${w.slug}`);
 const builtAt = new Date().toISOString();
-const adLanding = ['/apparel'];
+const adLanding = ['/apparel', '/contractors', '/contractors/ads', '/contractors/social'];
 
 // Every page is pre-built as static HTML (fast, cheap). The only server code is
 // src/pages/api/contact.ts, which opts out with `export const prerender = false`

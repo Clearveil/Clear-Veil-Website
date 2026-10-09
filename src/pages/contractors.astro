@@ -1,0 +1,32 @@
+---
+/**
+ * Contractors & service businesses landing page for ads (ads first, social second).
+ * Not linked from the menu, kept out of Google (noindex) and the sitemap.
+ * Its two service sub-pages (/contractors/ads, /contractors/social) are linked only from here.
+ * All wording lives in src/content/contractors.ts.
+ */
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import LogoStrip from '../components/LogoStrip.astro';
+import Stats from '../components/Stats.astro';
+import SearchToAds from '../components/SearchToAds.astro';
+import Story from '../components/Story.astro';
+import ServiceLinks from '../components/ServiceLinks.astro';
+import FeaturedCase from '../components/FeaturedCase.astro';
+import Process from '../components/Process.astro';
+import Reviews from '../components/Reviews.astro';
+import Contact from '../components/Contact.astro';
+import { contractors as c } from '../content/contractors';
+---
+<Base seoTitle={c.meta.title} description={c.meta.description} noindex minimal>
+  <Hero {...c.hero} />
+  <LogoStrip only={c.logos} label={c.logoLabel} />
+  <Stats items={c.stats} />
+  <SearchToAds {...c.demo} />
+  <Story {...c.story} />
+  <ServiceLinks {...c.services} />
+  <FeaturedCase {...c.caseStudy} />
+  <Process content={c.process} />
+  <Reviews only={c.reviews} title="Work with the founders, not a call center." />
+  <Contact title={c.contact.title} sub={c.contact.sub} source={c.source} />
+</Base>

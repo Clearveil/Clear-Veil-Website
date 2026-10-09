@@ -1,0 +1,37 @@
+---
+/** Hero for landing sub-pages: breadcrumb back to the parent page, headline, CTA and contact icons. */
+import ContactIcons from './ContactIcons.astro';
+import { site } from '../content/site';
+
+interface Props { parent: { label: string; href: string }; eyebrow: string; title: string; lede: string; cta?: string }
+const { parent, eyebrow, title, lede, cta = 'Book a free 15-minute call' } = Astro.props;
+---
+<section class="sub-hero container" id="hero">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href={parent.href}>{parent.label}</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{eyebrow}</span>
+  </nav>
+  <h1>{title}</h1>
+  <p>{lede}</p>
+  <div class="actions">
+    <a class="btn btn-glass" href={site.bookingUrl} target="_blank" rel="noopener">{cta}</a>
+    <ContactIcons />
+  </div>
+</section>
+
+<style>
+  .sub-hero { display: grid; gap: 24px; justify-items: start; padding-top: clamp(56px, 8vw, 112px); padding-bottom: clamp(24px, 4vw, 48px); }
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: var(--fs-card-meta); color: var(--ink-3); }
+  .crumbs a { color: var(--ink-2); transition: color var(--t-fast) var(--ease); }
+  .crumbs a:hover { color: #fff; }
+  .crumbs [aria-current] { color: #fff; }
+  h1 {
+    font-size: clamp(2.8rem, 1.6rem + 4.6vw, 5.4rem); line-height: 1; letter-spacing: -0.05em; max-width: 15ch;
+    background: linear-gradient(100deg, #fff 35%, rgba(255, 255, 255, 0.5) 130%);
+    -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 0.06em;
+  }
+  p { color: var(--ink-2); font-size: var(--fs-lede); max-width: 520px; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 22px 32px; margin-top: 6px; }
+  @media (max-width: 600px) { .actions { flex-direction: column; align-items: flex-start; } }
+</style>
