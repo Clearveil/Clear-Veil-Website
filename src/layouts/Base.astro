@@ -104,6 +104,9 @@ pageSchema.push(...schema);
     <Footer minimal={minimal} />
 
     <script>
+      // Pixel + GTM tracking for call, text and Book-a-call clicks
+      import '../scripts/click-tracking';
+
       // Liquid-glass sheen: tell each glass element where the cursor is so its
       // highlight can follow it. Mouse/trackpad only; skipped on touch.
       if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {

@@ -2,7 +2,7 @@
 /**
  * Three round glass shortcuts: message (→ contact form), call, text.
  * Number lives in src/content/site.ts → site.phone.
- * Each tap is reported to GTM ("contact_click") and Meta Pixel ("Contact").
+ * Taps are tracked by src/scripts/click-tracking.ts (Meta "Contact", GTM "contact_click").
  */
 import { site } from '../content/site';
 
@@ -45,18 +45,7 @@ const items = form ? all : all.filter((i) => i.kind !== 'form');
   </ul>
 </div>
 
-<script>
-  declare global {
-    interface Window { fbq?: (...args: unknown[]) => void; dataLayer?: unknown[] }
-  }
-  document.querySelectorAll<HTMLAnchorElement>('[data-contact]').forEach((a) => {
-    a.addEventListener('click', () => {
-      const method = a.dataset.contact;
-      (window.dataLayer ||= []).push({ event: 'contact_click', method });
-      if (method !== 'form') window.fbq?.('track', 'Contact', { method });
-    });
-  });
-</script>
+<!-- Clicks are tracked site-wide by src/scripts/click-tracking.ts -->
 
 <style>
   .contact-icons { display: inline-flex; flex-direction: column; align-items: center; gap: 10px; }
