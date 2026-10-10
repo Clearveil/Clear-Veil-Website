@@ -8,6 +8,7 @@ import Base from '../../layouts/Base.astro';
 import SubHero from '../../components/SubHero.astro';
 import SocialFeed from '../../components/SocialFeed.astro';
 import Story from '../../components/Story.astro';
+import BlankProfile from '../../components/BlankProfile.astro';
 import FeatureGrid from '../../components/FeatureGrid.astro';
 import Process from '../../components/Process.astro';
 import Faq from '../../components/Faq.astro';
@@ -17,7 +18,7 @@ import { contractorsSocial as s } from '../../content/contractors';
 <Base seoTitle={s.meta.title} description={s.meta.description} noindex minimal>
   <SubHero parent={{ label: 'Contractors & service businesses', href: '/contractors' }} {...s.hero} />
   <SocialFeed {...s.demo} images={s.gallery} />
-  <Story {...s.why} />
+  <Story {...s.why}><BlankProfile slot="visual" /></Story>
   <FeatureGrid {...s.included} />
   <Process content={s.process} />
   <Faq {...s.faq} />

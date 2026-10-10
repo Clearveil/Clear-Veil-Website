@@ -1,0 +1,68 @@
+---
+/**
+ * A blank social media profile drawn in glass: avatar, stats, buttons and an
+ * empty 3×3 post grid. Decorative stand-in for a photo (used on the
+ * contractors social page's "Why it matters" section).
+ */
+---
+<div class="bp card" aria-hidden="true">
+  <div class="head">
+    <span class="avatar"></span>
+    <div class="stats">
+      {[0, 1, 2].map(() => <span class="stat"><i></i><em></em></span>)}
+    </div>
+  </div>
+  <div class="bio">
+    <b></b>
+    <em></em>
+    <em class="short"></em>
+  </div>
+  <div class="btns"><span class="solid"></span><span></span></div>
+  <div class="tabs"><span class="on"></span><span></span><span></span></div>
+  <ul class="grid">
+    {Array.from({ length: 9 }, (_, i) => <li style={`--d:${i}`}></li>)}
+  </ul>
+</div>
+
+<style>
+  .bp { display: grid; gap: 16px; padding: 24px 20px 20px; border-radius: var(--r-xl); }
+
+  .head { display: flex; align-items: center; gap: 18px; }
+  .avatar {
+    flex: none; width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 0 3px rgba(0, 0, 0, 0.6), 0 0 0 4px rgba(255, 255, 255, 0.3);
+  }
+  .stats { flex: 1; display: flex; justify-content: space-around; }
+  .stat { display: grid; justify-items: center; gap: 6px; }
+  .stat i { width: 26px; height: 9px; border-radius: 4px; background: rgba(255, 255, 255, 0.5); }
+  .stat em { width: 38px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.16); }
+
+  .bio { display: grid; gap: 7px; }
+  .bio b { width: 42%; height: 9px; border-radius: 4px; background: rgba(255, 255, 255, 0.45); }
+  .bio em { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.14); }
+  .bio em.short { width: 62%; }
+
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .btns span {
+    height: 30px; border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+  .btns .solid { background: rgba(255, 255, 255, 0.85); box-shadow: none; }
+
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); }
+  .tabs span { height: 22px; position: relative; }
+  .tabs span::after { content: ''; position: absolute; left: 50%; top: 4px; width: 14px; height: 10px; border-radius: 3px; transform: translateX(-50%); background: rgba(255, 255, 255, 0.18); }
+  .tabs .on { box-shadow: inset 0 -1.5px 0 #fff; }
+  .tabs .on::after { background: rgba(255, 255, 255, 0.6); }
+
+  .grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+  .grid li {
+    aspect-ratio: 1; border-radius: 8px;
+    background:
+      radial-gradient(120% 90% at calc(15% + var(--d) * 9%) 0%, rgba(255, 255, 255, 0.1), transparent 60%),
+      linear-gradient(calc(140deg + var(--d) * 25deg), rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.01));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+</style>

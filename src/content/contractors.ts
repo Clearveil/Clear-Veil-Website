@@ -222,8 +222,6 @@ export const contractorsSocial = {
       'Most homeowners look you up before they call. A page full of recent projects, real crews and happy customers answers their questions before they ask.',
       'An empty page, or one that hasn’t posted since last summer, sends them to the next company on the list.',
     ],
-    image: { src: '/media/contractors-reel-4.jpg', alt: 'New wall framing on a concrete slab, surrounded by trees' },
-    tag: 'Real work, real crews',
     facts: [
       { value: 'Proof', label: 'Real projects show homeowners the quality they’ll get.' },
       { value: 'Trust', label: 'An active page says you’re busy, established and still in business.' },

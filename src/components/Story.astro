@@ -1,7 +1,8 @@
 ---
 /**
  * Split section: our story and three fact chips, with an optional job-site photo.
- * With a photo: photo | copy + facts. Without: copy | facts stacked.
+ * With a photo (or a drawn visual in the "visual" slot): visual | copy + facts.
+ * Without: copy | facts stacked.
  */
 interface Props {
   eyebrow: string; title: string; body: string[];
@@ -9,10 +10,12 @@ interface Props {
   image?: { src: string; alt: string }; tag?: string;
 }
 const { eyebrow, title, body, facts, image, tag = 'From the job site' } = Astro.props;
+const hasVisual = Astro.slots.has('visual'); // a drawn visual can stand in for the photo
 ---
 <section class="section story">
-  <div class:list={['container split', { 'no-photo': !image }]}>
-    {image && (
+  <div class:list={['container split', { 'no-photo': !image && !hasVisual }]}>
+    {hasVisual && <div class="photo visual" data-reveal><slot name="visual" /></div>}
+    {!hasVisual && image && (
       <figure class="photo card" data-reveal>
         <img src={image.src} alt={image.alt} width="540" height="960" loading="lazy" decoding="async" />
         <figcaption class="glass">{tag}</figcaption>
@@ -40,6 +43,7 @@ const { eyebrow, title, body, facts, image, tag = 'From the job site' } = Astro.
     grid-template-areas: 'photo head' 'photo facts'; column-gap: clamp(28px, 5vw, 72px); align-items: center;
   }
   .photo { grid-area: photo; margin: 0; border-radius: var(--r-xl); padding: 8px; aspect-ratio: 4 / 5; }
+  .visual { padding: 0; aspect-ratio: auto; }
   .photo img { width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--r-xl) - 8px); filter: grayscale(1) contrast(1.05); }
   figcaption {
     position: absolute; left: 22px; bottom: 22px; padding: 7px 14px; border-radius: 999px;
@@ -61,6 +65,7 @@ const { eyebrow, title, body, facts, image, tag = 'From the job site' } = Astro.
     .split, .no-photo { grid-template-columns: 1fr; grid-template-areas: 'photo' 'head' 'facts'; }
     .no-photo { grid-template-areas: 'head' 'facts'; }
     .photo { aspect-ratio: 4 / 3; max-width: 520px; margin-bottom: 32px; }
+    .visual { aspect-ratio: auto; max-width: 420px; }
     .no-photo .section-head { margin-bottom: 32px; }
     .facts { grid-template-columns: 1fr; }
     .no-photo .fact { grid-template-columns: 1fr; gap: 8px; }
