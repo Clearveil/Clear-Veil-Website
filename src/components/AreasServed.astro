@@ -13,7 +13,7 @@ const { city, nearby, links } = Astro.props;
     <div class="section-head" data-reveal>
       <span class="eyebrow">Areas we serve</span>
       <h2 class="h-display">{city} and the towns around it.</h2>
-      <p>We work with businesses across West Michigan. Around {city}, that includes:</p>
+      <p>We’re based in West Michigan and work with clients across the country. Around {city}, that includes businesses in:</p>
       <ul class="towns">{[city, ...nearby].map((t) => <li class="tag">{t}</li>)}</ul>
     </div>
     <nav class="more" aria-label="Nearby areas" data-reveal style="--i:1">
