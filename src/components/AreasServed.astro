@@ -1,0 +1,44 @@
+---
+/**
+ * City pages: the towns we serve around this city, plus links to nearby city
+ * pages (the only links into city pages; the main site never links here).
+ */
+import Arrow from './Arrow.astro';
+
+interface Props { city: string; nearby: string[]; links: { name: string; href: string }[] }
+const { city, nearby, links } = Astro.props;
+---
+<section class="section areas">
+  <div class="container split">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Areas we serve</span>
+      <h2 class="h-display">{city} and the towns around it.</h2>
+      <p>We work with businesses across West Michigan. Around {city}, that includes:</p>
+      <ul class="towns">{[city, ...nearby].map((t) => <li class="tag">{t}</li>)}</ul>
+    </div>
+    <nav class="more" aria-label="Nearby areas" data-reveal style="--i:1">
+      <span class="label">Also serving</span>
+      <ul>
+        {links.map((l) => (
+          <li><a class="card" href={l.href}><span>Marketing in {l.name}</span><Arrow /></a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<style>
+  .split { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+  .section-head { margin-bottom: 0; }
+  .towns { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .more { display: grid; gap: 12px; }
+  .label { font-size: var(--fs-card-meta); color: var(--ink-3); }
+  .more ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .more a {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px;
+    border-radius: var(--r-md); font-size: var(--fs-card); transition: transform var(--t) var(--ease);
+  }
+  .more a:hover { transform: translateX(4px); --rim: rgba(255, 255, 255, 0.5); }
+  .more a :global(svg) { width: 14px; height: 14px; flex: none; color: var(--ink-2); }
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+</style>

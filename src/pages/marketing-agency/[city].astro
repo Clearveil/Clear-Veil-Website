@@ -1,0 +1,66 @@
+---
+/**
+ * City pages for local search: the homepage, tailored to one city.
+ * /marketing-agency/kalamazoo-mi, /marketing-agency/grand-rapids-mi, …
+ *
+ * Indexed and in the sitemap, but never linked from the main site (only from
+ * each other). Full menu and footer, so visitors can browse the main site.
+ * Wording: src/content/cities.ts
+ */
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import LogoStrip from '../../components/LogoStrip.astro';
+import Stats from '../../components/Stats.astro';
+import Story from '../../components/Story.astro';
+import Services from '../../components/Services.astro';
+import Process from '../../components/Process.astro';
+import WorkPills from '../../components/WorkPills.astro';
+import AboutTeaser from '../../components/AboutTeaser.astro';
+import Reviews from '../../components/Reviews.astro';
+import Faq from '../../components/Faq.astro';
+import AreasServed from '../../components/AreasServed.astro';
+import Contact from '../../components/Contact.astro';
+import { cities, cityBySlug, cityCopy, type City } from '../../content/cities';
+import { site } from '../../content/site';
+
+export function getStaticPaths() {
+  return cities.map((c) => ({ params: { city: c.slug }, props: { city: c } }));
+}
+
+const { city } = Astro.props as { city: City };
+const copy = cityCopy(city);
+const path = `/marketing-agency/${city.slug}`;
+const links = city.neighbors.map((s) => cityBySlug(s)!).map((c) => ({ name: c.name, href: `/marketing-agency/${c.slug}` }));
+
+const place = { '@type': 'City', name: city.name, containedInPlace: { '@type': 'State', name: 'Michigan' } };
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: `Marketing services in ${city.name}, MI`,
+    serviceType: 'Digital marketing: paid ads, websites and creative',
+    url: new URL(path, site.url).href,
+    provider: { '@id': `${site.url}/#organization` },
+    areaServed: [place, ...city.nearby.map((n) => ({ '@type': 'Place', name: `${n}, MI` }))],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: copy.faq.items.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base seoTitle={copy.meta.title} description={copy.meta.description} breadcrumbs={[{ name: `${city.name}, MI`, path }]} schema={schema}>
+  <Hero {...copy.hero} />
+  <LogoStrip />
+  <Stats />
+  <Story {...copy.story} />
+  <Services />
+  <Process />
+  <WorkPills />
+  <AboutTeaser />
+  <Reviews />
+  <Faq {...copy.faq} />
+  <AreasServed city={city.name} nearby={city.nearby} links={links} />
+  <Contact source={copy.source} />
+</Base>

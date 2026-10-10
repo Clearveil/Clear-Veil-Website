@@ -32,6 +32,7 @@ const ogImage = new URL(image, site.url).href;
 const orgSchema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
+  '@id': `${site.url}/#organization`, // city pages point their Service at this
   name: site.legalName,
   url: site.url,
   logo: new URL('/icon-512.png', site.url).href,
