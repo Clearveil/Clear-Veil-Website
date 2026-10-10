@@ -49,15 +49,38 @@ const { eyebrow, title, intro, items } = Astro.props;
   .cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 0.9rem; color: #fff; }
   .cta :global(svg) { width: 15px; height: 15px; flex: none; transition: transform var(--t) var(--ease); }
   .svc:hover .cta :global(svg) { transform: translateX(4px); }
-  /* Three cards: the featured one fills the left, the others stack on the right */
-  .stacked .featured { grid-row: span 2; }
-  .stacked .svc:not(.featured) { min-height: 0; }
+  /* Three cards: the featured one runs full width on top (copy left, checklist right),
+     the two add-ons sit side by side underneath */
+  .stacked { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stacked .svc { min-height: 0; }
   .stacked .svc:not(.featured) h3 { margin-top: 28px; font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); }
+  .stacked .featured {
+    grid-column: 1 / -1; display: grid; align-items: start; column-gap: clamp(32px, 6vw, 96px);
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-areas: 'tag points' 'name points' 'body points' 'cta points';
+  }
+  .stacked .featured .tag-top { grid-area: tag; justify-self: start; margin-bottom: 0; }
+  .stacked .featured h3 { grid-area: name; margin-top: 32px; }
+  .stacked .featured p { grid-area: body; }
+  .stacked .featured .cta { grid-area: cta; justify-self: start; }
+  .stacked .featured ul { grid-area: points; align-self: center; display: grid; gap: 10px; }
+  .stacked .featured li {
+    display: flex; align-items: center; gap: 12px; height: auto; padding: 14px 18px; border-radius: 14px;
+    font-size: var(--fs-card); color: #fff;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  .stacked .featured li::before {
+    content: ''; flex: none; width: 7px; height: 7px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.55);
+  }
 
   @media (max-width: 900px) {
-    .stacked .featured { grid-row: auto; }
-    .grid { grid-template-columns: 1fr; }
+    .grid, .stacked { grid-template-columns: 1fr; }
     .svc { min-height: 0; }
     h3 { margin-top: 28px; }
+    .stacked .featured { grid-template-columns: 1fr; grid-template-areas: 'tag' 'name' 'body' 'points' 'cta'; row-gap: 16px; }
+    .stacked .featured h3 { margin-top: 12px; }
+    .stacked .featured ul { margin-top: 4px; }
   }
 </style>
