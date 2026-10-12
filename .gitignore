@@ -20,3 +20,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 npm-debug.log*
+
+# Local brand kit for content work (logo SVGs, Instagram prompt), not part of the site
+brand-kit/
