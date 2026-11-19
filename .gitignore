@@ -21,5 +21,7 @@ Thumbs.db
 !.vscode/extensions.json
 npm-debug.log*
 
-# Local brand kit for content work (logo SVGs, Instagram prompt), not part of the site
-brand-kit/
+# QA tool output (tools/qa)
+tools/qa/node_modules/
+tools/qa/.edge-profile/
+tools/qa/*.png

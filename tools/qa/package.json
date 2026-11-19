@@ -1,0 +1,10 @@
+{
+  "name": "clear-veil-qa",
+  "private": true,
+  "type": "module",
+  "description": "Local QA scripts (screenshots, mobile overflow audit, Meta Pixel pass). Not part of the site build.",
+  "dependencies": {
+    "puppeteer-core": "^24.0.0",
+    "sharp": "^0.34.0"
+  }
+}
